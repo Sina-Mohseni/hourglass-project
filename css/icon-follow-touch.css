@@ -1,0 +1,9 @@
+/* icon-follow-touch.css - optional helpers for touch devices */
+[data-follow-icon], .pickable-icon, .icon-follow, .__ifst_init {
+  touch-action: none;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  -webkit-user-drag: none;
+}
