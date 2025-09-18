@@ -16,11 +16,6 @@
   const FADE_MS = 160;         // fondu des autres icônes
   const Z = 999999;
   const CLAMP_TO_VIEWPORT = true;
-
-  // Effet de mouvement léger constant pour les icônes
-  const IDLE_AMPLITUDE_INITIAL = 1.5;  // amplitude avant sélection
-  const IDLE_AMPLITUDE_ACTIVE = 5;     // amplitude après sélection
-  const IDLE_SPEED = 1.2;              // vitesse de l'oscillation
   // ======================
 
   // CSS utilitaire (fondu + hygiène)
@@ -52,9 +47,6 @@
     let baseLeft = 0, baseTop = 0;    // position figée en px (viewport)
     let halfW = 0, halfH = 0;         // demi-taille (centrage souris)
 
-    // Démarrer l'animation des 3 icônes APRÈS la déclaration des variables
-    animateAllIcons();
-
     // Ressort (exponentiel) – position/vitesse relatives (transform)
     let x = 0, y = 0, vx = 0, vy = 0, tx = 0, ty = 0;
 
@@ -70,25 +62,6 @@
 
     let lastT = null, rafId = null;
 
-    // Animation pour toutes les icônes (avant sélection)
-    let initialAnimationId = null;
-
-    function animateAllIcons() {
-      if (picked) return; // Arrêter si une icône a été choisie
-      
-      const time = performance.now() / 1000;
-      icons.forEach((icon, index) => {
-        // Chaque icône a un décalage de phase différent
-        const phaseOffset = (index * Math.PI * 2) / 3; // 120° de décalage entre chaque icône
-        const offsetX = Math.sin(time * IDLE_SPEED + phaseOffset) * IDLE_AMPLITUDE_INITIAL * 0.7;
-        const offsetY = Math.sin(time * IDLE_SPEED * 0.8 + phaseOffset + Math.PI / 3) * IDLE_AMPLITUDE_INITIAL;
-        
-        icon.style.transform = `translate3d(${Math.round(offsetX)}px, ${Math.round(offsetY)}px, 0)`;
-      });
-      
-      initialAnimationId = requestAnimationFrame(animateAllIcons);
-    }
-
     function stepSpring(dt) {
       // x'' + 2ζω x' + ω²(x - tx) = 0   (même pour y)
       const ax = -2 * z * omega * vx - (omega * omega) * (x - tx);
@@ -96,14 +69,7 @@
       vx += ax * dt;  vy += ay * dt;
       x  += vx * dt;  y  += vy * dt;
 
-      // Effet de mouvement amplifié pour l'icône active
-      if (active) {
-        const time = performance.now() / 1000;
-        const offsetX = Math.sin(time * IDLE_SPEED) * IDLE_AMPLITUDE_ACTIVE * 0.7;
-        const offsetY = Math.sin(time * IDLE_SPEED * 0.8 + Math.PI / 3) * IDLE_AMPLITUDE_ACTIVE;
-        
-        active.style.transform = `translate3d(${Math.round(x + offsetX)}px, ${Math.round(y + offsetY)}px, 0)`;
-      }
+      if (active) active.style.transform = `translate3d(${Math.round(x)}px, ${Math.round(y)}px, 0)`;
     }
 
     function animate(t) {
@@ -194,12 +160,6 @@
       el.addEventListener('pointerdown', (e) => {
         // Première sélection => cacher les autres
         if (!picked) {
-          // Arrêter l'animation initiale de toutes les icônes
-          if (initialAnimationId) {
-            cancelAnimationFrame(initialAnimationId);
-            initialAnimationId = null;
-          }
-          
           icons.forEach(o => {
             if (o !== el) {
               o.classList.add('__ifst_hide');
