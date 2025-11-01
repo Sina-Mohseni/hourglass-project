@@ -1531,3 +1531,77 @@
         height: 110px;
     }
 }
+}
+
+/* ===== MODAL D'ACTION DE CARTE (MOBILE) ===== */
+
+.card-action-modal-content {
+    max-width: 500px;
+    width: 90%;
+}
+
+.card-action-preview {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.card-action-preview .card {
+    transform: scale(1.2);
+    margin: 20px;
+}
+
+.card-action-info {
+    text-align: center;
+}
+
+.card-action-info h3 {
+    font-size: 1.5rem;
+    margin: 0 0 5px 0;
+    color: var(--light-gold);
+}
+
+.card-type-info {
+    font-size: 0.9rem;
+    opacity: 0.8;
+    margin: 0 0 20px 0;
+}
+
+.card-powers-info {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    margin: 20px 0;
+}
+
+.power-info-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+}
+
+.power-info-label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    opacity: 0.9;
+}
+
+.power-info-value {
+    font-size: 1.3rem;
+    font-weight: 700;
+}
+
+@media (max-width: 768px) {
+    .card-action-preview .card {
+        transform: scale(1);
+    }
+
+    .card-action-info h3 {
+        font-size: 1.2rem;
+    }
+
+    .card-powers-info {
+        gap: 20px;
+    }
+}

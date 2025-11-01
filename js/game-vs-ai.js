@@ -1060,7 +1060,18 @@ function renderHand(owner) {
         const cardElement = createCardElement(card, owner === 'ai');
 
         if (owner === 'player' && gameState.phase === PHASES.COMBAT) {
-            cardElement.onclick = () => onPlayerCardSelected(card);
+            // Sur desktop : onclick classique
+            cardElement.onclick = (e) => {
+                if (e.pointerType === 'mouse' || e.pointerType === '') {
+                    onPlayerCardSelected(card);
+                }
+            };
+
+            // Sur mobile : tap ouvre un modal
+            cardElement.addEventListener('touchend', (e) => {
+                e.preventDefault();
+                showCardActionModal(card);
+            });
         }
 
         handElement.appendChild(cardElement);
@@ -1164,36 +1175,9 @@ function createCardElement(card, hidden = false, isDefense = false) {
     // Envelopper tout dans card-inner (pas de footer)
     div.innerHTML = `<div class="card-inner">${headerHTML}${bodyHTML}</div>`;
 
-    // Ajouter les événements de tooltip
+    // Ajouter les événements de tooltip (desktop uniquement)
     div.addEventListener('mouseenter', (e) => showCardTooltip(card, e));
     div.addEventListener('mouseleave', hideCardTooltip);
-
-    // Gestion tactile pour mobile : appui long pour tooltip
-    let touchTimeout = null;
-    div.addEventListener('touchstart', (e) => {
-        // Démarrer un timer pour le tooltip (appui long)
-        touchTimeout = setTimeout(() => {
-            showCardTooltip(card, e);
-        }, 500); // 500ms = appui long
-    });
-
-    div.addEventListener('touchend', (e) => {
-        // Annuler le tooltip si c'est un tap rapide
-        if (touchTimeout) {
-            clearTimeout(touchTimeout);
-            touchTimeout = null;
-        }
-        hideCardTooltip();
-    });
-
-    div.addEventListener('touchmove', () => {
-        // Annuler le tooltip si l'utilisateur fait glisser
-        if (touchTimeout) {
-            clearTimeout(touchTimeout);
-            touchTimeout = null;
-        }
-        hideCardTooltip();
-    });
 
     return div;
 }
@@ -1358,6 +1342,81 @@ function setupEventListeners() {
 
     // Rendre les stats de défausse cliquables
     makeGraveyardStatsClickable();
+}
+
+// ===== MODAL D'ACTION DE CARTE (MOBILE) =====
+
+function showCardActionModal(card) {
+    // Supprimer l'ancien modal s'il existe
+    const oldModal = document.getElementById('card-action-modal');
+    if (oldModal) {
+        oldModal.remove();
+    }
+
+    // Créer le modal
+    const modal = document.createElement('div');
+    modal.className = 'modal';
+    modal.id = 'card-action-modal';
+    modal.style.display = 'flex';
+
+    const attackSymbol = getAttackSymbol(card);
+    const defenseSymbol = getDefenseSymbol(card);
+    const attackData = getPowerData(attackSymbol, card);
+    const defenseData = getPowerData(defenseSymbol, card);
+
+    modal.innerHTML = `
+        <div class="modal-content card-action-modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Sélectionner une action</h2>
+            </div>
+            <div class="modal-body">
+                <div class="card-action-preview">
+                    ${createCardElement(card, false).outerHTML}
+                </div>
+                <div class="card-action-info">
+                    <h3>${card.name}</h3>
+                    <p class="card-type-info">${getCardTypeName(card.type)} ${card.color === 'white' ? 'Blanc' : 'Noir'}</p>
+                    <div class="card-powers-info">
+                        <div class="power-info-item">
+                            <span class="power-info-label">⚔️ Attaque:</span>
+                            <span class="power-info-value">${attackData.icon} ${attackData.value || ''}</span>
+                        </div>
+                        <div class="power-info-item">
+                            <span class="power-info-label">🛡️ Défense:</span>
+                            <span class="power-info-value">${defenseData.icon} ${defenseData.value || ''}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="modal-button primary-button" id="attack-card-button">
+                    ⚔️ Attaquer
+                </button>
+                <button class="modal-button secondary-button" id="cancel-card-button">
+                    ✖️ Annuler
+                </button>
+            </div>
+        </div>
+    `;
+
+    document.body.appendChild(modal);
+
+    // Événements des boutons
+    document.getElementById('attack-card-button').addEventListener('click', () => {
+        modal.remove();
+        onPlayerCardSelected(card);
+    });
+
+    document.getElementById('cancel-card-button').addEventListener('click', () => {
+        modal.remove();
+    });
+
+    // Fermer en cliquant à l'extérieur
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+            modal.remove();
+        }
+    });
 }
 
 // ===== TOOLTIPS DE CARTES =====
