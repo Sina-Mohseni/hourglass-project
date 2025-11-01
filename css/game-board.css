@@ -246,30 +246,54 @@
 
 /* ===== CARDS ===== */
 .card {
-    width: 90px;
-    height: 130px;
+    width: 100px;
+    height: 140px;
     background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
     border: 3px solid #ecf0f1;
-    border-radius: 10px;
+    border-radius: 12px;
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
+    justify-content: space-between;
     cursor: pointer;
     transition: var(--transition);
     position: relative;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
     user-select: none;
+    padding: 8px 5px;
+    overflow: hidden;
+}
+
+/* Effet de brillance sur la carte */
+.card::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(
+        45deg,
+        transparent 30%,
+        rgba(255, 255, 255, 0.1) 50%,
+        transparent 70%
+    );
+    transform: rotate(45deg);
+    transition: var(--transition);
+}
+
+.card:hover::before {
+    left: 100%;
 }
 
 .card:hover {
     transform: translateY(-10px) scale(1.05);
-    box-shadow: 0 8px 16px rgba(233, 69, 96, 0.4);
+    box-shadow: 0 12px 24px rgba(233, 69, 96, 0.5);
 }
 
 .card.selected {
     border-color: var(--gold-color);
-    box-shadow: 0 0 20px rgba(233, 69, 96, 0.8);
+    box-shadow: 0 0 25px rgba(233, 69, 96, 0.9);
     transform: translateY(-15px) scale(1.1);
 }
 
@@ -280,15 +304,17 @@
 }
 
 .card.white {
-    background: linear-gradient(135deg, #ecf0f1 0%, #bdc3c7 100%);
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 50%, #dee2e6 100%);
     color: var(--text-dark);
-    border-color: #2c3e50;
+    border-color: #495057;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3), inset 0 1px 3px rgba(255, 255, 255, 0.5);
 }
 
 .card.black {
-    background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+    background: linear-gradient(135deg, #212529 0%, #343a40 50%, #495057 100%);
     color: var(--text-light);
-    border-color: #ecf0f1;
+    border-color: #f8f9fa;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5), inset 0 1px 3px rgba(255, 255, 255, 0.1);
 }
 
 .card.hidden {
@@ -296,44 +322,157 @@
     border-color: #c39bd3;
 }
 
-.card-piece {
-    font-size: 3rem;
-    margin-bottom: 5px;
-}
-
-.card-name {
-    font-size: 0.75rem;
-    font-weight: 600;
-    text-align: center;
-    margin-top: 5px;
+/* En-tête de carte */
+.card-header {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    position: relative;
+    z-index: 2;
 }
 
 .card-number {
-    position: absolute;
-    top: 5px;
-    left: 8px;
-    font-size: 1.2rem;
+    font-size: 1.3rem;
     font-weight: 700;
+    padding: 2px 6px;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 4px;
+    min-width: 24px;
+    text-align: center;
 }
 
-.card-power {
-    position: absolute;
-    bottom: 5px;
-    right: 8px;
+.card.white .card-number {
+    background: rgba(255, 255, 255, 0.7);
+}
+
+/* Corps de carte */
+.card-body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+    position: relative;
+    z-index: 2;
+}
+
+.card-piece {
+    font-size: 3.2rem;
+    margin: 5px 0;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+}
+
+.card-name {
     font-size: 0.7rem;
+    font-weight: 700;
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-top: 2px;
+}
+
+/* Pied de carte avec puissances */
+.card-footer {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 5px;
+    position: relative;
+    z-index: 2;
+}
+
+.card-power-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex: 1;
+    padding: 3px;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 6px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.card.white .card-power-section {
+    background: rgba(255, 255, 255, 0.6);
+    border-color: rgba(0, 0, 0, 0.2);
+}
+
+.power-label {
+    font-size: 0.55rem;
     font-weight: 600;
     opacity: 0.8;
+    text-transform: uppercase;
+    margin-bottom: 2px;
+}
+
+.power-value {
+    font-size: 0.95rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 2px;
+}
+
+.power-icon {
+    font-size: 0.85rem;
+}
+
+/* Couleurs des puissances */
+.attack-power {
+    color: #ff6b6b;
+}
+
+.card.white .attack-power {
+    color: #e74c3c;
+}
+
+.defense-power {
+    color: #4ecdc4;
+}
+
+.card.white .defense-power {
+    color: #16a085;
+}
+
+/* Badge de type de pouvoir */
+.power-type-badge {
+    position: absolute;
+    top: 3px;
+    right: 3px;
+    font-size: 1.1rem;
+    background: rgba(0, 0, 0, 0.4);
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.card.white .power-type-badge {
+    background: rgba(255, 255, 255, 0.7);
+    border-color: rgba(0, 0, 0, 0.2);
 }
 
 /* Cartes cachées (dos) */
 .card.hidden .card-piece {
-    font-size: 4rem;
+    font-size: 4.5rem;
 }
 
 .card.hidden .card-name,
 .card.hidden .card-number,
-.card.hidden .card-power {
+.card.hidden .card-header,
+.card.hidden .card-footer,
+.card.hidden .power-type-badge {
     display: none;
+}
+
+.card.hidden .card-body {
+    flex: 1;
+    justify-content: center;
 }
 
 /* ===== DEFENSE ZONE ===== */
@@ -357,10 +496,10 @@
 }
 
 .defense-slot {
-    width: 90px;
-    height: 130px;
+    width: 100px;
+    height: 140px;
     border: 3px dashed rgba(233, 69, 96, 0.3);
-    border-radius: 10px;
+    border-radius: 12px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -391,8 +530,8 @@
 }
 
 .defense-slot .card {
-    width: 84px;
-    height: 124px;
+    width: 94px;
+    height: 134px;
 }
 
 .defense-slot-empty {
@@ -427,10 +566,10 @@
 }
 
 .combat-card-placeholder {
-    width: 110px;
-    height: 160px;
+    width: 120px;
+    height: 170px;
     border: 4px dashed rgba(255, 255, 255, 0.3);
-    border-radius: 12px;
+    border-radius: 14px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -452,8 +591,8 @@
 }
 
 .combat-card-placeholder .card {
-    width: 102px;
-    height: 152px;
+    width: 112px;
+    height: 162px;
     animation: cardReveal 0.5s ease-out;
 }
 
@@ -718,6 +857,223 @@
     margin-bottom: 8px;
 }
 
+/* ===== TOOLTIP DE CARTE ===== */
+.card-tooltip {
+    position: fixed;
+    background: var(--secondary-color);
+    border: 3px solid var(--gold-color);
+    border-radius: 12px;
+    padding: 20px;
+    min-width: 300px;
+    max-width: 400px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+    z-index: 2000;
+    animation: tooltipFadeIn 0.3s ease-out;
+    pointer-events: none;
+}
+
+@keyframes tooltipFadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.tooltip-card-preview {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 15px;
+    align-items: center;
+}
+
+.tooltip-card-mini {
+    width: 80px;
+    height: 112px;
+    flex-shrink: 0;
+}
+
+.tooltip-card-info {
+    flex: 1;
+}
+
+.tooltip-card-title {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--light-gold);
+    margin-bottom: 5px;
+}
+
+.tooltip-card-type {
+    font-size: 0.9rem;
+    opacity: 0.8;
+    margin-bottom: 10px;
+}
+
+.tooltip-powers {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.tooltip-power-item {
+    flex: 1;
+    padding: 8px;
+    background: var(--accent-color);
+    border-radius: 8px;
+    text-align: center;
+}
+
+.tooltip-power-label {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    opacity: 0.8;
+    margin-bottom: 5px;
+}
+
+.tooltip-power-value {
+    font-size: 1.3rem;
+    font-weight: 700;
+}
+
+.tooltip-details {
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 2px solid var(--accent-color);
+}
+
+.tooltip-detail-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.tooltip-detail-label {
+    font-weight: 600;
+    opacity: 0.9;
+}
+
+.tooltip-detail-value {
+    font-weight: 700;
+    color: var(--light-gold);
+}
+
+.tooltip-description {
+    margin-top: 15px;
+    padding: 10px;
+    background: var(--accent-color);
+    border-radius: 8px;
+    font-size: 0.85rem;
+    line-height: 1.5;
+}
+
+/* ===== MODAL DE DÉFAUSSE ===== */
+.graveyard-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.85);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1500;
+    animation: fadeIn 0.3s ease-out;
+}
+
+.graveyard-modal-content {
+    background: var(--secondary-color);
+    border-radius: var(--border-radius);
+    max-width: 90%;
+    max-height: 90vh;
+    width: 800px;
+    overflow-y: auto;
+    box-shadow: var(--shadow-lg);
+    animation: slideUp 0.4s ease-out;
+}
+
+.graveyard-modal-header {
+    padding: 20px;
+    border-bottom: 2px solid var(--accent-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    background: var(--secondary-color);
+    z-index: 10;
+}
+
+.graveyard-modal-title {
+    font-size: 1.5rem;
+    color: var(--light-gold);
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.graveyard-modal-body {
+    padding: 20px;
+}
+
+.graveyard-section {
+    margin-bottom: 30px;
+}
+
+.graveyard-section-title {
+    font-size: 1.2rem;
+    color: var(--light-gold);
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.graveyard-cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    gap: 15px;
+    padding: 15px;
+    background: var(--accent-color);
+    border-radius: 8px;
+    min-height: 80px;
+}
+
+.graveyard-empty {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 30px;
+    opacity: 0.6;
+    font-style: italic;
+}
+
+/* Effet de compteur */
+.count-badge {
+    background: var(--gradient-accent);
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 0.9rem;
+    font-weight: 700;
+}
+
+/* Stats cliquables */
+.stat-item.clickable {
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.stat-item.clickable:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 12px rgba(233, 69, 96, 0.4);
+}
+
 /* ===== RESPONSIVE ===== */
 
 /* Tablettes */
@@ -756,32 +1112,56 @@
     }
 
     .card {
-        width: 75px;
-        height: 110px;
+        width: 85px;
+        height: 120px;
+        padding: 6px 4px;
     }
 
     .card-piece {
-        font-size: 2.5rem;
+        font-size: 2.6rem;
+    }
+
+    .card-name {
+        font-size: 0.65rem;
+    }
+
+    .card-number {
+        font-size: 1.1rem;
+        padding: 2px 5px;
+    }
+
+    .power-type-badge {
+        width: 20px;
+        height: 20px;
+        font-size: 0.9rem;
+    }
+
+    .power-label {
+        font-size: 0.5rem;
+    }
+
+    .power-value {
+        font-size: 0.85rem;
     }
 
     .defense-slot {
-        width: 75px;
-        height: 110px;
+        width: 85px;
+        height: 120px;
     }
 
     .defense-slot .card {
-        width: 69px;
-        height: 104px;
+        width: 79px;
+        height: 114px;
     }
 
     .combat-card-placeholder {
-        width: 95px;
-        height: 140px;
+        width: 100px;
+        height: 145px;
     }
 
     .combat-card-placeholder .card {
-        width: 87px;
-        height: 132px;
+        width: 92px;
+        height: 137px;
     }
 
     .action-button {
@@ -821,26 +1201,50 @@
     }
 
     .card {
-        width: 65px;
-        height: 95px;
+        width: 70px;
+        height: 100px;
+        padding: 5px 3px;
     }
 
     .card-piece {
-        font-size: 2rem;
+        font-size: 2.2rem;
     }
 
     .card-name {
-        font-size: 0.65rem;
+        font-size: 0.6rem;
+    }
+
+    .card-number {
+        font-size: 1rem;
+        padding: 1px 4px;
+    }
+
+    .power-type-badge {
+        width: 18px;
+        height: 18px;
+        font-size: 0.8rem;
+    }
+
+    .power-label {
+        font-size: 0.45rem;
+    }
+
+    .power-value {
+        font-size: 0.75rem;
+    }
+
+    .card-power-section {
+        padding: 2px;
     }
 
     .defense-slot {
-        width: 65px;
-        height: 95px;
+        width: 70px;
+        height: 100px;
     }
 
     .defense-slot .card {
-        width: 59px;
-        height: 89px;
+        width: 64px;
+        height: 94px;
     }
 
     .combat-zone {
@@ -852,13 +1256,13 @@
     }
 
     .combat-card-placeholder {
-        width: 80px;
-        height: 115px;
+        width: 85px;
+        height: 125px;
     }
 
     .combat-card-placeholder .card {
-        width: 72px;
-        height: 107px;
+        width: 77px;
+        height: 117px;
     }
 
     .vs-indicator {
@@ -888,21 +1292,41 @@
 /* Très petits écrans */
 @media (max-width: 360px) {
     .card {
-        width: 55px;
-        height: 80px;
+        width: 60px;
+        height: 85px;
+        padding: 4px 2px;
     }
 
     .card-piece {
-        font-size: 1.8rem;
+        font-size: 1.9rem;
     }
 
     .card-name {
-        font-size: 0.6rem;
+        font-size: 0.55rem;
+    }
+
+    .card-number {
+        font-size: 0.9rem;
+        padding: 1px 3px;
+    }
+
+    .power-type-badge {
+        width: 16px;
+        height: 16px;
+        font-size: 0.7rem;
+    }
+
+    .power-label {
+        font-size: 0.4rem;
+    }
+
+    .power-value {
+        font-size: 0.7rem;
     }
 
     .defense-slot,
     .defense-slot .card {
-        width: 55px;
-        height: 80px;
+        width: 60px;
+        height: 85px;
     }
 }

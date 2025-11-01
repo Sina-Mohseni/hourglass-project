@@ -1125,44 +1125,97 @@ function renderCombatZone() {
 function createCardElement(card, hidden = false) {
     const div = document.createElement('div');
     div.className = `card ${card.color}`;
+    div.dataset.cardId = card.id;
 
     if (hidden) {
         div.classList.add('hidden');
-        div.innerHTML = '<div class="card-piece">?</div>';
+        div.innerHTML = '<div class="card-body"><div class="card-piece">?</div></div>';
         return div;
     }
 
     const icon = PIECE_ICONS[card.color][card.type];
-
-    div.innerHTML = `
-        <div class="card-piece">${icon}</div>
-        <div class="card-name">${card.name}</div>
-    `;
-
-    if (card.type === CARD_TYPES.PAWN) {
-        const numberSpan = document.createElement('div');
-        numberSpan.className = 'card-number';
-        numberSpan.textContent = card.number;
-        div.appendChild(numberSpan);
-    }
-
-    // Ajouter l'indicateur de pouvoir
     const attackSymbol = getAttackSymbol(card);
     const defenseSymbol = getDefenseSymbol(card);
 
-    let powerText = '';
-    if (attackSymbol === SYMBOLS.CROWN) powerText = '👑';
-    else if (attackSymbol === SYMBOLS.PAPER) powerText = '📄';
-    else if (attackSymbol === SYMBOLS.ROCK) powerText = '🪨';
-    else if (attackSymbol === SYMBOLS.SCISSORS) powerText = '✂️';
-    else if (attackSymbol === SYMBOLS.NUMBER) powerText = card.number;
+    // Obtenir les icônes et valeurs de pouvoir
+    const attackData = getPowerData(attackSymbol, card);
+    const defenseData = getPowerData(defenseSymbol, card);
 
-    const powerSpan = document.createElement('div');
-    powerSpan.className = 'card-power';
-    powerSpan.textContent = powerText;
-    div.appendChild(powerSpan);
+    // Header
+    let headerHTML = '<div class="card-header">';
+    if (card.type === CARD_TYPES.PAWN) {
+        headerHTML += `<div class="card-number">${card.number}</div>`;
+    } else {
+        headerHTML += '<div></div>';
+    }
+    headerHTML += `<div class="power-type-badge">${attackData.icon}</div>`;
+    headerHTML += '</div>';
+
+    // Body
+    const bodyHTML = `
+        <div class="card-body">
+            <div class="card-piece">${icon}</div>
+            <div class="card-name">${card.name}</div>
+        </div>
+    `;
+
+    // Footer avec puissances
+    const footerHTML = `
+        <div class="card-footer">
+            <div class="card-power-section">
+                <div class="power-label">ATK</div>
+                <div class="power-value attack-power">
+                    <span class="power-icon">${attackData.icon}</span>
+                    <span>${attackData.value}</span>
+                </div>
+            </div>
+            <div class="card-power-section">
+                <div class="power-label">DEF</div>
+                <div class="power-value defense-power">
+                    <span class="power-icon">${defenseData.icon}</span>
+                    <span>${defenseData.value}</span>
+                </div>
+            </div>
+        </div>
+    `;
+
+    div.innerHTML = headerHTML + bodyHTML + footerHTML;
+
+    // Ajouter les événements de tooltip
+    div.addEventListener('mouseenter', (e) => showCardTooltip(card, e));
+    div.addEventListener('mouseleave', hideCardTooltip);
+    div.addEventListener('touchstart', (e) => {
+        e.preventDefault();
+        showCardTooltip(card, e);
+    });
+    div.addEventListener('touchend', hideCardTooltip);
 
     return div;
+}
+
+// Fonction helper pour obtenir les données de pouvoir
+function getPowerData(symbol, card) {
+    let icon = '';
+    let value = '';
+
+    if (symbol === SYMBOLS.CROWN) {
+        icon = '👑';
+        value = 'MAX';
+    } else if (symbol === SYMBOLS.PAPER) {
+        icon = '📄';
+        value = 'PAP';
+    } else if (symbol === SYMBOLS.ROCK) {
+        icon = '🪨';
+        value = 'ROC';
+    } else if (symbol === SYMBOLS.SCISSORS) {
+        icon = '✂️';
+        value = 'CIS';
+    } else if (symbol === SYMBOLS.NUMBER) {
+        icon = '#';
+        value = card.number;
+    }
+
+    return { icon, value };
 }
 
 function updateMessage(text) {
@@ -1262,6 +1315,244 @@ function setupEventListeners() {
                 modal.classList.add('hidden');
             }
         });
+    });
+
+    // Rendre les stats de défausse cliquables
+    makeGraveyardStatsClickable();
+}
+
+// ===== TOOLTIPS DE CARTES =====
+
+let currentTooltip = null;
+let tooltipTimeout = null;
+
+function showCardTooltip(card, event) {
+    // Nettoyer l'ancien tooltip
+    hideCardTooltip();
+
+    // Créer le nouveau tooltip
+    const tooltip = document.createElement('div');
+    tooltip.className = 'card-tooltip';
+    tooltip.id = 'card-tooltip';
+
+    const attackSymbol = getAttackSymbol(card);
+    const defenseSymbol = getDefenseSymbol(card);
+    const attackData = getPowerData(attackSymbol, card);
+    const defenseData = getPowerData(defenseSymbol, card);
+
+    // Description de la carte
+    let description = getCardDescription(card, attackSymbol, defenseSymbol);
+
+    tooltip.innerHTML = `
+        <div class="tooltip-card-preview">
+            ${createCardElement(card, false).outerHTML}
+            <div class="tooltip-card-info">
+                <div class="tooltip-card-title">${card.name}</div>
+                <div class="tooltip-card-type">${getCardTypeName(card.type)} ${card.color === 'white' ? 'Blanc' : 'Noir'}</div>
+            </div>
+        </div>
+        <div class="tooltip-powers">
+            <div class="tooltip-power-item">
+                <div class="tooltip-power-label">Attaque</div>
+                <div class="tooltip-power-value attack-power">${attackData.icon} ${attackData.value}</div>
+            </div>
+            <div class="tooltip-power-item">
+                <div class="tooltip-power-label">Défense</div>
+                <div class="tooltip-power-value defense-power">${defenseData.icon} ${defenseData.value}</div>
+            </div>
+        </div>
+        <div class="tooltip-description">${description}</div>
+    `;
+
+    document.body.appendChild(tooltip);
+    currentTooltip = tooltip;
+
+    // Positionner le tooltip
+    positionTooltip(tooltip, event);
+}
+
+function hideCardTooltip() {
+    if (tooltipTimeout) {
+        clearTimeout(tooltipTimeout);
+        tooltipTimeout = null;
+    }
+
+    if (currentTooltip) {
+        currentTooltip.remove();
+        currentTooltip = null;
+    }
+}
+
+function positionTooltip(tooltip, event) {
+    const mouseX = event.clientX || (event.touches && event.touches[0].clientX) || 0;
+    const mouseY = event.clientY || (event.touches && event.touches[0].clientY) || 0;
+
+    const tooltipRect = tooltip.getBoundingClientRect();
+    const viewportWidth = window.innerWidth;
+    const viewportHeight = window.innerHeight;
+
+    let left = mouseX + 15;
+    let top = mouseY + 15;
+
+    // Ajuster si hors de l'écran à droite
+    if (left + tooltipRect.width > viewportWidth) {
+        left = mouseX - tooltipRect.width - 15;
+    }
+
+    // Ajuster si hors de l'écran en bas
+    if (top + tooltipRect.height > viewportHeight) {
+        top = mouseY - tooltipRect.height - 15;
+    }
+
+    // Limiter aux bords de l'écran
+    left = Math.max(10, Math.min(left, viewportWidth - tooltipRect.width - 10));
+    top = Math.max(10, Math.min(top, viewportHeight - tooltipRect.height - 10));
+
+    tooltip.style.left = `${left}px`;
+    tooltip.style.top = `${top}px`;
+}
+
+function getCardTypeName(type) {
+    const typeNames = {
+        queen: 'Reine',
+        rook: 'Tour',
+        bishop: 'Fou',
+        knight: 'Cavalier',
+        pawn: 'Pion'
+    };
+    return typeNames[type] || type;
+}
+
+function getCardDescription(card, attackSymbol, defenseSymbol) {
+    let desc = '<strong>En Attaque:</strong> ';
+
+    if (attackSymbol === SYMBOLS.CROWN) {
+        desc += 'Couronne - Bat toutes les pièces';
+        if (card.type === CARD_TYPES.PAWN && (card.number === 1 || card.number === 2)) {
+            desc += ' (sauf contre pièces majeures où compte comme chiffre)';
+        }
+    } else if (attackSymbol === SYMBOLS.PAPER) {
+        desc += 'Papier - Bat Pierre';
+    } else if (attackSymbol === SYMBOLS.ROCK) {
+        desc += 'Pierre - Bat Ciseaux';
+    } else if (attackSymbol === SYMBOLS.SCISSORS) {
+        desc += 'Ciseaux - Bat Papier';
+    } else if (attackSymbol === SYMBOLS.NUMBER) {
+        desc += `Chiffre ${card.number} - Plus le chiffre est élevé, plus fort`;
+    }
+
+    desc += '<br><br><strong>En Défense:</strong> ';
+
+    if (defenseSymbol === SYMBOLS.CROWN) {
+        desc += 'Couronne - Bloque tout sauf Reine attaquante';
+    } else if (defenseSymbol === SYMBOLS.PAPER) {
+        desc += 'Papier - Bloque Pierre';
+    } else if (defenseSymbol === SYMBOLS.ROCK) {
+        desc += 'Pierre - Bloque Ciseaux';
+    } else if (defenseSymbol === SYMBOLS.SCISSORS) {
+        desc += 'Ciseaux - Bloque Papier';
+    }
+
+    return desc;
+}
+
+// ===== MODAL DE DÉFAUSSE =====
+
+function makeGraveyardStatsClickable() {
+    // Stats du joueur
+    document.getElementById('player-graveyard').parentElement.classList.add('clickable');
+    document.getElementById('player-graveyard').parentElement.addEventListener('click', () => {
+        showGraveyardModal('player');
+    });
+
+    document.getElementById('player-prison').parentElement.classList.add('clickable');
+    document.getElementById('player-prison').parentElement.addEventListener('click', () => {
+        showGraveyardModal('player', true);
+    });
+
+    // Stats de l'IA
+    document.getElementById('ai-graveyard').parentElement.classList.add('clickable');
+    document.getElementById('ai-graveyard').parentElement.addEventListener('click', () => {
+        showGraveyardModal('ai');
+    });
+
+    document.getElementById('ai-prison').parentElement.classList.add('clickable');
+    document.getElementById('ai-prison').parentElement.addEventListener('click', () => {
+        showGraveyardModal('ai', true);
+    });
+}
+
+function showGraveyardModal(owner, prisonOnly = false) {
+    // Créer le modal
+    const modal = document.createElement('div');
+    modal.className = 'graveyard-modal';
+    modal.id = 'graveyard-modal-temp';
+
+    const ownerName = owner === 'player' ? 'Vous' : 'IA';
+
+    let modalHTML = `
+        <div class="graveyard-modal-content">
+            <div class="graveyard-modal-header">
+                <h2 class="graveyard-modal-title">
+                    ${prisonOnly ? '🏆' : '💀'} Défausse de ${ownerName}
+                </h2>
+                <button class="close-modal" id="close-graveyard">×</button>
+            </div>
+            <div class="graveyard-modal-body">
+    `;
+
+    if (!prisonOnly) {
+        // Section Cimetière
+        modalHTML += `
+            <div class="graveyard-section">
+                <h3 class="graveyard-section-title">
+                    💀 Cimetière <span class="count-badge">${gameState[owner].graveyard.length}</span>
+                </h3>
+                <div class="graveyard-cards-grid" id="graveyard-cemetery">
+        `;
+
+        if (gameState[owner].graveyard.length === 0) {
+            modalHTML += '<div class="graveyard-empty">Aucune carte</div>';
+        } else {
+            gameState[owner].graveyard.forEach(card => {
+                modalHTML += createCardElement(card, false).outerHTML;
+            });
+        }
+
+        modalHTML += '</div></div>';
+    }
+
+    // Section Prison
+    modalHTML += `
+        <div class="graveyard-section">
+            <h3 class="graveyard-section-title">
+                🏆 Prison (Victoire Tactique) <span class="count-badge">${gameState[owner].prison.length} / ${gameState.settings.tacticalVictory}</span>
+            </h3>
+            <div class="graveyard-cards-grid" id="graveyard-prison">
+    `;
+
+    if (gameState[owner].prison.length === 0) {
+        modalHTML += '<div class="graveyard-empty">Aucun défenseur battu</div>';
+    } else {
+        gameState[owner].prison.forEach(card => {
+            modalHTML += createCardElement(card, false).outerHTML;
+        });
+    }
+
+    modalHTML += '</div></div></div></div>';
+
+    modal.innerHTML = modalHTML;
+    document.body.appendChild(modal);
+
+    // Event listeners
+    document.getElementById('close-graveyard').addEventListener('click', () => {
+        modal.remove();
+    });
+
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+            modal.remove();
+        }
     });
 }
 
