@@ -529,16 +529,41 @@
     letter-spacing: 0.5px;
     margin-bottom: 2px;
     text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+    display: none; /* Masquer les labels ATK/DEF */
 }
 
 .power-value {
-    font-size: 1.05rem;
+    font-size: 1.15rem;
     font-weight: 900;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 2px;
+    gap: 3px;
     line-height: 1;
+    padding: 2px 0;
+}
+
+/* Couronne avec R pour pions 1 et 2 */
+.crown-r {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+}
+
+.r-letter {
+    position: absolute;
+    font-size: 0.5rem;
+    font-weight: 900;
+    color: #fff;
+    text-shadow:
+        0 0 2px rgba(0, 0, 0, 0.8),
+        0 1px 1px rgba(0, 0, 0, 0.6);
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
 }
 
 .power-icon {

@@ -1165,21 +1165,19 @@ function createCardElement(card, hidden = false) {
         </div>
     `;
 
-    // Footer avec puissances
+    // Footer avec puissances (symboles uniquement)
     const footerHTML = `
         <div class="card-footer">
             <div class="card-power-section">
-                <div class="power-label">ATK</div>
                 <div class="power-value attack-power">
                     <span class="power-icon">${attackData.icon}</span>
-                    <span>${attackData.value}</span>
+                    ${attackData.value ? `<span>${attackData.value}</span>` : ''}
                 </div>
             </div>
             <div class="card-power-section">
-                <div class="power-label">DEF</div>
                 <div class="power-value defense-power">
                     <span class="power-icon">${defenseData.icon}</span>
-                    <span>${defenseData.value}</span>
+                    ${defenseData.value ? `<span>${defenseData.value}</span>` : ''}
                 </div>
             </div>
         </div>
@@ -1207,19 +1205,24 @@ function getPowerData(symbol, card) {
 
     if (symbol === SYMBOLS.CROWN) {
         icon = '👑';
-        value = 'MAX';
+        // Pour les pions 1 et 2, afficher le numéro + couronne avec R
+        if (card.type === CARD_TYPES.PAWN && (card.number === 1 || card.number === 2)) {
+            value = `${card.number} <span class="crown-r">👑<span class="r-letter">R</span></span>`;
+        } else {
+            value = ''; // Juste l'icône, pas de texte
+        }
     } else if (symbol === SYMBOLS.PAPER) {
         icon = '📄';
-        value = 'PAP';
+        value = ''; // Juste l'icône
     } else if (symbol === SYMBOLS.ROCK) {
         icon = '🪨';
-        value = 'ROC';
+        value = ''; // Juste l'icône
     } else if (symbol === SYMBOLS.SCISSORS) {
         icon = '✂️';
-        value = 'CIS';
+        value = ''; // Juste l'icône
     } else if (symbol === SYMBOLS.NUMBER) {
         icon = '#';
-        value = card.number;
+        value = card.number; // Garder le chiffre
     }
 
     return { icon, value };
