@@ -1060,15 +1060,28 @@ function renderHand(owner) {
         const cardElement = createCardElement(card, owner === 'ai');
 
         if (owner === 'player' && gameState.phase === PHASES.COMBAT) {
-            // Desktop et mobile : ouvrir le modal
-            cardElement.onclick = (e) => {
-                e.preventDefault();
-                showCardActionModal(card);
-            };
+            let touchHandled = false;
+
+            // Gestion tactile (mobile)
+            cardElement.addEventListener('touchstart', (e) => {
+                touchHandled = true;
+            });
 
             cardElement.addEventListener('touchend', (e) => {
                 e.preventDefault();
+                e.stopPropagation();
+                showCardActionModal(card);
+                // Reset après un délai pour permettre les futurs clics
+                setTimeout(() => { touchHandled = false; }, 300);
             });
+
+            // Gestion clic (desktop uniquement)
+            cardElement.onclick = (e) => {
+                if (!touchHandled) {
+                    e.preventDefault();
+                    showCardActionModal(card);
+                }
+            };
         }
 
         handElement.appendChild(cardElement);
