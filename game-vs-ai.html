@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chess & Cards - Joueur vs IA</title>
+    <link rel="stylesheet" href="css/chess-cards.css">
+    <link rel="stylesheet" href="css/game-board.css">
+</head>
+<body class="game-body">
+    <div class="game-container">
+
+        <!-- Header avec infos de partie -->
+        <header class="game-header-bar">
+            <button class="back-button" id="back-to-menu">
+                <span>←</span> Menu
+            </button>
+            <div class="game-info">
+                <h1 class="game-title-small">
+                    <span class="chess-icon-small">♔</span>
+                    Chess & Cards
+                    <span class="chess-icon-small">♛</span>
+                </h1>
+                <p class="game-mode-label">Joueur vs IA</p>
+            </div>
+            <div class="turn-counter">
+                <span class="turn-label">Tour</span>
+                <span class="turn-value" id="turn-number">1</span>
+            </div>
+        </header>
+
+        <!-- Zone de jeu principale -->
+        <main class="game-board">
+
+            <!-- Zone IA (en haut) -->
+            <section class="player-zone ai-zone">
+                <div class="player-header">
+                    <div class="player-info">
+                        <h2 class="player-name">
+                            <span class="player-icon">🤖</span>
+                            IA (<span id="ai-difficulty">Facile</span>)
+                        </h2>
+                        <div class="first-player-indicator" id="ai-first-player">
+                            <span class="star-icon">⭐</span> Premier Joueur
+                        </div>
+                    </div>
+                    <div class="player-stats">
+                        <div class="stat-item hp-stat">
+                            <span class="stat-icon">❤️</span>
+                            <span class="stat-value" id="ai-hp">10</span>
+                        </div>
+                        <div class="stat-item cards-stat">
+                            <span class="stat-icon">🖐️</span>
+                            <span class="stat-value" id="ai-cards">15</span>
+                        </div>
+                        <div class="stat-item graveyard-stat">
+                            <span class="stat-icon">💀</span>
+                            <span class="stat-value" id="ai-graveyard">0</span>
+                        </div>
+                        <div class="stat-item prison-stat">
+                            <span class="stat-icon">🏆</span>
+                            <span class="stat-value" id="ai-prison">0</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Main de l'IA (cachée) -->
+                <div class="hand ai-hand" id="ai-hand">
+                    <!-- Les cartes seront générées dynamiquement -->
+                </div>
+
+                <!-- Plateau de défense IA -->
+                <div class="defense-zone">
+                    <div class="defense-label">Défenseurs IA</div>
+                    <div class="defense-slots" id="ai-defense">
+                        <!-- Slots de défense générés dynamiquement -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- Zone de combat centrale -->
+            <section class="combat-zone">
+                <div class="combat-area">
+                    <div class="combat-card-slot ai-combat-slot">
+                        <div class="combat-card-placeholder" id="ai-combat-card">
+                            <span class="placeholder-text">?</span>
+                        </div>
+                    </div>
+
+                    <div class="vs-indicator">
+                        <span class="vs-text">VS</span>
+                    </div>
+
+                    <div class="combat-card-slot player-combat-slot">
+                        <div class="combat-card-placeholder" id="player-combat-card">
+                            <span class="placeholder-text">Choisissez une carte</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Zone d'actions et messages -->
+                <div class="action-zone">
+                    <div class="game-message" id="game-message">
+                        Sélectionnez une carte pour attaquer
+                    </div>
+
+                    <div class="action-buttons hidden" id="action-buttons">
+                        <!-- Boutons générés dynamiquement selon la phase -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- Zone Joueur (en bas) -->
+            <section class="player-zone human-zone">
+                <!-- Plateau de défense Joueur -->
+                <div class="defense-zone">
+                    <div class="defense-label">Vos Défenseurs</div>
+                    <div class="defense-slots" id="player-defense">
+                        <!-- Slots de défense générés dynamiquement -->
+                    </div>
+                </div>
+
+                <!-- Main du Joueur -->
+                <div class="hand player-hand" id="player-hand">
+                    <!-- Les cartes seront générées dynamiquement -->
+                </div>
+
+                <div class="player-header">
+                    <div class="player-info">
+                        <h2 class="player-name">
+                            <span class="player-icon">👤</span>
+                            Vous (<span id="player-color">Blanc</span>)
+                        </h2>
+                        <div class="first-player-indicator" id="player-first-player">
+                            <span class="star-icon">⭐</span> Premier Joueur
+                        </div>
+                    </div>
+                    <div class="player-stats">
+                        <div class="stat-item hp-stat">
+                            <span class="stat-icon">❤️</span>
+                            <span class="stat-value" id="player-hp">10</span>
+                        </div>
+                        <div class="stat-item cards-stat">
+                            <span class="stat-icon">🖐️</span>
+                            <span class="stat-value" id="player-cards">15</span>
+                        </div>
+                        <div class="stat-item graveyard-stat">
+                            <span class="stat-icon">💀</span>
+                            <span class="stat-value" id="player-graveyard">0</span>
+                        </div>
+                        <div class="stat-item prison-stat">
+                            <span class="stat-icon">🏆</span>
+                            <span class="stat-value" id="player-prison">0</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+
+        <!-- Modal de fin de partie -->
+        <div class="modal hidden" id="game-over-modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 class="modal-title" id="game-over-title">Fin de partie</h2>
+                </div>
+                <div class="modal-body">
+                    <div class="victory-icon" id="victory-icon">🏆</div>
+                    <p class="victory-message" id="victory-message"></p>
+                    <div class="final-stats" id="final-stats"></div>
+                </div>
+                <div class="modal-footer">
+                    <button class="modal-button primary-button" id="new-game-button">
+                        Nouvelle partie
+                    </button>
+                    <button class="modal-button secondary-button" id="menu-button">
+                        Retour au menu
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal d'aide/règles rapides -->
+        <button class="help-button" id="help-button" title="Règles rapides">
+            <span>?</span>
+        </button>
+
+        <div class="modal hidden" id="help-modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 class="modal-title">Aide rapide</h2>
+                    <button class="close-modal" id="close-help">×</button>
+                </div>
+                <div class="modal-body">
+                    <div class="help-content">
+                        <h3>Phase 1 : Combat</h3>
+                        <p>Sélectionnez une carte pour attaquer.</p>
+
+                        <h3>Système de combat</h3>
+                        <ul>
+                            <li><strong>Reine (♛)</strong> : Couronne - Bat tout sauf Pions 1&2</li>
+                            <li><strong>Tour (♜)</strong> : Papier - Bat Pierre</li>
+                            <li><strong>Fou (♝)</strong> : Ciseaux - Bat Papier</li>
+                            <li><strong>Cavalier (♞)</strong> : Pierre - Bat Ciseaux</li>
+                            <li><strong>Pions</strong> : Plus le chiffre est élevé, plus fort</li>
+                        </ul>
+
+                        <h3>Victoires</h3>
+                        <ul>
+                            <li>❤️ HP à 0</li>
+                            <li>🖐️ Plus de cartes</li>
+                            <li>🏆 Prison = Objectif tactique</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="js/game-vs-ai.js"></script>
+</body>
+</html>

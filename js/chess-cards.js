@@ -312,18 +312,28 @@ function startGame() {
 
     // Simuler le chargement
     setTimeout(() => {
-        showNotification('🎮 La partie commence ! (Interface de jeu à venir)');
+        showNotification('🎮 La partie commence !');
 
-        // Réinitialiser le bouton après 2 secondes
         setTimeout(() => {
-            startButton.innerHTML = '<span class="start-icon">⚔️</span>Commencer la partie';
-            startButton.disabled = false;
-        }, 2000);
-
-        // ICI : Vous pourrez rediriger vers l'interface de jeu
-        // window.location.href = 'game.html';
-        // OU afficher l'interface de jeu dans la même page
-    }, 1000);
+            // Rediriger vers la page de jeu appropriée
+            if (gameState.mode === 'vsAI') {
+                const params = new URLSearchParams({
+                    hp: gameState.settings.hp,
+                    defenders: gameState.settings.defenders,
+                    tactical: gameState.settings.tacticalVictory,
+                    turns: gameState.settings.maxTurns,
+                    difficulty: gameState.difficulty,
+                    color: gameState.playerColor
+                });
+                window.location.href = `game-vs-ai.html?${params.toString()}`;
+            } else {
+                // Mode Joueur vs Joueur (à implémenter plus tard)
+                showNotification('⚠️ Mode Joueur vs Joueur à venir !');
+                startButton.innerHTML = '<span class="start-icon">⚔️</span>Commencer la partie';
+                startButton.disabled = false;
+            }
+        }, 1000);
+    }, 500);
 }
 
 // ===== FONCTIONS UTILITAIRES =====
