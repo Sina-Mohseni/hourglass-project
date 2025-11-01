@@ -168,52 +168,64 @@
                 </button>
                 <div class="rules-content hidden" id="rules-content">
                     <div class="rules-text">
-                        <h3>Règles du jeu Chess & Cards</h3>
+                        <h3>📖 Les Règles - Super Facile !</h3>
 
-                        <h4>🎯 Objectif du jeu</h4>
-                        <p>Réduire les HP de votre adversaire à 0 avant qu'il ne réduise les vôtres, ou atteindre le nombre de victoires tactiques requis.</p>
+                        <h4>🎯 But du Jeu</h4>
+                        <p>Gagner en faisant perdre tous les ❤️ de l'adversaire, OU en capturant assez de ses défenseurs !</p>
 
-                        <h4>♟️ Les cartes</h4>
-                        <p>Le jeu utilise des cartes inspirées des pièces d'échecs :</p>
+                        <h4>🃏 Les 15 Cartes</h4>
                         <ul>
-                            <li><strong>Pion (♟)</strong> - Attaque : 1 | Défense : 1</li>
-                            <li><strong>Cavalier (♞)</strong> - Attaque : 3 | Défense : 2</li>
-                            <li><strong>Fou (♝)</strong> - Attaque : 3 | Défense : 2</li>
-                            <li><strong>Tour (♜)</strong> - Attaque : 5 | Défense : 3</li>
-                            <li><strong>Dame (♛)</strong> - Attaque : 8 | Défense : 4</li>
-                            <li><strong>Roi (♚)</strong> - Attaque : 0 | Défense : 5</li>
+                            <li>👑 <strong>1 Reine</strong> - La plus forte ! Bat presque tout</li>
+                            <li>♜ <strong>2 Tours</strong> - Papier 📄 (en attaque) / Pierre 🪨 (en défense)</li>
+                            <li>♝ <strong>2 Fous</strong> - Ciseaux ✂️</li>
+                            <li>♞ <strong>2 Cavaliers</strong> - Pierre 🪨 (en attaque) / Papier 📄 (en défense)</li>
+                            <li>♟ <strong>8 Pions</strong> - Numérotés de 1 à 8. Plus le chiffre est grand, plus fort !</li>
                         </ul>
 
-                        <h4>🎲 Déroulement d'un tour</h4>
+                        <h4>✊ Comment Gagner un Combat ?</h4>
+                        <p><strong>Pierre-Papier-Ciseaux !</strong></p>
+                        <ul>
+                            <li>📄 <strong>Papier</strong> bat 🪨 Pierre</li>
+                            <li>🪨 <strong>Pierre</strong> bat ✂️ Ciseaux</li>
+                            <li>✂️ <strong>Ciseaux</strong> bat 📄 Papier</li>
+                            <li>👑 <strong>Couronne</strong> bat tout (sauf Pion 1 ou 2 qui ont aussi une couronne !)</li>
+                            <li>🔢 <strong>Pions</strong> : Le plus grand nombre gagne</li>
+                        </ul>
+                        <p><strong>🌟 Égalité ?</strong> Le joueur qui joue en PREMIER gagne !</p>
+
+                        <h4>🎮 Un Tour de Jeu</h4>
                         <ol>
-                            <li><strong>Piocher</strong> : Chaque joueur pioche une carte</li>
-                            <li><strong>Jouer</strong> : Le joueur peut jouer une carte d'attaque ou de défense</li>
-                            <li><strong>Défendre</strong> : L'adversaire peut utiliser ses défenseurs</li>
-                            <li><strong>Résolution</strong> : Les dégâts sont calculés et appliqués</li>
+                            <li><strong>⚔️ Combat</strong> : Les deux joueurs choisissent une carte</li>
+                            <li><strong>🏆 Le Gagnant choisit</strong> :
+                                <ul>
+                                    <li>Enlever 1 ❤️ à l'adversaire</li>
+                                    <li>OU attaquer un de ses défenseurs</li>
+                                </ul>
+                            </li>
+                            <li><strong>😢 Le Perdant choisit</strong> :
+                                <ul>
+                                    <li>Accepter : perd 1 ❤️ et sa carte va au cimetière</li>
+                                    <li>Remplacer un défenseur : sa carte devient défenseur</li>
+                                    <li>Sacrifier un défenseur : perd 2 cartes mais garde ses ❤️</li>
+                                </ul>
+                            </li>
+                            <li><strong>🛡️ Résolution</strong> : La carte gagnante devient un défenseur</li>
                         </ol>
 
-                        <h4>⚔️ Combat</h4>
-                        <p>Lorsqu'un joueur attaque :</p>
+                        <h4>🏁 Comment Gagner la Partie ?</h4>
                         <ul>
-                            <li>L'adversaire peut placer jusqu'à X défenseurs (selon les paramètres)</li>
-                            <li>La défense totale = somme des valeurs de défense des cartes défenseuses</li>
-                            <li>Si Attaque > Défense : l'excédent est retiré des HP adverses</li>
-                            <li>Si Défense ≥ Attaque : aucun dégât, et l'attaquant gagne 1 point de victoire tactique</li>
+                            <li>❤️ L'adversaire n'a plus de points de vie</li>
+                            <li>🃏 L'adversaire n'a plus de cartes</li>
+                            <li>🏆 Tu as capturé assez de défenseurs (Prison pleine !)</li>
+                            <li>⏱️ Tours max atteints : celui qui a le plus de ❤️ gagne</li>
                         </ul>
 
-                        <h4>🏆 Conditions de victoire</h4>
+                        <h4>✨ Astuces</h4>
                         <ul>
-                            <li><strong>Victoire par élimination</strong> : Réduire les HP adverses à 0</li>
-                            <li><strong>Victoire tactique</strong> : Atteindre le nombre de victoires tactiques défini</li>
-                            <li><strong>Égalité</strong> : Si le nombre de tours max est atteint, le joueur avec le plus de HP gagne</li>
-                        </ul>
-
-                        <h4>📝 Règles spéciales</h4>
-                        <ul>
-                            <li>Vous ne pouvez pas avoir plus de 7 cartes en main</li>
-                            <li>Les cartes défenseuses utilisées sont défaussées</li>
-                            <li>Le Roi ne peut pas attaquer mais offre la meilleure défense</li>
-                            <li>La Dame est la carte la plus puissante en attaque</li>
+                            <li>Les Pions 1 et 2 ont une couronne 👑 spéciale en attaque !</li>
+                            <li>Chaque pièce change de pouvoir entre attaque et défense</li>
+                            <li>Garde tes meilleures cartes pour les moments importants</li>
+                            <li>Pense stratégie : parfois sacrifier pour garder ses ❤️ est malin !</li>
                         </ul>
                     </div>
                 </div>
