@@ -74,7 +74,9 @@ const gameState = {
         aiCard: null,
         winner: null,
         loser: null
-    }
+    },
+    tempWinningCard: null, // Pour stocker la carte gagnante temporairement
+    currentAction: null // Pour stocker l'action en cours (replace, sacrifice, etc.)
 };
 
 // ===== INITIALISATION =====
@@ -350,8 +352,11 @@ function resolveCombat(card1, card2, isAttackVsAttack = true, firstPlayer = null
 function startCombatPhase() {
     gameState.phase = PHASES.COMBAT;
     gameState.combat = { playerCard: null, aiCard: null, winner: null, loser: null };
+    gameState.currentAction = null;
+    gameState.tempWinningCard = null;
 
     updateMessage('Sélectionnez une carte pour attaquer');
+    updateUI();
     enableCardSelection();
 }
 
@@ -476,6 +481,8 @@ function winnerChoiceA() {
 }
 
 function winnerChoiceB() {
+    document.getElementById('action-buttons').classList.add('hidden');
+
     const beatableDefenders = getBeadableDefenders(
         gameState.combat.playerCard,
         gameState.ai.defense
@@ -577,6 +584,8 @@ function loserChoiceA() {
 }
 
 function loserChoiceB() {
+    document.getElementById('action-buttons').classList.add('hidden');
+    gameState.currentAction = 'replace_loser'; // Définir l'action en cours
     updateMessage('Sélectionnez un défenseur à remplacer');
     highlightAllDefenders(gameState.combat.loser);
 }
@@ -592,6 +601,8 @@ function onDefenderReplaced(defenderIndex) {
     // Carte perdante → défense
     gameState[loser].defense[defenderIndex] = losingCard;
 
+    gameState.currentAction = null; // Réinitialiser
+
     updateUI();
     updateMessage('Défenseur remplacé !');
 
@@ -603,6 +614,8 @@ function onDefenderReplaced(defenderIndex) {
 }
 
 function loserChoiceC() {
+    document.getElementById('action-buttons').classList.add('hidden');
+    gameState.currentAction = 'sacrifice'; // Définir l'action en cours
     updateMessage('Sélectionnez un défenseur à sacrifier');
     highlightAllDefenders(gameState.combat.loser);
 }
@@ -620,6 +633,8 @@ function onDefenderSacrificed(defenderIndex) {
 
     // Annuler la perte de PV (déjà appliquée dans winnerChoiceA)
     gameState[loser].hp++;
+
+    gameState.currentAction = null; // Réinitialiser
 
     updateUI();
     updateMessage('Défenseur sacrifié ! Pas de perte de PV.');
@@ -660,17 +675,22 @@ function startResolutionPhase() {
 }
 
 function showDefenderReplacementChoice(newCard) {
+    gameState.tempWinningCard = newCard; // Stocker la carte temporairement
     updateMessage('Votre défense est pleine. Choisissez un défenseur à remplacer :');
     highlightAllDefenders('player');
 }
 
-function replaceDefenderWithWinningCard(defenderIndex, newCard) {
+function replaceDefenderWithWinningCard(defenderIndex) {
+    const newCard = gameState.tempWinningCard;
+
     // Défenseur remplacé → retourne en main
     const replacedDefender = gameState.player.defense[defenderIndex];
     gameState.player.hand.push(replacedDefender);
 
     // Nouvelle carte → défense
     gameState.player.defense[defenderIndex] = newCard;
+
+    gameState.tempWinningCard = null; // Réinitialiser
 
     updateUI();
     removeDefenderHighlights();
@@ -1185,18 +1205,15 @@ function highlightAllDefenders(owner) {
         slot.classList.add('targetable');
         slot.onclick = () => {
             if (gameState.phase === PHASES.LOSER_CHOICE) {
-                // Déterminer si c'est remplacement ou sacrifice
-                const actionButtons = document.getElementById('action-buttons');
-                if (actionButtons.querySelector('button')?.textContent.includes('Remplacer')) {
+                // Utiliser currentAction pour déterminer l'action
+                if (gameState.currentAction === 'replace_loser') {
                     onDefenderReplaced(actualIndex);
-                } else {
+                } else if (gameState.currentAction === 'sacrifice') {
                     onDefenderSacrificed(actualIndex);
                 }
             } else if (gameState.phase === PHASES.RESOLUTION) {
                 // Remplacement avec carte gagnante
-                const winningCard = gameState.combat.winner === 'player' ?
-                    gameState.combat.playerCard : gameState.combat.aiCard;
-                replaceDefenderWithWinningCard(actualIndex, winningCard);
+                replaceDefenderWithWinningCard(actualIndex);
             }
         };
     });
