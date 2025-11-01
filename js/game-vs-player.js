@@ -273,11 +273,8 @@ function resolveCombat(card1, card2, isAttackVsAttack = true, firstPlayer = null
     // Cas spéciaux pour Pions 1 & 2
     if (card1.type === CARD_TYPES.PAWN && (card1.number === 1 || card1.number === 2)) {
         if (card2.type === CARD_TYPES.QUEEN) {
-            if (isAttackVsAttack) {
-                return firstPlayer === 'card1' ? 1 : -1;
-            } else {
-                return 1;
-            }
+            // Couronne vs Couronne = Égalité → Premier joueur gagne
+            return firstPlayer === 'card1' ? 1 : -1;
         } else {
             if (card2.type === CARD_TYPES.PAWN) {
                 return card1.number > card2.number ? 1 : (card1.number < card2.number ? -1 : 0);
@@ -288,11 +285,8 @@ function resolveCombat(card1, card2, isAttackVsAttack = true, firstPlayer = null
 
     if (card2.type === CARD_TYPES.PAWN && (card2.number === 1 || card2.number === 2)) {
         if (card1.type === CARD_TYPES.QUEEN) {
-            if (isAttackVsAttack) {
-                return firstPlayer === 'card1' ? 1 : -1;
-            } else {
-                return 1;
-            }
+            // Couronne vs Couronne = Égalité → Premier joueur gagne
+            return firstPlayer === 'card1' ? 1 : -1;
         } else {
             if (card1.type === CARD_TYPES.PAWN) {
                 return card1.number > card2.number ? 1 : (card1.number < card2.number ? -1 : 0);
@@ -305,13 +299,9 @@ function resolveCombat(card1, card2, isAttackVsAttack = true, firstPlayer = null
     if (symbol1 === SYMBOLS.CROWN && symbol2 !== SYMBOLS.CROWN) return 1;
     if (symbol2 === SYMBOLS.CROWN && symbol1 !== SYMBOLS.CROWN) return -1;
 
-    // Couronne vs Couronne
+    // Couronne vs Couronne (Reine vs Reine) = Égalité → Premier joueur gagne
     if (symbol1 === SYMBOLS.CROWN && symbol2 === SYMBOLS.CROWN) {
-        if (isAttackVsAttack) {
-            return firstPlayer === 'card1' ? 1 : -1;
-        } else {
-            return 1;
-        }
+        return firstPlayer === 'card1' ? 1 : -1;
     }
 
     // Pierre-Feuille-Ciseaux
@@ -342,12 +332,8 @@ function resolveCombat(card1, card2, isAttackVsAttack = true, firstPlayer = null
         if (card1.number < card2.number) return -1;
     }
 
-    // Égalité
-    if (isAttackVsAttack) {
-        return firstPlayer === 'card1' ? 1 : -1;
-    } else {
-        return 1;
-    }
+    // Égalité → Premier joueur gagne toujours
+    return firstPlayer === 'card1' ? 1 : -1;
 }
 
 // ===== GESTION DES PHASES =====
@@ -490,8 +476,9 @@ function showPlayerWinnerChoices() {
 
 function getBeadableDefenders(attackCard, defenders) {
     return defenders.filter(defender => {
-        const result = resolveCombat(attackCard, defender, false);
-        return result >= 0;
+        // Le premier joueur est celui qui attaque (card1)
+        const result = resolveCombat(attackCard, defender, false, 'card1');
+        return result >= 0; // Attaquant gagne ou égalité (premier joueur = attaquant gagne en égalité)
     });
 }
 
