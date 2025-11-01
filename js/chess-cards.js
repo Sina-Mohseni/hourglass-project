@@ -327,10 +327,18 @@ function startGame() {
                 });
                 window.location.href = `game-vs-ai.html?${params.toString()}`;
             } else {
-                // Mode Joueur vs Joueur (à implémenter plus tard)
-                showNotification('⚠️ Mode Joueur vs Joueur à venir !');
-                startButton.innerHTML = '<span class="start-icon">⚔️</span>Commencer la partie';
-                startButton.disabled = false;
+                // Mode Joueur vs Joueur
+                const params = new URLSearchParams({
+                    hp: gameState.settings.hp,
+                    defenders: gameState.settings.defenders,
+                    tactical: gameState.settings.tacticalVictory,
+                    turns: gameState.settings.maxTurns,
+                    player1Name: gameState.player1.name,
+                    player1Color: gameState.player1.color,
+                    player2Name: gameState.player2.name,
+                    player2Color: gameState.player2.color
+                });
+                window.location.href = `game-vs-player.html?${params.toString()}`;
             }
         }, 1000);
     }, 500);
