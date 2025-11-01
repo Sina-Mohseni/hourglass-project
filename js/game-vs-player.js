@@ -1026,11 +1026,33 @@ function createCardElement(card, hidden = false, isDefense = false) {
 
     div.addEventListener('mouseenter', (e) => showCardTooltip(card, e));
     div.addEventListener('mouseleave', hideCardTooltip);
+
+    // Gestion tactile pour mobile : appui long pour tooltip
+    let touchTimeout = null;
     div.addEventListener('touchstart', (e) => {
-        e.preventDefault();
-        showCardTooltip(card, e);
+        // Démarrer un timer pour le tooltip (appui long)
+        touchTimeout = setTimeout(() => {
+            showCardTooltip(card, e);
+        }, 500); // 500ms = appui long
     });
-    div.addEventListener('touchend', hideCardTooltip);
+
+    div.addEventListener('touchend', (e) => {
+        // Annuler le tooltip si c'est un tap rapide
+        if (touchTimeout) {
+            clearTimeout(touchTimeout);
+            touchTimeout = null;
+        }
+        hideCardTooltip();
+    });
+
+    div.addEventListener('touchmove', () => {
+        // Annuler le tooltip si l'utilisateur fait glisser
+        if (touchTimeout) {
+            clearTimeout(touchTimeout);
+            touchTimeout = null;
+        }
+        hideCardTooltip();
+    });
 
     return div;
 }
