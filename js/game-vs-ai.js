@@ -1060,17 +1060,14 @@ function renderHand(owner) {
         const cardElement = createCardElement(card, owner === 'ai');
 
         if (owner === 'player' && gameState.phase === PHASES.COMBAT) {
-            // Sur desktop : onclick classique
+            // Desktop et mobile : ouvrir le modal
             cardElement.onclick = (e) => {
-                if (e.pointerType === 'mouse' || e.pointerType === '') {
-                    onPlayerCardSelected(card);
-                }
-            };
-
-            // Sur mobile : tap ouvre un modal
-            cardElement.addEventListener('touchend', (e) => {
                 e.preventDefault();
                 showCardActionModal(card);
+            };
+
+            cardElement.addEventListener('touchend', (e) => {
+                e.preventDefault();
             });
         }
 

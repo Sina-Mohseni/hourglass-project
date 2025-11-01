@@ -1533,7 +1533,27 @@
 }
 }
 
-/* ===== MODAL D'ACTION DE CARTE (MOBILE) ===== */
+/* ===== CARTES CLIQUABLES ===== */
+
+.player-hand .card {
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.player-hand .card:hover {
+    transform: translateY(-5px) scale(1.05);
+    box-shadow:
+        0 0 0 3px #d4af37,
+        0 0 0 6px rgba(212, 175, 55, 0.5),
+        0 12px 30px rgba(0, 0, 0, 0.8),
+        0 0 50px rgba(212, 175, 55, 0.6) !important;
+}
+
+.player-hand .card:active {
+    transform: translateY(-3px) scale(1.02);
+}
+
+/* ===== MODAL D'ACTION DE CARTE ===== */
 
 .card-action-modal-content {
     max-width: 500px;
