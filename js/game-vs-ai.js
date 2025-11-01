@@ -1081,7 +1081,7 @@ function renderDefense(owner) {
 
         if (i < gameState[owner].defense.length) {
             const card = gameState[owner].defense[i];
-            const cardElement = createCardElement(card, false);
+            const cardElement = createCardElement(card, false, true); // isDefense = true
             cardElement.style.margin = '0';
             slot.appendChild(cardElement);
             slot.classList.add('occupied');
@@ -1122,7 +1122,7 @@ function renderCombatZone() {
     }
 }
 
-function createCardElement(card, hidden = false) {
+function createCardElement(card, hidden = false, isDefense = false) {
     const div = document.createElement('div');
     div.className = `card ${card.color}`;
     div.dataset.cardId = card.id;
@@ -1140,22 +1140,18 @@ function createCardElement(card, hidden = false) {
     }
 
     const icon = PIECE_ICONS[card.color][card.type];
-    const attackSymbol = getAttackSymbol(card);
-    const defenseSymbol = getDefenseSymbol(card);
 
-    // Obtenir les icônes et valeurs de pouvoir
-    const attackData = getPowerData(attackSymbol, card);
-    const defenseData = getPowerData(defenseSymbol, card);
+    // Obtenir le symbole et les données selon le contexte (attaque ou défense)
+    const currentSymbol = isDefense ? getDefenseSymbol(card) : getAttackSymbol(card);
+    const powerDisplay = getCurrentPowerDisplay(currentSymbol, card, isDefense);
 
-    // Header
-    let headerHTML = '<div class="card-header">';
-    if (card.type === CARD_TYPES.PAWN) {
-        headerHTML += `<div class="card-number">${card.number}</div>`;
-    } else {
-        headerHTML += '<div></div>';
-    }
-    headerHTML += `<div class="power-type-badge">${attackData.icon}</div>`;
-    headerHTML += '</div>';
+    // Header avec puissance actuelle en haut à gauche
+    const headerHTML = `
+        <div class="card-header">
+            <div class="current-power">${powerDisplay}</div>
+            ${card.type === CARD_TYPES.PAWN ? `<div class="card-number">${card.number}</div>` : '<div></div>'}
+        </div>
+    `;
 
     // Body
     const bodyHTML = `
@@ -1165,26 +1161,8 @@ function createCardElement(card, hidden = false) {
         </div>
     `;
 
-    // Footer avec puissances (symboles uniquement)
-    const footerHTML = `
-        <div class="card-footer">
-            <div class="card-power-section">
-                <div class="power-value attack-power">
-                    <span class="power-icon">${attackData.icon}</span>
-                    ${attackData.value ? `<span>${attackData.value}</span>` : ''}
-                </div>
-            </div>
-            <div class="card-power-section">
-                <div class="power-value defense-power">
-                    <span class="power-icon">${defenseData.icon}</span>
-                    ${defenseData.value ? `<span>${defenseData.value}</span>` : ''}
-                </div>
-            </div>
-        </div>
-    `;
-
-    // Envelopper tout dans card-inner
-    div.innerHTML = `<div class="card-inner">${headerHTML}${bodyHTML}${footerHTML}</div>`;
+    // Envelopper tout dans card-inner (pas de footer)
+    div.innerHTML = `<div class="card-inner">${headerHTML}${bodyHTML}</div>`;
 
     // Ajouter les événements de tooltip
     div.addEventListener('mouseenter', (e) => showCardTooltip(card, e));
@@ -1198,7 +1176,36 @@ function createCardElement(card, hidden = false) {
     return div;
 }
 
-// Fonction helper pour obtenir les données de pouvoir
+// Fonction pour obtenir l'affichage de la puissance actuelle
+function getCurrentPowerDisplay(symbol, card, isDefense) {
+    // Pour les pions 1 et 2 : traitement spécial
+    if (card.type === CARD_TYPES.PAWN && (card.number === 1 || card.number === 2)) {
+        if (isDefense) {
+            // En défense : couronne simple comme la Reine
+            return '👑';
+        } else {
+            // En attaque : chiffre + couronne avec R
+            return `${card.number} <span class="crown-r">👑<span class="r-letter">R</span></span>`;
+        }
+    }
+
+    // Pour les autres cartes : juste le symbole
+    if (symbol === SYMBOLS.CROWN) {
+        return '👑';
+    } else if (symbol === SYMBOLS.PAPER) {
+        return '📄';
+    } else if (symbol === SYMBOLS.ROCK) {
+        return '🪨';
+    } else if (symbol === SYMBOLS.SCISSORS) {
+        return '✂️';
+    } else if (symbol === SYMBOLS.NUMBER) {
+        return `${card.number}`;
+    }
+
+    return '';
+}
+
+// Fonction helper pour obtenir les données de pouvoir (pour les tooltips)
 function getPowerData(symbol, card) {
     let icon = '';
     let value = '';
