@@ -1129,7 +1129,13 @@ function createCardElement(card, hidden = false) {
 
     if (hidden) {
         div.classList.add('hidden');
-        div.innerHTML = '<div class="card-body"><div class="card-piece">?</div></div>';
+        div.innerHTML = `
+            <div class="card-inner">
+                <div class="card-body">
+                    <div class="card-piece">?</div>
+                </div>
+            </div>
+        `;
         return div;
     }
 
@@ -1179,7 +1185,8 @@ function createCardElement(card, hidden = false) {
         </div>
     `;
 
-    div.innerHTML = headerHTML + bodyHTML + footerHTML;
+    // Envelopper tout dans card-inner
+    div.innerHTML = `<div class="card-inner">${headerHTML}${bodyHTML}${footerHTML}</div>`;
 
     // Ajouter les événements de tooltip
     div.addEventListener('mouseenter', (e) => showCardTooltip(card, e));

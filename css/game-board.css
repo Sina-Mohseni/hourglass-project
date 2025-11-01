@@ -244,57 +244,65 @@
     justify-content: center;
 }
 
-/* ===== CARDS ===== */
+/* ===== CARDS - EPIC DESIGN ===== */
 .card {
-    width: 100px;
-    height: 140px;
-    background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
-    border: 3px solid #ecf0f1;
-    border-radius: 12px;
+    width: 110px;
+    height: 155px;
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    border: none;
+    border-radius: 8px;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    justify-content: space-between;
     cursor: pointer;
     transition: var(--transition);
     position: relative;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    box-shadow:
+        0 0 0 3px #2d3142,
+        0 0 0 5px rgba(233, 69, 96, 0.5),
+        0 8px 20px rgba(0, 0, 0, 0.6);
     user-select: none;
-    padding: 8px 5px;
     overflow: hidden;
 }
 
-/* Effet de brillance sur la carte */
+/* Cadre décoratif externe */
+.card::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 8px;
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    pointer-events: none;
+}
+
+/* Fond avec motif */
 .card::before {
     content: '';
     position: absolute;
-    top: -50%;
-    left: -50%;
-    width: 200%;
-    height: 200%;
-    background: linear-gradient(
-        45deg,
-        transparent 30%,
-        rgba(255, 255, 255, 0.1) 50%,
-        transparent 70%
-    );
-    transform: rotate(45deg);
-    transition: var(--transition);
-}
-
-.card:hover::before {
-    left: 100%;
+    inset: 0;
+    background-image:
+        repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(255,255,255,0.02) 10px, rgba(255,255,255,0.02) 20px),
+        radial-gradient(circle at 30% 30%, rgba(233, 69, 96, 0.1) 0%, transparent 50%);
+    opacity: 0.5;
+    pointer-events: none;
 }
 
 .card:hover {
-    transform: translateY(-10px) scale(1.05);
-    box-shadow: 0 12px 24px rgba(233, 69, 96, 0.5);
+    transform: translateY(-8px) scale(1.05);
+    box-shadow:
+        0 0 0 3px #e94560,
+        0 0 0 6px rgba(233, 69, 96, 0.8),
+        0 15px 35px rgba(233, 69, 96, 0.4),
+        0 0 40px rgba(233, 69, 96, 0.3);
 }
 
 .card.selected {
     border-color: var(--gold-color);
-    box-shadow: 0 0 25px rgba(233, 69, 96, 0.9);
-    transform: translateY(-15px) scale(1.1);
+    box-shadow:
+        0 0 0 4px #ffd700,
+        0 0 0 7px rgba(255, 215, 0, 0.8),
+        0 0 50px rgba(255, 215, 0, 0.6),
+        0 15px 40px rgba(233, 69, 96, 0.5);
+    transform: translateY(-12px) scale(1.08);
 }
 
 .card.disabled {
@@ -303,47 +311,126 @@
     pointer-events: none;
 }
 
+/* Cartes Blanches */
 .card.white {
-    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 50%, #dee2e6 100%);
-    color: var(--text-dark);
-    border-color: #495057;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3), inset 0 1px 3px rgba(255, 255, 255, 0.5);
+    background:
+        linear-gradient(135deg, #ffffff 0%, #f5f5f5 50%, #e8e8e8 100%);
+    box-shadow:
+        0 0 0 3px #d4af37,
+        0 0 0 5px rgba(212, 175, 55, 0.6),
+        0 8px 20px rgba(0, 0, 0, 0.4),
+        inset 0 1px 3px rgba(255, 255, 255, 0.8);
+    color: #1a1a2e;
 }
 
+.card.white::after {
+    border: 2px solid rgba(0, 0, 0, 0.1);
+}
+
+.card.white:hover {
+    box-shadow:
+        0 0 0 3px #ffd700,
+        0 0 0 6px rgba(255, 215, 0, 0.9),
+        0 15px 35px rgba(212, 175, 55, 0.5),
+        0 0 40px rgba(255, 215, 0, 0.4);
+}
+
+/* Cartes Noires */
 .card.black {
-    background: linear-gradient(135deg, #212529 0%, #343a40 50%, #495057 100%);
-    color: var(--text-light);
-    border-color: #f8f9fa;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5), inset 0 1px 3px rgba(255, 255, 255, 0.1);
+    background:
+        linear-gradient(135deg, #0f0f1e 0%, #1a1a2e 50%, #2d2d3f 100%);
+    box-shadow:
+        0 0 0 3px #4a4a5e,
+        0 0 0 5px rgba(74, 74, 94, 0.6),
+        0 8px 20px rgba(0, 0, 0, 0.8),
+        inset 0 1px 3px rgba(255, 255, 255, 0.05);
+    color: #f5f5f5;
 }
 
+.card.black::after {
+    border: 2px solid rgba(255, 255, 255, 0.15);
+}
+
+.card.black:hover {
+    box-shadow:
+        0 0 0 3px #8a8aaa,
+        0 0 0 6px rgba(138, 138, 170, 0.9),
+        0 15px 35px rgba(74, 74, 94, 0.6),
+        0 0 40px rgba(138, 138, 170, 0.4);
+}
+
+/* Cartes cachées */
 .card.hidden {
-    background: linear-gradient(135deg, #8e44ad 0%, #9b59b6 100%);
-    border-color: #c39bd3;
+    background:
+        linear-gradient(135deg, #2d0d4e 0%, #4a148c 50%, #6a1b9a 100%);
+    box-shadow:
+        0 0 0 3px #7b1fa2,
+        0 0 0 5px rgba(123, 31, 162, 0.6),
+        0 8px 20px rgba(0, 0, 0, 0.7);
 }
 
-/* En-tête de carte */
-.card-header {
+/* ===== STRUCTURE DE LA CARTE ===== */
+
+/* Conteneur interne avec marges */
+.card-inner {
+    position: relative;
     width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    padding: 6px;
+    z-index: 1;
+}
+
+/* Header de carte */
+.card-header {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
-    position: relative;
-    z-index: 2;
+    margin-bottom: 4px;
+    min-height: 22px;
 }
 
 .card-number {
     font-size: 1.3rem;
-    font-weight: 700;
-    padding: 2px 6px;
-    background: rgba(0, 0, 0, 0.3);
+    font-weight: 900;
+    padding: 2px 7px;
+    background: linear-gradient(135deg, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0.5) 100%);
     border-radius: 4px;
-    min-width: 24px;
+    min-width: 26px;
     text-align: center;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    line-height: 1;
 }
 
 .card.white .card-number {
-    background: rgba(255, 255, 255, 0.7);
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.85) 100%);
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    color: #1a1a2e;
+    text-shadow: 0 1px 2px rgba(255, 255, 255, 0.5);
+}
+
+/* Badge de type de pouvoir - TOP RIGHT */
+.power-type-badge {
+    font-size: 1.2rem;
+    background: linear-gradient(135deg, rgba(233, 69, 96, 0.9) 0%, rgba(255, 107, 129, 0.9) 100%);
+    border-radius: 50%;
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid rgba(255, 255, 255, 0.4);
+    box-shadow:
+        0 2px 6px rgba(0, 0, 0, 0.4),
+        inset 0 1px 2px rgba(255, 255, 255, 0.3);
+    flex-shrink: 0;
+}
+
+.card.white .power-type-badge {
+    background: linear-gradient(135deg, rgba(212, 175, 55, 0.95) 0%, rgba(255, 215, 0, 0.95) 100%);
+    border: 2px solid rgba(255, 255, 255, 0.6);
 }
 
 /* Corps de carte */
@@ -354,125 +441,159 @@
     justify-content: center;
     flex: 1;
     position: relative;
-    z-index: 2;
+    min-height: 0;
 }
 
 .card-piece {
-    font-size: 3.2rem;
-    margin: 5px 0;
-    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+    font-size: 3.8rem;
+    margin: 0;
+    filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.5));
+    line-height: 1;
+}
+
+.card.white .card-piece {
+    filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.3));
 }
 
 .card-name {
-    font-size: 0.7rem;
-    font-weight: 700;
+    font-size: 0.65rem;
+    font-weight: 900;
     text-align: center;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
-    margin-top: 2px;
+    letter-spacing: 0.8px;
+    margin-top: 4px;
+    padding: 2px 4px;
+    background: linear-gradient(135deg, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0.4) 100%);
+    border-radius: 3px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 90%;
+    line-height: 1.2;
 }
 
-/* Pied de carte avec puissances */
+.card.white .card-name {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.7) 100%);
+    color: #1a1a2e;
+    text-shadow: 0 1px 1px rgba(255, 255, 255, 0.5);
+}
+
+/* Footer de carte avec puissances */
 .card-footer {
-    width: 100%;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 5px;
-    position: relative;
-    z-index: 2;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4px;
+    margin-top: auto;
 }
 
 .card-power-section {
     display: flex;
     flex-direction: column;
     align-items: center;
-    flex: 1;
-    padding: 3px;
-    background: rgba(0, 0, 0, 0.3);
-    border-radius: 6px;
+    padding: 4px 2px;
+    background: linear-gradient(135deg, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0.5) 100%);
+    border-radius: 5px;
     border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.5);
+    position: relative;
+    overflow: hidden;
+}
+
+/* Effet de brillance dans les sections de pouvoir */
+.card-power-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.1) 50%, transparent 100%);
+    transition: left 0.5s;
+}
+
+.card:hover .card-power-section::before {
+    left: 100%;
 }
 
 .card.white .card-power-section {
-    background: rgba(255, 255, 255, 0.6);
-    border-color: rgba(0, 0, 0, 0.2);
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.85) 100%);
+    border: 1px solid rgba(0, 0, 0, 0.15);
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .power-label {
-    font-size: 0.55rem;
-    font-weight: 600;
-    opacity: 0.8;
+    font-size: 0.5rem;
+    font-weight: 900;
+    opacity: 0.9;
     text-transform: uppercase;
+    letter-spacing: 0.5px;
     margin-bottom: 2px;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 
 .power-value {
-    font-size: 0.95rem;
-    font-weight: 700;
+    font-size: 1.05rem;
+    font-weight: 900;
     display: flex;
     align-items: center;
+    justify-content: center;
     gap: 2px;
+    line-height: 1;
 }
 
 .power-icon {
-    font-size: 0.85rem;
+    font-size: 0.95rem;
+    filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.3));
 }
 
-/* Couleurs des puissances */
+/* Couleurs des puissances avec gradient */
 .attack-power {
-    color: #ff6b6b;
+    background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    filter: drop-shadow(0 0 3px rgba(255, 107, 107, 0.5));
 }
 
 .card.white .attack-power {
-    color: #e74c3c;
+    background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    filter: drop-shadow(0 0 2px rgba(231, 76, 60, 0.3));
 }
 
 .defense-power {
-    color: #4ecdc4;
+    background: linear-gradient(135deg, #4ecdc4 0%, #3498db 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    filter: drop-shadow(0 0 3px rgba(78, 205, 196, 0.5));
 }
 
 .card.white .defense-power {
-    color: #16a085;
+    background: linear-gradient(135deg, #16a085 0%, #1abc9c 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    filter: drop-shadow(0 0 2px rgba(22, 160, 133, 0.3));
 }
 
-/* Badge de type de pouvoir */
-.power-type-badge {
-    position: absolute;
-    top: 3px;
-    right: 3px;
-    font-size: 1.1rem;
-    background: rgba(0, 0, 0, 0.4);
-    border-radius: 50%;
-    width: 24px;
-    height: 24px;
-    display: flex;
-    align-items: center;
+/* Cartes cachées - Design simplifié */
+.card.hidden .card-inner {
     justify-content: center;
-    border: 1px solid rgba(255, 255, 255, 0.3);
+    align-items: center;
 }
 
-.card.white .power-type-badge {
-    background: rgba(255, 255, 255, 0.7);
-    border-color: rgba(0, 0, 0, 0.2);
-}
-
-/* Cartes cachées (dos) */
 .card.hidden .card-piece {
-    font-size: 4.5rem;
+    font-size: 5rem;
 }
 
-.card.hidden .card-name,
-.card.hidden .card-number,
 .card.hidden .card-header,
+.card.hidden .card-name,
 .card.hidden .card-footer,
 .card.hidden .power-type-badge {
     display: none;
-}
-
-.card.hidden .card-body {
-    flex: 1;
-    justify-content: center;
 }
 
 /* ===== DEFENSE ZONE ===== */
@@ -496,42 +617,48 @@
 }
 
 .defense-slot {
-    width: 100px;
-    height: 140px;
-    border: 3px dashed rgba(233, 69, 96, 0.3);
-    border-radius: 12px;
+    width: 110px;
+    height: 155px;
+    border: 3px dashed rgba(233, 69, 96, 0.4);
+    border-radius: 8px;
     display: flex;
     align-items: center;
     justify-content: center;
     background: rgba(15, 52, 96, 0.3);
     transition: var(--transition);
+    box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.3);
 }
 
 .defense-slot.occupied {
     border-style: solid;
-    border-color: var(--gold-color);
+    border-color: rgba(233, 69, 96, 0.7);
+    border-width: 2px;
+    background: rgba(15, 52, 96, 0.2);
+    box-shadow: none;
 }
 
 .defense-slot.targetable {
     border-color: var(--light-gold);
-    background: rgba(233, 69, 96, 0.2);
+    border-style: solid;
+    border-width: 3px;
+    background: rgba(233, 69, 96, 0.25);
     cursor: pointer;
     animation: pulse-target 1s ease-in-out infinite;
 }
 
 .defense-slot.targetable:hover {
-    transform: scale(1.1);
-    box-shadow: 0 0 20px rgba(233, 69, 96, 0.6);
+    transform: scale(1.05);
+    box-shadow: 0 0 25px rgba(233, 69, 96, 0.7);
 }
 
 @keyframes pulse-target {
-    0%, 100% { box-shadow: 0 0 10px rgba(233, 69, 96, 0.4); }
-    50% { box-shadow: 0 0 20px rgba(233, 69, 96, 0.8); }
+    0%, 100% { box-shadow: 0 0 15px rgba(233, 69, 96, 0.5); }
+    50% { box-shadow: 0 0 30px rgba(233, 69, 96, 0.9); }
 }
 
 .defense-slot .card {
-    width: 94px;
-    height: 134px;
+    width: 110px;
+    height: 155px;
 }
 
 .defense-slot-empty {
@@ -566,33 +693,42 @@
 }
 
 .combat-card-placeholder {
-    width: 120px;
-    height: 170px;
-    border: 4px dashed rgba(255, 255, 255, 0.3);
-    border-radius: 14px;
+    width: 130px;
+    height: 180px;
+    border: 4px dashed rgba(255, 255, 255, 0.4);
+    border-radius: 10px;
     display: flex;
     align-items: center;
     justify-content: center;
-    background: rgba(0, 0, 0, 0.3);
+    background: rgba(0, 0, 0, 0.4);
     transition: var(--transition);
+    box-shadow:
+        inset 0 4px 12px rgba(0, 0, 0, 0.5),
+        0 0 20px rgba(233, 69, 96, 0.3);
 }
 
 .combat-card-placeholder.filled {
     border-style: solid;
     border-color: var(--gold-color);
-    background: transparent;
+    border-width: 3px;
+    background: rgba(0, 0, 0, 0.2);
+    box-shadow:
+        0 0 30px rgba(255, 215, 0, 0.4),
+        0 8px 20px rgba(0, 0, 0, 0.6);
 }
 
 .placeholder-text {
-    font-size: 0.9rem;
-    opacity: 0.6;
+    font-size: 1rem;
+    opacity: 0.7;
     text-align: center;
     padding: 10px;
+    font-weight: 700;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
 }
 
 .combat-card-placeholder .card {
-    width: 112px;
-    height: 162px;
+    width: 120px;
+    height: 170px;
     animation: cardReveal 0.5s ease-out;
 }
 
@@ -1112,56 +1248,67 @@
     }
 
     .card {
-        width: 85px;
-        height: 120px;
-        padding: 6px 4px;
+        width: 95px;
+        height: 135px;
+    }
+
+    .card-inner {
+        padding: 5px;
     }
 
     .card-piece {
-        font-size: 2.6rem;
+        font-size: 3.2rem;
     }
 
     .card-name {
-        font-size: 0.65rem;
+        font-size: 0.6rem;
     }
 
     .card-number {
-        font-size: 1.1rem;
-        padding: 2px 5px;
+        font-size: 1.15rem;
+        padding: 2px 6px;
     }
 
     .power-type-badge {
-        width: 20px;
-        height: 20px;
-        font-size: 0.9rem;
+        width: 24px;
+        height: 24px;
+        font-size: 1rem;
     }
 
     .power-label {
-        font-size: 0.5rem;
+        font-size: 0.48rem;
     }
 
     .power-value {
+        font-size: 0.95rem;
+    }
+
+    .power-icon {
         font-size: 0.85rem;
     }
 
+    .card-power-section {
+        padding: 3px 2px;
+    }
+
     .defense-slot {
-        width: 85px;
-        height: 120px;
+        width: 95px;
+        height: 135px;
     }
 
     .defense-slot .card {
-        width: 79px;
-        height: 114px;
+        width: 95px;
+        height: 135px;
     }
 
     .combat-card-placeholder {
-        width: 100px;
-        height: 145px;
+        width: 110px;
+        height: 155px;
     }
 
     .combat-card-placeholder .card {
-        width: 92px;
-        height: 137px;
+        width: 105px;
+        height: 150px;
     }
 
     .action-button {
@@ -1201,28 +1348,32 @@
     }
 
     .card {
-        width: 70px;
-        height: 100px;
-        padding: 5px 3px;
+        width: 80px;
+        height: 115px;
+    }
+
+    .card-inner {
+        padding: 4px;
     }
 
     .card-piece {
-        font-size: 2.2rem;
+        font-size: 2.8rem;
     }
 
     .card-name {
-        font-size: 0.6rem;
+        font-size: 0.55rem;
+        padding: 2px 3px;
     }
 
     .card-number {
         font-size: 1rem;
-        padding: 1px 4px;
+        padding: 2px 5px;
     }
 
     .power-type-badge {
-        width: 18px;
-        height: 18px;
-        font-size: 0.8rem;
+        width: 22px;
+        height: 22px;
+        font-size: 0.9rem;
     }
 
     .power-label {
@@ -1230,21 +1381,29 @@
     }
 
     .power-value {
+        font-size: 0.85rem;
+    }
+
+    .power-icon {
         font-size: 0.75rem;
     }
 
     .card-power-section {
-        padding: 2px;
+        padding: 3px 2px;
+    }
+
+    .card-footer {
+        gap: 3px;
     }
 
     .defense-slot {
-        width: 70px;
-        height: 100px;
+        width: 80px;
+        height: 115px;
     }
 
     .defense-slot .card {
-        width: 64px;
-        height: 94px;
+        width: 80px;
+        height: 115px;
     }
 
     .combat-zone {
@@ -1256,13 +1415,13 @@
     }
 
     .combat-card-placeholder {
-        width: 85px;
-        height: 125px;
+        width: 95px;
+        height: 135px;
     }
 
     .combat-card-placeholder .card {
-        width: 77px;
-        height: 117px;
+        width: 90px;
+        height: 130px;
     }
 
     .vs-indicator {
@@ -1292,28 +1451,32 @@
 /* Très petits écrans */
 @media (max-width: 360px) {
     .card {
-        width: 60px;
-        height: 85px;
-        padding: 4px 2px;
+        width: 70px;
+        height: 100px;
+    }
+
+    .card-inner {
+        padding: 3px;
     }
 
     .card-piece {
-        font-size: 1.9rem;
+        font-size: 2.4rem;
     }
 
     .card-name {
-        font-size: 0.55rem;
+        font-size: 0.5rem;
+        padding: 1px 2px;
     }
 
     .card-number {
-        font-size: 0.9rem;
-        padding: 1px 3px;
+        font-size: 0.95rem;
+        padding: 1px 4px;
     }
 
     .power-type-badge {
-        width: 16px;
-        height: 16px;
-        font-size: 0.7rem;
+        width: 20px;
+        height: 20px;
+        font-size: 0.8rem;
     }
 
     .power-label {
@@ -1321,12 +1484,34 @@
     }
 
     .power-value {
+        font-size: 0.75rem;
+    }
+
+    .power-icon {
         font-size: 0.7rem;
+    }
+
+    .card-power-section {
+        padding: 2px 1px;
+    }
+
+    .card-footer {
+        gap: 2px;
     }
 
     .defense-slot,
     .defense-slot .card {
-        width: 60px;
-        height: 85px;
+        width: 70px;
+        height: 100px;
+    }
+
+    .combat-card-placeholder {
+        width: 80px;
+        height: 115px;
+    }
+
+    .combat-card-placeholder .card {
+        width: 75px;
+        height: 110px;
     }
 }
