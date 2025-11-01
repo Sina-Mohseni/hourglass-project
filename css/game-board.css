@@ -393,22 +393,22 @@
 
 /* Puissance actuelle - TOP LEFT */
 .current-power {
-    font-size: 1.5rem;
+    font-size: 1.8rem;
     font-weight: 900;
-    padding: 3px 8px;
+    padding: 5px 11px;
     background: linear-gradient(135deg, rgba(0, 0, 0, 0.85) 0%, rgba(0, 0, 0, 0.65) 100%);
-    border-radius: 6px;
-    min-width: 32px;
+    border-radius: 8px;
+    min-width: 42px;
     text-align: center;
     border: 2px solid rgba(255, 255, 255, 0.3);
     box-shadow:
-        0 2px 6px rgba(0, 0, 0, 0.4),
+        0 3px 8px rgba(0, 0, 0, 0.5),
         inset 0 1px 2px rgba(255, 255, 255, 0.1);
     line-height: 1;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 3px;
+    gap: 4px;
 }
 
 .card.white .current-power {
@@ -419,23 +419,7 @@
 }
 
 .card-number {
-    font-size: 1.1rem;
-    font-weight: 900;
-    padding: 2px 7px;
-    background: linear-gradient(135deg, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0.5) 100%);
-    border-radius: 4px;
-    min-width: 24px;
-    text-align: center;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-    line-height: 1;
-}
-
-.card.white .card-number {
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.85) 100%);
-    border: 1px solid rgba(0, 0, 0, 0.2);
-    color: #1a1a2e;
-    text-shadow: 0 1px 2px rgba(255, 255, 255, 0.5);
+    display: none; /* Masquer le numéro de pion en haut à droite */
 }
 
 /* Badge de type de pouvoir - Obsolète */
