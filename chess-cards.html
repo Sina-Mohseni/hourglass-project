@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chess & Cards</title>
+    <link rel="stylesheet" href="css/chess-cards.css">
+</head>
+<body>
+    <div class="container">
+        <!-- En-tête du jeu -->
+        <header class="game-header">
+            <h1 class="game-title">
+                <span class="chess-icon">♔</span>
+                Chess & Cards
+                <span class="chess-icon">♛</span>
+            </h1>
+            <p class="game-subtitle">Un jeu de cartes dans l'univers des échecs</p>
+        </header>
+
+        <!-- Menu principal -->
+        <main class="main-menu">
+
+            <!-- Section choix du mode -->
+            <section class="menu-section mode-selection">
+                <h2 class="section-title">Mode de jeu</h2>
+                <div class="button-group">
+                    <button class="mode-button active" data-mode="vsAI">
+                        <span class="button-icon">🤖</span>
+                        <span class="button-text">Joueur vs IA</span>
+                    </button>
+                    <button class="mode-button" data-mode="vsPlayer">
+                        <span class="button-icon">👥</span>
+                        <span class="button-text">Joueur vs Joueur</span>
+                    </button>
+                </div>
+            </section>
+
+            <!-- Options pour mode vs IA -->
+            <section class="menu-section ai-options" id="ai-options">
+                <div class="options-grid">
+                    <!-- Difficulté -->
+                    <div class="option-group">
+                        <label class="option-label">Difficulté</label>
+                        <div class="button-group small">
+                            <button class="option-button active" data-difficulty="easy">Facile</button>
+                            <button class="option-button" data-difficulty="normal">Normal</button>
+                            <button class="option-button" data-difficulty="hard">Difficile</button>
+                        </div>
+                    </div>
+
+                    <!-- Couleur joueur -->
+                    <div class="option-group">
+                        <label class="option-label">Votre couleur</label>
+                        <div class="button-group small">
+                            <button class="color-button active" data-color="white">
+                                <span class="piece-icon">♔</span> Blanc
+                            </button>
+                            <button class="color-button" data-color="black">
+                                <span class="piece-icon">♚</span> Noir
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Options pour mode vs Joueur -->
+            <section class="menu-section player-options hidden" id="player-options">
+                <div class="players-grid">
+                    <!-- Joueur 1 -->
+                    <div class="player-config">
+                        <h3 class="player-title">Joueur 1</h3>
+                        <div class="input-group">
+                            <label class="input-label">Pseudo</label>
+                            <input type="text" class="text-input" id="player1-name" placeholder="Entrez votre pseudo" maxlength="20">
+                        </div>
+                        <div class="option-group">
+                            <label class="option-label">Couleur</label>
+                            <div class="button-group small">
+                                <button class="color-button active" data-player="1" data-color="white">
+                                    <span class="piece-icon">♔</span> Blanc
+                                </button>
+                                <button class="color-button" data-player="1" data-color="black">
+                                    <span class="piece-icon">♚</span> Noir
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Joueur 2 -->
+                    <div class="player-config">
+                        <h3 class="player-title">Joueur 2</h3>
+                        <div class="input-group">
+                            <label class="input-label">Pseudo</label>
+                            <input type="text" class="text-input" id="player2-name" placeholder="Entrez votre pseudo" maxlength="20">
+                        </div>
+                        <div class="option-group">
+                            <label class="option-label">Couleur</label>
+                            <div class="button-group small">
+                                <button class="color-button" data-player="2" data-color="white">
+                                    <span class="piece-icon">♔</span> Blanc
+                                </button>
+                                <button class="color-button active" data-player="2" data-color="black">
+                                    <span class="piece-icon">♚</span> Noir
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Options communes -->
+            <section class="menu-section common-options">
+                <h2 class="section-title">Paramètres de partie</h2>
+                <div class="options-grid">
+                    <!-- HP de départ -->
+                    <div class="option-group">
+                        <label class="option-label">HP de départ</label>
+                        <div class="slider-container">
+                            <input type="range" class="slider" id="hp-slider" min="3" max="12" value="10">
+                            <span class="slider-value" id="hp-value">10</span>
+                        </div>
+                    </div>
+
+                    <!-- Défenseurs max -->
+                    <div class="option-group">
+                        <label class="option-label">Défenseurs max</label>
+                        <div class="slider-container">
+                            <input type="range" class="slider" id="defenders-slider" min="1" max="3" value="2">
+                            <span class="slider-value" id="defenders-value">2</span>
+                        </div>
+                    </div>
+
+                    <!-- Victoire tactique -->
+                    <div class="option-group">
+                        <label class="option-label">Victoire tactique</label>
+                        <div class="slider-container">
+                            <input type="range" class="slider" id="tactical-slider" min="1" max="12" value="6">
+                            <span class="slider-value" id="tactical-value">6</span>
+                        </div>
+                    </div>
+
+                    <!-- Nombre de tours max -->
+                    <div class="option-group">
+                        <label class="option-label">Nombre de tours max</label>
+                        <div class="slider-container">
+                            <input type="range" class="slider" id="turns-slider" min="5" max="20" value="10">
+                            <span class="slider-value" id="turns-value">10</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Bouton commencer -->
+            <section class="menu-section start-section">
+                <button class="start-button" id="start-button">
+                    <span class="start-icon">⚔️</span>
+                    Commencer la partie
+                </button>
+            </section>
+
+            <!-- Règles -->
+            <section class="menu-section rules-section">
+                <button class="rules-toggle" id="rules-toggle">
+                    <span class="rules-icon">📜</span>
+                    Les règles complètes
+                    <span class="arrow">▼</span>
+                </button>
+                <div class="rules-content hidden" id="rules-content">
+                    <div class="rules-text">
+                        <h3>Règles du jeu Chess & Cards</h3>
+
+                        <h4>🎯 Objectif du jeu</h4>
+                        <p>Réduire les HP de votre adversaire à 0 avant qu'il ne réduise les vôtres, ou atteindre le nombre de victoires tactiques requis.</p>
+
+                        <h4>♟️ Les cartes</h4>
+                        <p>Le jeu utilise des cartes inspirées des pièces d'échecs :</p>
+                        <ul>
+                            <li><strong>Pion (♟)</strong> - Attaque : 1 | Défense : 1</li>
+                            <li><strong>Cavalier (♞)</strong> - Attaque : 3 | Défense : 2</li>
+                            <li><strong>Fou (♝)</strong> - Attaque : 3 | Défense : 2</li>
+                            <li><strong>Tour (♜)</strong> - Attaque : 5 | Défense : 3</li>
+                            <li><strong>Dame (♛)</strong> - Attaque : 8 | Défense : 4</li>
+                            <li><strong>Roi (♚)</strong> - Attaque : 0 | Défense : 5</li>
+                        </ul>
+
+                        <h4>🎲 Déroulement d'un tour</h4>
+                        <ol>
+                            <li><strong>Piocher</strong> : Chaque joueur pioche une carte</li>
+                            <li><strong>Jouer</strong> : Le joueur peut jouer une carte d'attaque ou de défense</li>
+                            <li><strong>Défendre</strong> : L'adversaire peut utiliser ses défenseurs</li>
+                            <li><strong>Résolution</strong> : Les dégâts sont calculés et appliqués</li>
+                        </ol>
+
+                        <h4>⚔️ Combat</h4>
+                        <p>Lorsqu'un joueur attaque :</p>
+                        <ul>
+                            <li>L'adversaire peut placer jusqu'à X défenseurs (selon les paramètres)</li>
+                            <li>La défense totale = somme des valeurs de défense des cartes défenseuses</li>
+                            <li>Si Attaque > Défense : l'excédent est retiré des HP adverses</li>
+                            <li>Si Défense ≥ Attaque : aucun dégât, et l'attaquant gagne 1 point de victoire tactique</li>
+                        </ul>
+
+                        <h4>🏆 Conditions de victoire</h4>
+                        <ul>
+                            <li><strong>Victoire par élimination</strong> : Réduire les HP adverses à 0</li>
+                            <li><strong>Victoire tactique</strong> : Atteindre le nombre de victoires tactiques défini</li>
+                            <li><strong>Égalité</strong> : Si le nombre de tours max est atteint, le joueur avec le plus de HP gagne</li>
+                        </ul>
+
+                        <h4>📝 Règles spéciales</h4>
+                        <ul>
+                            <li>Vous ne pouvez pas avoir plus de 7 cartes en main</li>
+                            <li>Les cartes défenseuses utilisées sont défaussées</li>
+                            <li>Le Roi ne peut pas attaquer mais offre la meilleure défense</li>
+                            <li>La Dame est la carte la plus puissante en attaque</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Footer -->
+        <footer class="game-footer">
+            <p>© 2025 Chess & Cards - Un jeu stratégique</p>
+        </footer>
+    </div>
+
+    <script src="js/chess-cards.js"></script>
+</body>
+</html>
