@@ -1317,6 +1317,7 @@
     .card {
         width: 95px;
         height: 135px;
+        flex-shrink: 0;
     }
 
     .card-inner {
@@ -1412,11 +1413,14 @@
         padding: 10px;
         min-height: 120px;
         gap: 8px;
+        flex-wrap: nowrap;
+        overflow-x: auto;
     }
 
     .card {
         width: 80px;
         height: 115px;
+        flex-shrink: 0;
     }
 
     .card-inner {
@@ -1520,6 +1524,7 @@
     .card {
         width: 70px;
         height: 100px;
+        flex-shrink: 0;
     }
 
     .card-inner {
