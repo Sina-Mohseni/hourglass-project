@@ -713,8 +713,8 @@ function updatePlayerHand() {
         currentPlayer.hand.forEach(card => {
             const cardElement = createCardElement(card, true);
 
-            // Vérifier si la carte peut être jouée
-            const canPlay = NUMBERS.some(i => isValidMove(card, i));
+            // Vérifier si la carte peut être jouée sur au moins une pile (indices 0 à 8)
+            const canPlay = [0, 1, 2, 3, 4, 5, 6, 7, 8].some(pileIndex => isValidMove(card, pileIndex));
             if (!canPlay) {
                 cardElement.classList.add('disabled');
             }
