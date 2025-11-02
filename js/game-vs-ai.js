@@ -1047,9 +1047,8 @@ function renderHand(owner) {
     }
 
     hand.forEach((card, index) => {
-        // Pas de tooltip pour les cartes jouables (joueur en phase combat)
         const isPlayable = owner === 'player' && gameState.phase === PHASES.COMBAT;
-        const cardElement = createCardElement(card, owner === 'ai', false, isPlayable);
+        const cardElement = createCardElement(card, owner === 'ai', false);
 
         if (isPlayable) {
             let touchHandled = false;
@@ -1145,7 +1144,7 @@ function renderCombatZone() {
     }
 }
 
-function createCardElement(card, hidden = false, isDefense = false, noTooltip = false) {
+function createCardElement(card, hidden = false, isDefense = false) {
     const div = document.createElement('div');
     div.className = `card ${card.color}`;
     div.dataset.cardId = card.id;
@@ -1186,46 +1185,6 @@ function createCardElement(card, hidden = false, isDefense = false, noTooltip = 
 
     // Envelopper tout dans card-inner (pas de footer)
     div.innerHTML = `<div class="card-inner">${headerHTML}${bodyHTML}</div>`;
-
-    // Ajouter les tooltips seulement si noTooltip n'est pas activé
-    if (!noTooltip) {
-        // Gestion des tooltips avec double-tap sur mobile
-        let lastTapTime = 0;
-        let touchHandled = false;
-
-        // Desktop : hover pour afficher le tooltip
-        div.addEventListener('mouseenter', (e) => {
-            if (!touchHandled) {
-                showCardTooltip(card, e, isDefense);
-            }
-        });
-        div.addEventListener('mouseleave', hideCardTooltip);
-
-        // Mobile : double-tap pour afficher le tooltip
-        div.addEventListener('touchend', (e) => {
-            // Toujours empêcher la propagation pour éviter conflits avec d'autres handlers
-            e.preventDefault();
-            e.stopPropagation();
-
-            const currentTime = new Date().getTime();
-            const tapTimeDiff = currentTime - lastTapTime;
-
-            // Double-tap détecté (moins de 300ms entre deux taps)
-            if (tapTimeDiff < 300 && tapTimeDiff > 0) {
-                touchHandled = true;
-                showCardTooltip(card, e, isDefense);
-                lastTapTime = 0;
-
-                // Reset après un délai
-                setTimeout(() => { touchHandled = false; }, 300);
-            } else {
-                // Premier tap
-                lastTapTime = currentTime;
-                // Cacher le tooltip si un seul tap
-                hideCardTooltip();
-            }
-        });
-    }
 
     return div;
 }
