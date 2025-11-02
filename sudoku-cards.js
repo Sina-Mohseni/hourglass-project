@@ -31,7 +31,8 @@ let gameState = {
     selectedPile: null,
     lastRoundLoser: null,
     playingJoker: false,
-    hasPlayedCard: false
+    hasPlayedCard: false,
+    hasDrawnCard: false
 };
 
 // ===============================
@@ -172,7 +173,8 @@ function startGame() {
         selectedPile: null,
         lastRoundLoser: null,
         playingJoker: false,
-        hasPlayedCard: false
+        hasPlayedCard: false,
+        hasDrawnCard: false
     };
 
     // Passer à l'écran de jeu
@@ -218,6 +220,7 @@ function startRound() {
     gameState.selectedPile = null;
     gameState.playingJoker = false;
     gameState.hasPlayedCard = false;
+    gameState.hasDrawnCard = false;
 
     // Réinitialiser les joueurs
     gameState.players.forEach(player => {
@@ -465,6 +468,7 @@ function nextPlayer() {
     gameState.selectedPile = null;
     gameState.playingJoker = false;
     gameState.hasPlayedCard = false;
+    gameState.hasDrawnCard = false;
 
     do {
         gameState.currentPlayerIndex = (gameState.currentPlayerIndex + 1) % gameState.players.length;
@@ -482,9 +486,10 @@ function passTurn() {
 function drawCard() {
     const currentPlayer = gameState.players[gameState.currentPlayerIndex];
 
-    // Vérifier qu'il reste des cartes
-    if (gameState.deck.length > 0) {
+    // Vérifier qu'on n'a pas déjà pioché et qu'il reste des cartes
+    if (!gameState.hasDrawnCard && gameState.deck.length > 0) {
         currentPlayer.hand.push(gameState.deck.pop());
+        gameState.hasDrawnCard = true;
         updateGameDisplay();
     }
 }
@@ -782,7 +787,8 @@ function updatePlayerHand() {
             passBtn.style.display = 'block';
         } else if (gameState.hasPlayedCard) {
             // Carte jouée : boutons piocher et terminer le tour
-            drawBtn.style.display = gameState.deck.length > 0 ? 'inline-block' : 'none';
+            // Le bouton piocher n'apparaît que si le joueur n'a pas encore pioché
+            drawBtn.style.display = (!gameState.hasDrawnCard && gameState.deck.length > 0) ? 'inline-block' : 'none';
             endTurnBtn.style.display = 'inline-block';
             passBtn.style.display = 'none';
         } else {
