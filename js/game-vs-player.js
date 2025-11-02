@@ -1060,7 +1060,7 @@ function createCardElement(card, hidden = false, isDefense = false) {
     });
     div.addEventListener('mouseleave', hideCardTooltip);
 
-    // Mobile : double-tap pour afficher le tooltip
+    // Mobile : double-tap pour afficher le tooltip ou la modale
     div.addEventListener('touchend', (e) => {
         // Toujours empêcher la propagation pour éviter conflits avec d'autres handlers
         e.preventDefault();
@@ -1072,7 +1072,19 @@ function createCardElement(card, hidden = false, isDefense = false) {
         // Double-tap détecté (moins de 300ms entre deux taps)
         if (tapTimeDiff < 300 && tapTimeDiff > 0) {
             touchHandled = true;
-            showCardTooltip(card, e, isDefense);
+
+            // Si c'est une carte en défense, afficher la modale de défense
+            if (isDefense) {
+                // Trouver le propriétaire de cette carte
+                const player1Defense = gameState.player1.defense || [];
+                const player2Defense = gameState.player2.defense || [];
+                const owner = player1Defense.some(c => c.id === card.id) ? 'player1' : 'player2';
+                showDefenseModal(owner);
+            } else {
+                // Sinon, afficher le tooltip normal
+                showCardTooltip(card, e, isDefense);
+            }
+
             lastTapTime = 0;
 
             // Reset après un délai
@@ -1413,6 +1425,56 @@ function makeGraveyardStatsClickable() {
     document.getElementById('player2-prison').parentElement.classList.add('clickable');
     document.getElementById('player2-prison').parentElement.addEventListener('click', () => {
         showGraveyardModal('player2', true);
+    });
+}
+
+function showDefenseModal(owner) {
+    // Créer le modal
+    const modal = document.createElement('div');
+    modal.className = 'graveyard-modal';
+    modal.id = 'defense-modal-temp';
+
+    const ownerName = owner === 'player1' ? gameState.settings.player1Name : gameState.settings.player2Name;
+    const defenseCards = gameState[owner].defense || [];
+
+    let modalHTML = `
+        <div class="graveyard-modal-content">
+            <div class="graveyard-modal-header">
+                <h2 class="graveyard-modal-title">
+                    🛡️ Défense de ${ownerName}
+                </h2>
+                <button class="close-modal" id="close-defense">×</button>
+            </div>
+            <div class="graveyard-modal-body">
+                <div class="graveyard-section">
+                    <h3 class="graveyard-section-title">
+                        🛡️ Défenseurs actifs <span class="count-badge">${defenseCards.length} / ${gameState.settings.defenders}</span>
+                    </h3>
+                    <div class="graveyard-cards-grid" id="defense-cards">
+    `;
+
+    if (defenseCards.length === 0) {
+        modalHTML += '<div class="graveyard-empty">Aucun défenseur</div>';
+    } else {
+        defenseCards.forEach(card => {
+            modalHTML += createCardElement(card, false, true).outerHTML;
+        });
+    }
+
+    modalHTML += '</div></div></div></div>';
+
+    modal.innerHTML = modalHTML;
+    document.body.appendChild(modal);
+
+    // Event listeners
+    document.getElementById('close-defense').addEventListener('click', () => {
+        modal.remove();
+    });
+
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+            modal.remove();
+        }
     });
 }
 
