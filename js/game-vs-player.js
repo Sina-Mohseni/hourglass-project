@@ -888,18 +888,28 @@ function renderHand(owner) {
 
         if (!shouldHideCards && gameState.phase === PHASES.COMBAT && gameState.currentPlayer === owner) {
             let touchHandled = false;
+            let lastTapTime = 0;
 
-            // Gestion tactile (mobile)
-            cardElement.addEventListener('touchstart', (e) => {
-                touchHandled = true;
-            });
-
+            // Gestion tactile (mobile) - Double-tap requis
             cardElement.addEventListener('touchend', (e) => {
                 e.preventDefault();
                 e.stopPropagation();
-                showCardActionModal(card, owner);
-                // Reset après un délai pour permettre les futurs clics
-                setTimeout(() => { touchHandled = false; }, 300);
+
+                const currentTime = new Date().getTime();
+                const tapTimeDiff = currentTime - lastTapTime;
+
+                // Double-tap détecté (moins de 300ms entre deux taps)
+                if (tapTimeDiff < 300 && tapTimeDiff > 0) {
+                    touchHandled = true;
+                    showCardActionModal(card, owner);
+                    lastTapTime = 0; // Reset pour éviter triple-tap
+
+                    // Reset après un délai pour permettre les futurs clics
+                    setTimeout(() => { touchHandled = false; }, 300);
+                } else {
+                    // Premier tap, on stocke le temps
+                    lastTapTime = currentTime;
+                }
             });
 
             // Gestion clic (desktop uniquement)
