@@ -1637,13 +1637,26 @@ function makeGraveyardStatsClickable() {
     });
 
     // Icônes de défense
-    document.getElementById('player-defense-info').addEventListener('click', () => {
-        showDefenseModal('player');
-    });
+    const playerDefenseIcon = document.getElementById('player-defense-info');
+    const aiDefenseIcon = document.getElementById('ai-defense-info');
 
-    document.getElementById('ai-defense-info').addEventListener('click', () => {
-        showDefenseModal('ai');
-    });
+    if (playerDefenseIcon) {
+        playerDefenseIcon.addEventListener('click', () => {
+            console.log('Clic sur icône défense joueur');
+            showDefenseModal('player');
+        });
+    } else {
+        console.error('Élément player-defense-info non trouvé');
+    }
+
+    if (aiDefenseIcon) {
+        aiDefenseIcon.addEventListener('click', () => {
+            console.log('Clic sur icône défense IA');
+            showDefenseModal('ai');
+        });
+    } else {
+        console.error('Élément ai-defense-info non trouvé');
+    }
 }
 
 function showGraveyardModal(owner, prisonOnly = false) {

@@ -1416,13 +1416,26 @@ function makeGraveyardStatsClickable() {
     });
 
     // Icônes de défense
-    document.getElementById('player1-defense-info').addEventListener('click', () => {
-        showDefenseModal('player1');
-    });
+    const player1DefenseIcon = document.getElementById('player1-defense-info');
+    const player2DefenseIcon = document.getElementById('player2-defense-info');
 
-    document.getElementById('player2-defense-info').addEventListener('click', () => {
-        showDefenseModal('player2');
-    });
+    if (player1DefenseIcon) {
+        player1DefenseIcon.addEventListener('click', () => {
+            console.log('Clic sur icône défense joueur 1');
+            showDefenseModal('player1');
+        });
+    } else {
+        console.error('Élément player1-defense-info non trouvé');
+    }
+
+    if (player2DefenseIcon) {
+        player2DefenseIcon.addEventListener('click', () => {
+            console.log('Clic sur icône défense joueur 2');
+            showDefenseModal('player2');
+        });
+    } else {
+        console.error('Élément player2-defense-info non trouvé');
+    }
 }
 
 function showGraveyardModal(owner, prisonOnly = false) {
