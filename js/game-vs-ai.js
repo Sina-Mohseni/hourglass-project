@@ -1064,7 +1064,7 @@ function renderHand(owner) {
                 // Double-tap détecté (moins de 300ms entre deux taps)
                 if (tapTimeDiff < 300 && tapTimeDiff > 0) {
                     touchHandled = true;
-                    showCardActionModal(card);
+                    onPlayerCardSelected(card);
                     lastTapTime = 0; // Reset pour éviter triple-tap
 
                     // Reset après un délai pour permettre les futurs clics
@@ -1079,7 +1079,7 @@ function renderHand(owner) {
             cardElement.onclick = (e) => {
                 if (!touchHandled) {
                     e.preventDefault();
-                    showCardActionModal(card);
+                    onPlayerCardSelected(card);
                 }
             };
         }
