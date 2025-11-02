@@ -543,7 +543,7 @@ function showPlayerLoserChoices() {
     if (gameState.player.defense.length > 0) {
         const optionC = document.createElement('button');
         optionC.className = 'action-button secondary';
-        optionC.innerHTML = '⚔️ Sacrifier un défenseur (-2 cartes / 0 PV)';
+        optionC.innerHTML = '⚔️ Sacrifier un défenseur (-2 cartes / +1 PV)';
         optionC.onclick = () => loserChoiceC();
         actionButtons.appendChild(optionC);
     }
@@ -1170,7 +1170,7 @@ function createCardElement(card, hidden = false, isDefense = false) {
     div.innerHTML = `<div class="card-inner">${headerHTML}${bodyHTML}</div>`;
 
     // Ajouter les événements de tooltip (desktop uniquement)
-    div.addEventListener('mouseenter', (e) => showCardTooltip(card, e));
+    div.addEventListener('mouseenter', (e) => showCardTooltip(card, e, isDefense));
     div.addEventListener('mouseleave', hideCardTooltip);
 
     return div;
@@ -1418,7 +1418,7 @@ function showCardActionModal(card) {
 let currentTooltip = null;
 let tooltipTimeout = null;
 
-function showCardTooltip(card, event) {
+function showCardTooltip(card, event, isDefense = false) {
     // Nettoyer l'ancien tooltip
     hideCardTooltip();
 
@@ -1437,7 +1437,7 @@ function showCardTooltip(card, event) {
 
     tooltip.innerHTML = `
         <div class="tooltip-card-preview">
-            ${createCardElement(card, false).outerHTML}
+            ${createCardElement(card, false, isDefense).outerHTML}
             <div class="tooltip-card-info">
                 <div class="tooltip-card-title">${card.name}</div>
                 <div class="tooltip-card-type">${getCardTypeName(card.type)} ${card.color === 'white' ? 'Blanc' : 'Noir'}</div>
@@ -1519,9 +1519,10 @@ function getCardDescription(card, attackSymbol, defenseSymbol) {
     let desc = '<strong>En Attaque:</strong> ';
 
     if (attackSymbol === SYMBOLS.CROWN) {
-        desc += 'Couronne - Bat toutes les pièces';
         if (card.type === CARD_TYPES.PAWN && (card.number === 1 || card.number === 2)) {
-            desc += ' (sauf contre pièces majeures où compte comme chiffre)';
+            desc += 'Couronne avec R - Perd contre tous, sauf Égalité avec Reine';
+        } else {
+            desc += 'Couronne - Bat tous, Égalité avec Pions 1&2 attaquants';
         }
     } else if (attackSymbol === SYMBOLS.PAPER) {
         desc += 'Papier - Bat Pierre';
@@ -1536,7 +1537,11 @@ function getCardDescription(card, attackSymbol, defenseSymbol) {
     desc += '<br><br><strong>En Défense:</strong> ';
 
     if (defenseSymbol === SYMBOLS.CROWN) {
-        desc += 'Couronne - Bloque tout sauf Reine attaquante';
+        if (card.type === CARD_TYPES.PAWN && (card.number === 1 || card.number === 2)) {
+            desc += 'Couronne - Bat tous, sauf Égalité avec Couronnes (Reine, Pions 1 ou 2)';
+        } else {
+            desc += 'Couronne - Bat tous, sauf Égalité avec Couronnes (Pions 1 ou 2)';
+        }
     } else if (defenseSymbol === SYMBOLS.PAPER) {
         desc += 'Papier - Bloque Pierre';
     } else if (defenseSymbol === SYMBOLS.ROCK) {
