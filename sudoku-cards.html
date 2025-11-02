@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sudoku Cards - Jeu de Cartes</title>
+    <link rel="stylesheet" href="sudoku-cards.css">
+</head>
+<body>
+    <!-- Menu Principal -->
+    <div id="menu-screen" class="screen active">
+        <div class="menu-container">
+            <h1 class="game-title">Sudoku Cards</h1>
+            <div class="menu-content">
+                <div class="menu-section">
+                    <h2>Configuration de la partie</h2>
+
+                    <div class="setting-group">
+                        <label>Score maximum pour perdre :</label>
+                        <select id="max-score">
+                            <option value="50">50 points</option>
+                            <option value="100" selected>100 points</option>
+                            <option value="150">150 points</option>
+                            <option value="200">200 points</option>
+                            <option value="250">250 points</option>
+                        </select>
+                    </div>
+
+                    <div class="setting-group">
+                        <label>Nombre de joueurs :</label>
+                        <select id="num-players">
+                            <option value="2" selected>2 joueurs</option>
+                            <option value="3">3 joueurs</option>
+                            <option value="4">4 joueurs</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="menu-section players-config">
+                    <h2>Configuration des joueurs</h2>
+                    <div id="players-setup"></div>
+                </div>
+
+                <button id="start-game-btn" class="btn btn-primary">Commencer la partie</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Écran de jeu -->
+    <div id="game-screen" class="screen">
+        <div class="game-header">
+            <div class="game-info">
+                <div class="round-info">
+                    <span>Manche: <span id="current-round">1</span></span>
+                    <span>Score max: <span id="game-max-score">100</span></span>
+                </div>
+            </div>
+            <button id="menu-btn" class="btn btn-secondary">Menu</button>
+        </div>
+
+        <div class="game-layout">
+            <!-- Panneau des joueurs -->
+            <div class="players-panel">
+                <div id="players-list"></div>
+            </div>
+
+            <!-- Plateau de jeu -->
+            <div class="game-board">
+                <div class="board-header">
+                    <div class="deck-info">
+                        <div class="deck-pile">
+                            <div class="card-back">
+                                <span class="deck-count" id="deck-count">81</span>
+                            </div>
+                            <span>Pioche</span>
+                        </div>
+                    </div>
+                    <div class="current-turn">
+                        <span>Tour de : <span id="current-player-name">Joueur 1</span></span>
+                    </div>
+                </div>
+
+                <div class="piles-container">
+                    <div class="pile" data-pile="0"></div>
+                    <div class="pile" data-pile="1"></div>
+                    <div class="pile" data-pile="2"></div>
+                    <div class="pile" data-pile="3"></div>
+                    <div class="pile" data-pile="4"></div>
+                    <div class="pile" data-pile="5"></div>
+                    <div class="pile" data-pile="6"></div>
+                    <div class="pile" data-pile="7"></div>
+                    <div class="pile" data-pile="8"></div>
+                </div>
+
+                <!-- Main du joueur actif -->
+                <div class="player-hand-container">
+                    <h3>Votre main</h3>
+                    <div id="player-hand" class="player-hand"></div>
+                    <div class="hand-actions">
+                        <button id="pass-turn-btn" class="btn btn-warning" style="display:none;">Je ne peux pas jouer</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de fin de manche -->
+    <div id="round-end-modal" class="modal">
+        <div class="modal-content">
+            <h2>Fin de manche</h2>
+            <div id="round-result"></div>
+            <div id="scores-table"></div>
+            <button id="next-round-btn" class="btn btn-primary">Manche suivante</button>
+        </div>
+    </div>
+
+    <!-- Modal de fin de partie -->
+    <div id="game-end-modal" class="modal">
+        <div class="modal-content">
+            <h2>Partie terminée !</h2>
+            <div id="game-result"></div>
+            <div id="final-scores"></div>
+            <button id="new-game-btn" class="btn btn-primary">Nouvelle partie</button>
+        </div>
+    </div>
+
+    <script src="sudoku-cards.js"></script>
+</body>
+</html>
