@@ -1185,9 +1185,40 @@ function createCardElement(card, hidden = false, isDefense = false) {
     // Envelopper tout dans card-inner (pas de footer)
     div.innerHTML = `<div class="card-inner">${headerHTML}${bodyHTML}</div>`;
 
-    // Ajouter les événements de tooltip (desktop uniquement)
-    div.addEventListener('mouseenter', (e) => showCardTooltip(card, e, isDefense));
+    // Gestion des tooltips avec double-tap sur mobile
+    let lastTapTime = 0;
+    let touchHandled = false;
+
+    // Desktop : hover pour afficher le tooltip
+    div.addEventListener('mouseenter', (e) => {
+        if (!touchHandled) {
+            showCardTooltip(card, e, isDefense);
+        }
+    });
     div.addEventListener('mouseleave', hideCardTooltip);
+
+    // Mobile : double-tap pour afficher le tooltip
+    div.addEventListener('touchend', (e) => {
+        const currentTime = new Date().getTime();
+        const tapTimeDiff = currentTime - lastTapTime;
+
+        // Double-tap détecté (moins de 300ms entre deux taps)
+        if (tapTimeDiff < 300 && tapTimeDiff > 0) {
+            e.preventDefault();
+            e.stopPropagation();
+            touchHandled = true;
+            showCardTooltip(card, e, isDefense);
+            lastTapTime = 0;
+
+            // Reset après un délai
+            setTimeout(() => { touchHandled = false; }, 300);
+        } else {
+            // Premier tap
+            lastTapTime = currentTime;
+            // Cacher le tooltip si un seul tap
+            hideCardTooltip();
+        }
+    });
 
     return div;
 }
