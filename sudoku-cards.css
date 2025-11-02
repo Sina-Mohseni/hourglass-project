@@ -236,6 +236,15 @@ body {
     background: #e67e22;
 }
 
+.btn-success {
+    background: var(--success);
+    color: white;
+}
+
+.btn-success:hover {
+    background: #3dbd8f;
+}
+
 /* Écran de jeu */
 #game-screen {
     flex-direction: column;
@@ -575,7 +584,16 @@ body {
 
 .hand-actions {
     margin-top: 15px;
-    text-align: center;
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    align-items: center;
+}
+
+.hand-actions .btn {
+    flex: 0 0 auto;
+    padding: 12px 25px;
+    font-size: 1rem;
 }
 
 /* Modals */

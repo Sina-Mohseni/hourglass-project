@@ -30,7 +30,8 @@ let gameState = {
     selectedCard: null,
     selectedPile: null,
     lastRoundLoser: null,
-    playingJoker: false
+    playingJoker: false,
+    hasPlayedCard: false
 };
 
 // ===============================
@@ -170,7 +171,8 @@ function startGame() {
         selectedCard: null,
         selectedPile: null,
         lastRoundLoser: null,
-        playingJoker: false
+        playingJoker: false,
+        hasPlayedCard: false
     };
 
     // Passer à l'écran de jeu
@@ -215,6 +217,7 @@ function startRound() {
     gameState.selectedCard = null;
     gameState.selectedPile = null;
     gameState.playingJoker = false;
+    gameState.hasPlayedCard = false;
 
     // Réinitialiser les joueurs
     gameState.players.forEach(player => {
@@ -393,13 +396,19 @@ function playCard(card, pileIndex) {
     // Ajouter la carte à la pile
     gameState.piles[pileIndex].push(card);
 
-    // Piocher une nouvelle carte si le deck n'est pas vide
-    if (gameState.deck.length > 0) {
-        currentPlayer.hand.push(gameState.deck.pop());
-    }
+    // Marquer que le joueur a joué une carte
+    gameState.hasPlayedCard = true;
 
-    // Passer au joueur suivant
-    nextPlayer();
+    // Si c'est l'IA, piocher et terminer le tour automatiquement
+    if (currentPlayer.type === 'ai') {
+        if (gameState.deck.length > 0) {
+            currentPlayer.hand.push(gameState.deck.pop());
+        }
+        nextPlayer();
+    } else {
+        // Pour un joueur humain, mettre à jour l'affichage
+        updateGameDisplay();
+    }
 }
 
 function playJoker(pileIndex) {
@@ -436,19 +445,26 @@ function playJoker(pileIndex) {
     // Réduire le nombre de jokers
     currentPlayer.jokers--;
 
-    // Piocher une nouvelle carte si le deck n'est pas vide
-    if (gameState.deck.length > 0) {
-        currentPlayer.hand.push(gameState.deck.pop());
-    }
+    // Marquer que le joueur a joué une carte
+    gameState.hasPlayedCard = true;
 
-    // Passer au joueur suivant
-    nextPlayer();
+    // Si c'est l'IA, piocher et terminer le tour automatiquement
+    if (currentPlayer.type === 'ai') {
+        if (gameState.deck.length > 0) {
+            currentPlayer.hand.push(gameState.deck.pop());
+        }
+        nextPlayer();
+    } else {
+        // Pour un joueur humain, mettre à jour l'affichage
+        updateGameDisplay();
+    }
 }
 
 function nextPlayer() {
     gameState.selectedCard = null;
     gameState.selectedPile = null;
     gameState.playingJoker = false;
+    gameState.hasPlayedCard = false;
 
     do {
         gameState.currentPlayerIndex = (gameState.currentPlayerIndex + 1) % gameState.players.length;
@@ -461,6 +477,28 @@ function passTurn() {
     const currentPlayer = gameState.players[gameState.currentPlayerIndex];
     currentPlayer.eliminated = true;
     endRound(currentPlayer);
+}
+
+function drawCard() {
+    const currentPlayer = gameState.players[gameState.currentPlayerIndex];
+
+    // Vérifier qu'il reste des cartes
+    if (gameState.deck.length > 0) {
+        currentPlayer.hand.push(gameState.deck.pop());
+        updateGameDisplay();
+    }
+}
+
+function endTurn() {
+    const currentPlayer = gameState.players[gameState.currentPlayerIndex];
+
+    // Vérifier que le joueur a joué une carte
+    if (!gameState.hasPlayedCard) {
+        return; // Ne peut pas terminer le tour sans avoir joué
+    }
+
+    // Passer au joueur suivant
+    nextPlayer();
 }
 
 // ===============================
@@ -694,6 +732,8 @@ function updatePiles() {
 function updatePlayerHand() {
     const currentPlayer = gameState.players[gameState.currentPlayerIndex];
     const handElement = document.getElementById('player-hand');
+    const drawBtn = document.getElementById('draw-card-btn');
+    const endTurnBtn = document.getElementById('end-turn-btn');
     const passBtn = document.getElementById('pass-turn-btn');
     const jokerIndicator = document.getElementById('joker-count');
     const jokerNumber = document.getElementById('joker-number');
@@ -730,10 +770,27 @@ function updatePlayerHand() {
             handElement.appendChild(jokerCard);
         }
 
-        // Afficher le bouton "passer" si aucun coup n'est possible
+        // Gérer l'affichage des boutons
         const validMoves = getValidMoves(currentPlayer);
         const hasJoker = currentPlayer.jokers > 0;
-        passBtn.style.display = (validMoves.length === 0 && !hasJoker) ? 'block' : 'none';
+        const canPlayAnything = validMoves.length > 0 || hasJoker;
+
+        if (!canPlayAnything) {
+            // Aucun coup possible : bouton passer
+            drawBtn.style.display = 'none';
+            endTurnBtn.style.display = 'none';
+            passBtn.style.display = 'block';
+        } else if (gameState.hasPlayedCard) {
+            // Carte jouée : boutons piocher et terminer le tour
+            drawBtn.style.display = gameState.deck.length > 0 ? 'inline-block' : 'none';
+            endTurnBtn.style.display = 'inline-block';
+            passBtn.style.display = 'none';
+        } else {
+            // Début de tour : aucun bouton (doit jouer une carte)
+            drawBtn.style.display = 'none';
+            endTurnBtn.style.display = 'none';
+            passBtn.style.display = 'none';
+        }
     } else {
         // Pour l'IA, afficher des cartes cachées
         for (let i = 0; i < currentPlayer.hand.length; i++) {
@@ -750,6 +807,9 @@ function updatePlayerHand() {
             handElement.appendChild(jokerCard);
         }
 
+        // Cacher tous les boutons pour l'IA
+        drawBtn.style.display = 'none';
+        endTurnBtn.style.display = 'none';
         passBtn.style.display = 'none';
     }
 }
@@ -899,5 +959,7 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('menu-screen').classList.add('active');
     });
 
+    document.getElementById('draw-card-btn').addEventListener('click', drawCard);
+    document.getElementById('end-turn-btn').addEventListener('click', endTurn);
     document.getElementById('pass-turn-btn').addEventListener('click', passTurn);
 });
