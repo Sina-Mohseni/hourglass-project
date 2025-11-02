@@ -455,7 +455,6 @@ body {
     transition: all 0.3s;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
     position: relative;
-    background: white;
 }
 
 .card:hover {
@@ -490,41 +489,68 @@ body {
 }
 
 /* Couleurs des cartes */
-.card.red { border-color: #e74c3c; }
-.card.red .card-number { color: #e74c3c; }
-.card.red .card-color-name { color: #e74c3c; }
+.card.red {
+    background: #e74c3c;
+    border-color: #c0392b;
+}
+.card.red .card-number { color: white; }
+.card.red .card-color-name { color: white; }
 
-.card.blue { border-color: #3498db; }
-.card.blue .card-number { color: #3498db; }
-.card.blue .card-color-name { color: #3498db; }
+.card.blue {
+    background: #3498db;
+    border-color: #2980b9;
+}
+.card.blue .card-number { color: white; }
+.card.blue .card-color-name { color: white; }
 
-.card.green { border-color: #2ecc71; }
-.card.green .card-number { color: #2ecc71; }
-.card.green .card-color-name { color: #2ecc71; }
+.card.green {
+    background: #2ecc71;
+    border-color: #27ae60;
+}
+.card.green .card-number { color: white; }
+.card.green .card-color-name { color: white; }
 
-.card.yellow { border-color: #f1c40f; }
-.card.yellow .card-number { color: #f1c40f; }
-.card.yellow .card-color-name { color: #f1c40f; }
+.card.yellow {
+    background: #f1c40f;
+    border-color: #f39c12;
+}
+.card.yellow .card-number { color: #2c3e50; }
+.card.yellow .card-color-name { color: #2c3e50; }
 
-.card.orange { border-color: #e67e22; }
-.card.orange .card-number { color: #e67e22; }
-.card.orange .card-color-name { color: #e67e22; }
+.card.orange {
+    background: #e67e22;
+    border-color: #d35400;
+}
+.card.orange .card-number { color: white; }
+.card.orange .card-color-name { color: white; }
 
-.card.purple { border-color: #9b59b6; }
-.card.purple .card-number { color: #9b59b6; }
-.card.purple .card-color-name { color: #9b59b6; }
+.card.purple {
+    background: #9b59b6;
+    border-color: #8e44ad;
+}
+.card.purple .card-number { color: white; }
+.card.purple .card-color-name { color: white; }
 
-.card.black { border-color: #2c3e50; }
-.card.black .card-number { color: #2c3e50; }
-.card.black .card-color-name { color: #2c3e50; }
+.card.black {
+    background: #2c3e50;
+    border-color: #1a252f;
+}
+.card.black .card-number { color: white; }
+.card.black .card-color-name { color: white; }
 
-.card.white { border-color: #95a5a6; background: #ecf0f1; }
+.card.white {
+    background: #ecf0f1;
+    border-color: #bdc3c7;
+}
 .card.white .card-number { color: #34495e; }
 .card.white .card-color-name { color: #34495e; }
 
-.card.gray { border-color: #7f8c8d; }
-.card.gray .card-number { color: #7f8c8d; }
-.card.gray .card-color-name { color: #7f8c8d; }
+.card.gray {
+    background: #7f8c8d;
+    border-color: #5d6d6e;
+}
+.card.gray .card-number { color: white; }
+.card.gray .card-color-name { color: white; }
 
 /* Main du joueur */
 .player-hand-container {
