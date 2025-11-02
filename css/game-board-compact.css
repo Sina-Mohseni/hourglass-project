@@ -357,26 +357,23 @@
         margin: 0;
     }
 
-    /* Compteur de cartes en main - sur la carte */
+    /* Compteur de cartes en main - directement sur la carte */
     .hand-pile-count {
         position: absolute;
-        bottom: 8px;
+        bottom: 12px;
         left: 50%;
         transform: translateX(-50%);
-        background: rgba(233, 69, 96, 0.95);
         color: #fff;
-        font-size: 1.2rem;
+        font-size: 1.5rem;
         font-weight: 700;
-        padding: 4px 10px;
-        border-radius: 8px;
-        min-width: 40px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        border: 2px solid rgba(212, 175, 55, 0.8);
-        box-shadow:
-            0 0 10px rgba(233, 69, 96, 0.6),
-            0 2px 8px rgba(0, 0, 0, 0.8);
+        text-shadow:
+            0 0 8px rgba(233, 69, 96, 0.8),
+            0 0 15px rgba(233, 69, 96, 0.6),
+            0 2px 4px rgba(0, 0, 0, 0.9),
+            -1px -1px 0 rgba(212, 175, 55, 0.5),
+            1px -1px 0 rgba(212, 175, 55, 0.5),
+            -1px 1px 0 rgba(212, 175, 55, 0.5),
+            1px 1px 0 rgba(212, 175, 55, 0.5);
         z-index: 10;
     }
 
