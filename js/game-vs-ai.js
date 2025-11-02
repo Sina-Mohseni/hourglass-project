@@ -1199,13 +1199,15 @@ function createCardElement(card, hidden = false, isDefense = false) {
 
     // Mobile : double-tap pour afficher le tooltip
     div.addEventListener('touchend', (e) => {
+        // Toujours empêcher la propagation pour éviter conflits avec d'autres handlers
+        e.preventDefault();
+        e.stopPropagation();
+
         const currentTime = new Date().getTime();
         const tapTimeDiff = currentTime - lastTapTime;
 
         // Double-tap détecté (moins de 300ms entre deux taps)
         if (tapTimeDiff < 300 && tapTimeDiff > 0) {
-            e.preventDefault();
-            e.stopPropagation();
             touchHandled = true;
             showCardTooltip(card, e, isDefense);
             lastTapTime = 0;
