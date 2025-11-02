@@ -357,24 +357,27 @@
         margin: 0;
     }
 
-    /* Compteur de cartes en main */
+    /* Compteur de cartes en main - sur la carte */
     .hand-pile-count {
         position: absolute;
-        bottom: -8px;
-        right: -8px;
-        background: var(--gradient-accent);
-        color: var(--white);
-        font-size: 0.75rem;
+        bottom: 8px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: rgba(233, 69, 96, 0.95);
+        color: #fff;
+        font-size: 1.2rem;
         font-weight: 700;
-        padding: 4px 8px;
-        border-radius: 50%;
-        min-width: 24px;
-        height: 24px;
+        padding: 4px 10px;
+        border-radius: 8px;
+        min-width: 40px;
         display: flex;
         align-items: center;
         justify-content: center;
-        border: 2px solid var(--gold-color);
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+        border: 2px solid rgba(212, 175, 55, 0.8);
+        box-shadow:
+            0 0 10px rgba(233, 69, 96, 0.6),
+            0 2px 8px rgba(0, 0, 0, 0.8);
+        z-index: 10;
     }
 
     /* Zone de défense à droite */
