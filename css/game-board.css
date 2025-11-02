@@ -232,22 +232,48 @@
     min-height: 140px;
     overflow-x: auto;
     overflow-y: hidden;
-    flex-wrap: wrap;
-    justify-content: center;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
 }
 
 .ai-hand {
-    justify-content: center;
+    justify-content: flex-start;
 }
 
 .player-hand {
-    justify-content: center;
+    justify-content: flex-start;
+}
+
+/* Scrollbar personnalisée pour les mains */
+.hand::-webkit-scrollbar {
+    height: 8px;
+}
+
+.hand::-webkit-scrollbar-track {
+    background: rgba(15, 52, 96, 0.3);
+    border-radius: 4px;
+}
+
+.hand::-webkit-scrollbar-thumb {
+    background: rgba(233, 69, 96, 0.6);
+    border-radius: 4px;
+}
+
+.hand::-webkit-scrollbar-thumb:hover {
+    background: rgba(233, 69, 96, 0.8);
+}
+
+/* Firefox scrollbar */
+.hand {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(233, 69, 96, 0.6) rgba(15, 52, 96, 0.3);
 }
 
 /* ===== CARDS - EPIC DESIGN ===== */
 .card {
     width: 110px;
     height: 155px;
+    flex-shrink: 0;
     background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
     border: none;
     border-radius: 8px;
