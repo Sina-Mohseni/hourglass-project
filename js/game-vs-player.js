@@ -1434,9 +1434,8 @@ function showDefenseModal(owner) {
     modal.className = 'graveyard-modal';
     modal.id = 'defense-modal-temp';
 
-    // Empêcher le scroll du body et forcer le scroll en haut
+    // Empêcher le scroll du body pendant que la modale est ouverte
     document.body.style.overflow = 'hidden';
-    window.scrollTo(0, 0);
 
     const ownerName = owner === 'player1' ? gameState.settings.player1Name : gameState.settings.player2Name;
     const defenseCards = gameState[owner].defense || [];
