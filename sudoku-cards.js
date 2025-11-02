@@ -264,7 +264,10 @@ function startRound() {
 
 function endRound(eliminatedPlayer) {
     // Calculer les points
-    const points = eliminatedPlayer.hand.reduce((sum, card) => sum + card.number, 0);
+    // Si le joueur n'a plus de cartes, il prend 15 points minimum
+    const points = eliminatedPlayer.hand.length === 0
+        ? 15
+        : eliminatedPlayer.hand.reduce((sum, card) => sum + card.number, 0);
     eliminatedPlayer.score += points;
 
     // Gérer le système de jokers
@@ -479,7 +482,8 @@ function playCard(card, pileIndex) {
 
     // Si c'est l'IA, piocher et terminer le tour automatiquement
     if (currentPlayer.type === 'ai') {
-        if (gameState.deck.length > 0) {
+        // L'IA pioche seulement si elle a moins de 5 cartes
+        if (gameState.deck.length > 0 && currentPlayer.hand.length < 5) {
             currentPlayer.hand.push(gameState.deck.pop());
         }
         nextPlayer();
@@ -538,7 +542,8 @@ function playJoker(pileIndex) {
 
     // Si c'est l'IA, piocher et terminer le tour automatiquement
     if (currentPlayer.type === 'ai') {
-        if (gameState.deck.length > 0) {
+        // L'IA pioche seulement si elle a moins de 5 cartes
+        if (gameState.deck.length > 0 && currentPlayer.hand.length < 5) {
             currentPlayer.hand.push(gameState.deck.pop());
         }
         nextPlayer();
@@ -573,8 +578,9 @@ function passTurn() {
 function drawCard() {
     const currentPlayer = gameState.players[gameState.currentPlayerIndex];
 
-    // Vérifier qu'on n'a pas déjà pioché et qu'il reste des cartes
-    if (!gameState.hasDrawnCard && gameState.deck.length > 0) {
+    // Vérifier qu'on n'a pas déjà pioché, qu'il reste des cartes, et qu'on n'a pas déjà 5 cartes
+    // Les jokers ne comptent pas dans la limite de 5 cartes
+    if (!gameState.hasDrawnCard && gameState.deck.length > 0 && currentPlayer.hand.length < 5) {
         currentPlayer.hand.push(gameState.deck.pop());
         gameState.hasDrawnCard = true;
         updateGameDisplay();
@@ -922,8 +928,8 @@ function updatePlayerHand() {
         } else if (gameState.hasPlayedCard) {
             // Carte jouée : boutons annuler, piocher et terminer le tour
             undoBtn.style.display = 'inline-block';
-            // Le bouton piocher n'apparaît que si le joueur n'a pas encore pioché
-            drawBtn.style.display = (!gameState.hasDrawnCard && gameState.deck.length > 0) ? 'inline-block' : 'none';
+            // Le bouton piocher n'apparaît que si le joueur n'a pas encore pioché, qu'il reste des cartes, et qu'il n'a pas déjà 5 cartes
+            drawBtn.style.display = (!gameState.hasDrawnCard && gameState.deck.length > 0 && currentPlayer.hand.length < 5) ? 'inline-block' : 'none';
             endTurnBtn.style.display = 'inline-block';
             passBtn.style.display = 'none';
         } else {
@@ -963,12 +969,21 @@ function updateDeckCount() {
 
 function createCardElement(card, selectable) {
     const cardElement = document.createElement('div');
-    cardElement.className = `card ${card.color}`;
 
-    cardElement.innerHTML = `
-        <div class="card-number">${card.number}</div>
-        <div class="card-color-name">${COLOR_NAMES[card.color]}</div>
-    `;
+    // Si c'est un joker sur une pile, l'afficher comme joker
+    if (card.isJoker && !selectable) {
+        cardElement.className = 'card joker';
+        cardElement.innerHTML = `
+            <div class="card-number">★</div>
+            <div class="card-color-name">JOKER</div>
+        `;
+    } else {
+        cardElement.className = `card ${card.color}`;
+        cardElement.innerHTML = `
+            <div class="card-number">${card.number}</div>
+            <div class="card-color-name">${COLOR_NAMES[card.color]}</div>
+        `;
+    }
 
     if (selectable && gameState.selectedCard &&
         gameState.selectedCard.color === card.color &&

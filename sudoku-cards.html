@@ -51,16 +51,16 @@
                         <ul>
                             <li><strong>81 cartes</strong> : 9 couleurs (rouge, bleu, vert, jaune, orange, mauve, noir, blanc, gris) × 9 chiffres (1 à 9)</li>
                             <li><strong>9 piles</strong> disposées en grille 3×3 (comme un Sudoku)</li>
-                            <li><strong>5 cartes en main</strong> par joueur au départ</li>
+                            <li><strong>5 cartes en main</strong> par joueur au départ (maximum 5 cartes, les jokers ne comptent pas)</li>
                         </ul>
 
                         <h3>🎲 Déroulement d'un tour</h3>
                         <ol>
                             <li><strong>Jouer UNE carte</strong> : Choisissez une carte de votre main et placez-la sur une pile</li>
-                            <li><strong>Piocher (optionnel)</strong> : Vous POUVEZ piocher UNE carte (maximum 1 par tour) si des cartes restent dans la pioche</li>
+                            <li><strong>Piocher (optionnel)</strong> : Vous POUVEZ piocher UNE carte (maximum 1 par tour) si vous avez moins de 5 cartes en main</li>
                             <li><strong>Terminer le tour</strong> : Cliquez sur "Terminer le tour" pour passer au joueur suivant</li>
                         </ol>
-                        <p style="color: var(--warning); font-style: italic;">⚠️ Vous ne pouvez jouer qu'UNE SEULE carte par tour ! Une fois jouée, vous devez terminer votre tour.</p>
+                        <p style="color: var(--warning); font-style: italic;">⚠️ Vous ne pouvez jouer qu'UNE SEULE carte par tour ! Maximum 5 cartes en main (les jokers ne comptent pas dans cette limite).</p>
 
                         <h3>📏 Règles de placement des cartes</h3>
                         <h4>Sur une pile vide :</h4>
@@ -81,7 +81,7 @@
                             <li>
                                 <strong style="color: var(--danger);">Élimination (mauvais)</strong> : Un joueur ne peut plus jouer
                                 <ul>
-                                    <li>Il gagne <strong>+points</strong> égaux à la somme de ses cartes en main</li>
+                                    <li>Il gagne <strong>+points</strong> égaux à la somme de ses cartes en main (minimum 15 points s'il n'a plus de cartes)</li>
                                     <li>Il commence la prochaine manche et reçoit 1 Joker</li>
                                 </ul>
                             </li>
@@ -99,6 +99,8 @@
                         <ul>
                             <li>Le <strong>perdant par élimination</strong> commence la manche suivante avec <strong>1 Joker</strong></li>
                             <li>Le Joker peut être joué comme <strong>n'importe quelle couleur ET n'importe quel chiffre</strong></li>
+                            <li>Le Joker <strong>ne compte pas</strong> dans la limite de 5 cartes en main</li>
+                            <li>Une fois joué, le Joker reste <strong>visible comme joker</strong> (★ multicolore) sur le terrain</li>
                             <li>Utilisable <strong>une seule fois</strong> (le Joker disparaît après utilisation)</li>
                             <li>Si un joueur perd <strong>plusieurs manches consécutives</strong>, il accumule des Jokers (2, 3, 4...)</li>
                             <li>Si un joueur perd après avoir gagné au moins une manche (perte non-consécutive), il revient à 1 Joker</li>
@@ -219,10 +221,10 @@
                     <h3>🎴 Votre tour en 3 étapes</h3>
                     <ol style="line-height: 1.6;">
                         <li>Jouez <strong>UNE carte</strong> sur une pile</li>
-                        <li>Piochez <strong>0 ou 1 carte</strong> (optionnel)</li>
+                        <li>Piochez <strong>0 ou 1 carte</strong> (optionnel, max 5 cartes)</li>
                         <li>Cliquez sur <strong>"Terminer le tour"</strong></li>
                     </ol>
-                    <p style="font-size: 0.85rem; color: var(--warning); margin-top: 5px;">⚠️ 1 seule carte par tour !</p>
+                    <p style="font-size: 0.85rem; color: var(--warning); margin-top: 5px;">⚠️ 1 seule carte par tour ! Max 5 cartes en main (hors jokers).</p>
                 </div>
 
                 <div class="rule-card">
@@ -254,7 +256,7 @@
                     <h3 style="color: var(--danger);">❌ Élimination</h3>
                     <p>Si vous ne pouvez plus jouer :</p>
                     <ul>
-                        <li><strong style="color: var(--danger);">+points</strong> (somme de vos cartes)</li>
+                        <li><strong style="color: var(--danger);">+points</strong> (somme de vos cartes, min. 15)</li>
                         <li>Vous commencez la prochaine manche</li>
                         <li>Vous recevez 1 Joker</li>
                     </ul>
@@ -264,6 +266,8 @@
                     <h3>⭐ Joker</h3>
                     <ul>
                         <li>Joue comme n'importe quelle carte</li>
+                        <li>Ne compte pas dans les 5 cartes max</li>
+                        <li>Reste visible comme joker (★) sur le terrain</li>
                         <li>Donné au perdant (élimination)</li>
                         <li>Cumule si pertes consécutives</li>
                         <li>Usage unique</li>
