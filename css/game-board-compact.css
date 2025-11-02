@@ -237,6 +237,148 @@
     font-size: 3.5rem !important;
 }
 
+/* ===== LAYOUT MOBILE COMPACT (CARTE-PILE + DÉFENSE) ===== */
+
+/* Par défaut, cacher le layout mobile et afficher la main normale */
+.mobile-compact-layout {
+    display: none;
+}
+
+.hand {
+    display: flex !important;
+}
+
+/* Mode mobile portrait : activer le layout compact */
+@media (max-width: 600px) and (orientation: portrait) {
+    /* Afficher le layout mobile compact */
+    .mobile-compact-layout {
+        display: flex !important;
+        gap: 10px;
+        align-items: flex-start;
+        padding: 5px;
+    }
+
+    /* Cacher la main normale sur mobile */
+    .hand {
+        display: none !important;
+    }
+
+    /* Conteneur de la carte-pile à gauche */
+    .hand-pile-container {
+        flex-shrink: 0;
+        position: relative;
+    }
+
+    /* Carte pile (dos de carte) */
+    .hand-pile {
+        position: relative;
+        width: 70px;
+        height: 100px;
+        cursor: pointer;
+        transition: transform 0.2s ease;
+    }
+
+    .hand-pile.clickable:hover {
+        transform: scale(1.05);
+    }
+
+    .hand-pile.clickable:active {
+        transform: scale(0.98);
+    }
+
+    .hand-pile .card {
+        width: 70px !important;
+        height: 100px !important;
+        margin: 0;
+    }
+
+    /* Compteur de cartes en main */
+    .hand-pile-count {
+        position: absolute;
+        bottom: -8px;
+        right: -8px;
+        background: var(--gradient-accent);
+        color: var(--white);
+        font-size: 0.75rem;
+        font-weight: 700;
+        padding: 4px 8px;
+        border-radius: 50%;
+        min-width: 24px;
+        height: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 2px solid var(--gold-color);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+    }
+
+    /* Zone de défense à droite */
+    .mobile-compact-layout .defense-zone {
+        flex: 1;
+        margin: 0;
+    }
+
+    .mobile-compact-layout .defense-label {
+        font-size: 0.65rem !important;
+        margin-bottom: 5px !important;
+    }
+
+    .mobile-compact-layout .defense-slots {
+        gap: 5px !important;
+        justify-content: center;
+    }
+
+    .mobile-compact-layout .defense-slot {
+        width: 60px !important;
+        height: 85px !important;
+    }
+
+    .mobile-compact-layout .defense-slot .card {
+        width: 60px !important;
+        height: 85px !important;
+    }
+
+    .mobile-compact-layout .defense-info-icon {
+        font-size: 1rem !important;
+        width: 24px !important;
+        height: 24px !important;
+        margin-top: 5px !important;
+    }
+}
+
+/* ===== MODAL DE SÉLECTION DE CARTES (MOBILE) ===== */
+.hand-selection-modal-content {
+    max-width: 95% !important;
+    width: 400px !important;
+}
+
+.hand-selection-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+    gap: 10px;
+    padding: 10px;
+    background: var(--accent-color);
+    border-radius: 8px;
+    max-height: 60vh;
+    overflow-y: auto;
+}
+
+.hand-selection-grid .card {
+    width: 80px !important;
+    height: 115px !important;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.hand-selection-grid .card:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 15px rgba(233, 69, 96, 0.8) !important;
+}
+
+.hand-selection-grid .card:active {
+    transform: scale(0.98);
+}
+
 /* Responsive adjustments */
 @media (max-width: 768px) {
     .game-board {

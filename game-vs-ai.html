@@ -65,13 +65,24 @@
                     </div>
                 </div>
 
-                <!-- Main de l'IA (cachée) -->
-                <div class="hand ai-hand" id="ai-hand">
-                    <!-- Les cartes seront générées dynamiquement -->
-                </div>
+                <!-- Layout mobile compact : carte-pile + défense -->
+                <div class="mobile-compact-layout">
+                    <!-- Carte pile à gauche (pour sélection main) -->
+                    <div class="hand-pile-container" id="ai-hand-pile-container">
+                        <div class="hand-pile" id="ai-hand-pile">
+                            <div class="card hidden">
+                                <div class="card-inner">
+                                    <div class="card-body">
+                                        <div class="card-piece">?</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="hand-pile-count" id="ai-hand-pile-count">15</div>
+                        </div>
+                    </div>
 
-                <!-- Plateau de défense IA -->
-                <div class="defense-zone">
+                    <!-- Plateau de défense IA à droite -->
+                    <div class="defense-zone">
                     <div class="defense-label">Défenseurs IA</div>
                     <div class="defense-slots" id="ai-defense">
                         <!-- Slots de défense générés dynamiquement -->
@@ -79,6 +90,12 @@
                     <div class="defense-info-icon clickable" id="ai-defense-info" title="Voir les défenseurs">
                         🛡️
                     </div>
+                </div>
+                </div>
+
+                <!-- Main de l'IA (cachée) - Desktop -->
+                <div class="hand ai-hand" id="ai-hand">
+                    <!-- Les cartes seront générées dynamiquement -->
                 </div>
             </section>
 
@@ -116,8 +133,24 @@
 
             <!-- Zone Joueur (en bas) -->
             <section class="player-zone human-zone">
-                <!-- Plateau de défense Joueur -->
-                <div class="defense-zone">
+                <!-- Layout mobile compact : carte-pile + défense -->
+                <div class="mobile-compact-layout">
+                    <!-- Carte pile à gauche (pour sélection main) -->
+                    <div class="hand-pile-container" id="player-hand-pile-container">
+                        <div class="hand-pile clickable" id="player-hand-pile">
+                            <div class="card hidden">
+                                <div class="card-inner">
+                                    <div class="card-body">
+                                        <div class="card-piece">?</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="hand-pile-count" id="player-hand-pile-count">15</div>
+                        </div>
+                    </div>
+
+                    <!-- Plateau de défense Joueur à droite -->
+                    <div class="defense-zone">
                     <div class="defense-label">Vos Défenseurs</div>
                     <div class="defense-slots" id="player-defense">
                         <!-- Slots de défense générés dynamiquement -->
@@ -126,8 +159,9 @@
                         🛡️
                     </div>
                 </div>
+                </div>
 
-                <!-- Main du Joueur -->
+                <!-- Main du Joueur - Desktop -->
                 <div class="hand player-hand" id="player-hand">
                     <!-- Les cartes seront générées dynamiquement -->
                 </div>
@@ -268,6 +302,21 @@
             </div>
         </div>
 
+    </div>
+
+    <!-- Modal de sélection de carte depuis la pile (mobile) -->
+    <div class="modal hidden" id="hand-selection-modal">
+        <div class="modal-content hand-selection-modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Choisissez une carte</h2>
+                <button class="close-modal" id="close-hand-selection">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="hand-selection-grid" id="hand-selection-grid">
+                    <!-- Les cartes seront affichées ici -->
+                </div>
+            </div>
+        </div>
     </div>
 
     <script src="js/game-vs-ai.js"></script>

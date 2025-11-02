@@ -1037,6 +1037,9 @@ function renderHand(owner) {
 
     const hand = gameState[owner].hand;
 
+    // Mettre à jour le compteur de la pile (mobile)
+    updateHandPileCount(owner, hand.length);
+
     if (hand.length === 0) {
         const emptyMessage = document.createElement('div');
         emptyMessage.className = 'empty-hand-message';
@@ -1319,6 +1322,59 @@ function removeDefenderHighlights() {
     });
 }
 
+// ===== MOBILE: HAND PILE & SELECTION MODAL =====
+
+function updateHandPileCount(owner, count) {
+    const pileCountElement = document.getElementById(`${owner}-hand-pile-count`);
+    if (pileCountElement) {
+        pileCountElement.textContent = count;
+    }
+}
+
+function showHandSelectionModal(owner) {
+    const modal = document.getElementById('hand-selection-modal');
+    const grid = document.getElementById('hand-selection-grid');
+
+    if (!modal || !grid) return;
+
+    // Vider la grille
+    grid.innerHTML = '';
+
+    const hand = gameState[owner].hand;
+
+    if (hand.length === 0) {
+        const emptyMessage = document.createElement('div');
+        emptyMessage.style.cssText = 'text-align: center; opacity: 0.6; padding: 20px; grid-column: 1 / -1;';
+        emptyMessage.textContent = 'Main vide';
+        grid.appendChild(emptyMessage);
+    } else {
+        hand.forEach((card) => {
+            const cardElement = createCardElement(card, false, false);
+
+            // Ajouter le click handler
+            cardElement.style.cursor = 'pointer';
+            cardElement.onclick = () => {
+                // Fermer le modal
+                closeHandSelectionModal();
+                // Afficher la modale d'action
+                showCardActionModal(card);
+            };
+
+            grid.appendChild(cardElement);
+        });
+    }
+
+    // Afficher le modal
+    modal.classList.remove('hidden');
+}
+
+function closeHandSelectionModal() {
+    const modal = document.getElementById('hand-selection-modal');
+    if (modal) {
+        modal.classList.add('hidden');
+    }
+}
+
 // ===== EVENT LISTENERS =====
 
 function setupEventListeners() {
@@ -1355,6 +1411,23 @@ function setupEventListeners() {
             }
         });
     });
+
+    // Pile de cartes mobile - Joueur uniquement
+    const playerHandPile = document.getElementById('player-hand-pile');
+    if (playerHandPile) {
+        playerHandPile.addEventListener('click', () => {
+            // Ouvrir le modal seulement si c'est la phase de combat du joueur
+            if (gameState.phase === PHASES.COMBAT) {
+                showHandSelectionModal('player');
+            }
+        });
+    }
+
+    // Fermer le modal de sélection de main
+    const closeHandSelection = document.getElementById('close-hand-selection');
+    if (closeHandSelection) {
+        closeHandSelection.addEventListener('click', closeHandSelectionModal);
+    }
 
     // Rendre les stats de défausse cliquables
     makeGraveyardStatsClickable();

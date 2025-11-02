@@ -65,13 +65,24 @@
                     </div>
                 </div>
 
-                <!-- Main du Joueur 2 -->
-                <div class="hand player2-hand" id="player2-hand">
-                    <!-- Les cartes seront générées dynamiquement -->
-                </div>
+                <!-- Layout mobile compact : carte-pile + défense -->
+                <div class="mobile-compact-layout">
+                    <!-- Carte pile à gauche (pour sélection main) -->
+                    <div class="hand-pile-container" id="player2-hand-pile-container">
+                        <div class="hand-pile" id="player2-hand-pile">
+                            <div class="card hidden">
+                                <div class="card-inner">
+                                    <div class="card-body">
+                                        <div class="card-piece">?</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="hand-pile-count" id="player2-hand-pile-count">15</div>
+                        </div>
+                    </div>
 
-                <!-- Plateau de défense Joueur 2 -->
-                <div class="defense-zone">
+                    <!-- Plateau de défense Joueur 2 à droite -->
+                    <div class="defense-zone">
                     <div class="defense-label">Défenseurs <span id="player2-name-def">Joueur 2</span></div>
                     <div class="defense-slots" id="player2-defense">
                         <!-- Slots de défense générés dynamiquement -->
@@ -79,6 +90,12 @@
                     <div class="defense-info-icon clickable" id="player2-defense-info" title="Voir les défenseurs">
                         🛡️
                     </div>
+                </div>
+                </div>
+
+                <!-- Main du Joueur 2 - Desktop -->
+                <div class="hand player2-hand" id="player2-hand">
+                    <!-- Les cartes seront générées dynamiquement -->
                 </div>
             </section>
 
@@ -116,8 +133,24 @@
 
             <!-- Zone Joueur 1 (en bas) -->
             <section class="player-zone human-zone" id="player1-zone">
-                <!-- Plateau de défense Joueur 1 -->
-                <div class="defense-zone">
+                <!-- Layout mobile compact : carte-pile + défense -->
+                <div class="mobile-compact-layout">
+                    <!-- Carte pile à gauche (pour sélection main) -->
+                    <div class="hand-pile-container" id="player1-hand-pile-container">
+                        <div class="hand-pile clickable" id="player1-hand-pile">
+                            <div class="card hidden">
+                                <div class="card-inner">
+                                    <div class="card-body">
+                                        <div class="card-piece">?</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="hand-pile-count" id="player1-hand-pile-count">15</div>
+                        </div>
+                    </div>
+
+                    <!-- Plateau de défense Joueur 1 à droite -->
+                    <div class="defense-zone">
                     <div class="defense-label">Défenseurs <span id="player1-name-def">Joueur 1</span></div>
                     <div class="defense-slots" id="player1-defense">
                         <!-- Slots de défense générés dynamiquement -->
@@ -126,8 +159,9 @@
                         🛡️
                     </div>
                 </div>
+                </div>
 
-                <!-- Main du Joueur 1 -->
+                <!-- Main du Joueur 1 - Desktop -->
                 <div class="hand player1-hand" id="player1-hand">
                     <!-- Les cartes seront générées dynamiquement -->
                 </div>
@@ -289,6 +323,21 @@
             </div>
         </div>
 
+    </div>
+
+    <!-- Modal de sélection de carte depuis la pile (mobile) -->
+    <div class="modal hidden" id="hand-selection-modal">
+        <div class="modal-content hand-selection-modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Choisissez une carte</h2>
+                <button class="close-modal" id="close-hand-selection">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="hand-selection-grid" id="hand-selection-grid">
+                    <!-- Les cartes seront affichées ici -->
+                </div>
+            </div>
+        </div>
     </div>
 
     <script src="js/game-vs-player.js"></script>
