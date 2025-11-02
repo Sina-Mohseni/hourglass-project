@@ -1206,17 +1206,26 @@ function getCurrentPowerDisplay(symbol, card, isDefense) {
 }
 
 // Fonction helper pour obtenir les données de pouvoir (pour les tooltips)
-function getPowerData(symbol, card) {
+function getPowerData(symbol, card, isDefense = false) {
     let icon = '';
     let value = '';
 
     if (symbol === SYMBOLS.CROWN) {
-        icon = '👑';
-        // Pour les pions 1 et 2, afficher le numéro + couronne avec R
+        // Pour les pions 1 et 2, l'affichage diffère selon attaque/défense
         if (card.type === CARD_TYPES.PAWN && (card.number === 1 || card.number === 2)) {
-            value = `${card.number} <span class="crown-r">👑<span class="r-letter">R</span></span>`;
+            if (isDefense) {
+                // En défense : juste la couronne simple
+                icon = '👑';
+                value = '';
+            } else {
+                // En attaque : chiffre + couronne avec R
+                icon = '';
+                value = `${card.number} <span class="crown-r">👑<span class="r-letter">R</span></span>`;
+            }
         } else {
-            value = ''; // Juste l'icône, pas de texte
+            // Pour les autres cartes avec couronne (Reine)
+            icon = '👑';
+            value = '';
         }
     } else if (symbol === SYMBOLS.PAPER) {
         icon = '📄';
@@ -1355,8 +1364,8 @@ function showCardActionModal(card) {
 
     const attackSymbol = getAttackSymbol(card);
     const defenseSymbol = getDefenseSymbol(card);
-    const attackData = getPowerData(attackSymbol, card);
-    const defenseData = getPowerData(defenseSymbol, card);
+    const attackData = getPowerData(attackSymbol, card, false); // false = attaque
+    const defenseData = getPowerData(defenseSymbol, card, true); // true = défense
 
     modal.innerHTML = `
         <div class="modal-content card-action-modal-content">
@@ -1429,8 +1438,8 @@ function showCardTooltip(card, event, isDefense = false) {
 
     const attackSymbol = getAttackSymbol(card);
     const defenseSymbol = getDefenseSymbol(card);
-    const attackData = getPowerData(attackSymbol, card);
-    const defenseData = getPowerData(defenseSymbol, card);
+    const attackData = getPowerData(attackSymbol, card, false); // false = attaque
+    const defenseData = getPowerData(defenseSymbol, card, true); // true = défense
 
     // Description de la carte
     let description = getCardDescription(card, attackSymbol, defenseSymbol);
