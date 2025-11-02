@@ -1051,7 +1051,7 @@ function renderHand(owner) {
 
     hand.forEach((card, index) => {
         const isPlayable = owner === 'player' && gameState.phase === PHASES.COMBAT;
-        const cardElement = createCardElement(card, owner === 'ai', false);
+        const cardElement = createCardElement(card, false, false);
 
         if (isPlayable) {
             let touchHandled = false;

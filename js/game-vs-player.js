@@ -887,13 +887,11 @@ function renderHand(owner) {
         return;
     }
 
-    // Déterminer si on doit cacher les cartes (quand ce n'est pas le tour de ce joueur en phase combat)
-    const shouldHideCards = gameState.phase === PHASES.COMBAT &&
-                           gameState.currentPlayer !== owner &&
-                           !gameState.waitingForTurnChange;
+    // Toutes les cartes sont maintenant visibles pour tous les joueurs
+    const shouldHideCards = false;
 
     hand.forEach((card, index) => {
-        const isPlayable = !shouldHideCards && gameState.phase === PHASES.COMBAT && gameState.currentPlayer === owner;
+        const isPlayable = gameState.phase === PHASES.COMBAT && gameState.currentPlayer === owner;
         const cardElement = createCardElement(card, shouldHideCards, false);
 
         if (isPlayable) {
