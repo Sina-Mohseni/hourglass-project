@@ -1,0 +1,282 @@
+/* ===== MODIFICATIONS POUR LAYOUT COMPACT SANS SCROLL ===== */
+
+/* Réduction de la hauteur du header */
+.game-header-bar {
+    height: 50px !important;
+    padding: 8px 15px !important;
+}
+
+.game-title-small {
+    font-size: 1.1rem !important;
+}
+
+.chess-icon-small {
+    font-size: 1.3rem !important;
+}
+
+.game-mode-label {
+    font-size: 0.75rem !important;
+    margin: 2px 0 0 0 !important;
+}
+
+.turn-counter {
+    padding: 6px 12px !important;
+    min-width: 70px !important;
+}
+
+.turn-label {
+    font-size: 0.7rem !important;
+}
+
+.turn-value {
+    font-size: 1.2rem !important;
+}
+
+.back-button {
+    padding: 6px 12px !important;
+    font-size: 0.85rem !important;
+}
+
+/* Ajuster le top du game-board */
+.game-board {
+    top: 50px !important;
+}
+
+/* Zones joueur compactes */
+.player-zone {
+    padding: 6px 8px !important;
+    overflow: hidden !important;
+}
+
+/* Header joueur réduit */
+.player-header {
+    margin-bottom: 4px !important;
+    gap: 4px !important;
+    min-height: 30px !important;
+}
+
+.player-name {
+    font-size: 0.85rem !important;
+    gap: 4px !important;
+}
+
+.player-icon {
+    font-size: 1rem !important;
+}
+
+.first-player-indicator {
+    padding: 2px 6px !important;
+    font-size: 0.65rem !important;
+    gap: 2px !important;
+}
+
+.star-icon {
+    font-size: 0.9rem !important;
+}
+
+/* Stats réduites */
+.player-stats {
+    gap: 4px !important;
+}
+
+.stat-item {
+    padding: 3px 6px !important;
+    border-radius: 4px !important;
+    gap: 4px !important;
+}
+
+.stat-icon {
+    font-size: 0.85rem !important;
+}
+
+.stat-value {
+    font-size: 0.8rem !important;
+    min-width: 18px !important;
+}
+
+/* Mains réduites */
+.hand {
+    gap: 6px !important;
+    padding: 6px !important;
+    min-height: 90px !important;
+    max-height: 95px !important;
+}
+
+/* Cartes plus petites */
+.card {
+    width: 70px !important;
+    height: 100px !important;
+    border-radius: 5px !important;
+    box-shadow:
+        0 0 0 2px #2d3142,
+        0 0 0 3px rgba(233, 69, 96, 0.5),
+        0 4px 12px rgba(0, 0, 0, 0.6) !important;
+}
+
+.card::after {
+    border-radius: 5px !important;
+}
+
+.card-inner {
+    padding: 4px !important;
+}
+
+.card-header {
+    margin-bottom: 2px !important;
+    min-height: 20px !important;
+}
+
+.current-power {
+    font-size: 0.85rem !important;
+    padding: 3px 6px !important;
+    min-width: 28px !important;
+    border-radius: 4px !important;
+    gap: 2px !important;
+}
+
+.card-piece {
+    font-size: 2.5rem !important;
+    margin: 0 !important;
+}
+
+.card-name {
+    font-size: 0.5rem !important;
+    padding: 1px 2px !important;
+    margin-top: 2px !important;
+}
+
+/* Defense zone compacte */
+.defense-zone {
+    margin-top: 4px !important;
+    margin-bottom: 4px !important;
+}
+
+.defense-label {
+    font-size: 0.7rem !important;
+    margin-bottom: 4px !important;
+}
+
+.defense-slots {
+    gap: 6px !important;
+}
+
+.defense-slot {
+    width: 70px !important;
+    height: 100px !important;
+    border: 2px dashed rgba(255, 255, 255, 0.3) !important;
+    border-radius: 5px !important;
+}
+
+.defense-slot .card {
+    width: 70px !important;
+    height: 100px !important;
+}
+
+.defense-info-icon {
+    font-size: 1.2rem !important;
+    padding: 4px !important;
+    width: 30px !important;
+    height: 30px !important;
+    margin-top: 4px !important;
+}
+
+/* Combat zone compacte */
+.combat-zone {
+    padding: 8px !important;
+    overflow: hidden !important;
+}
+
+.combat-area {
+    gap: 15px !important;
+    margin-bottom: 8px !important;
+}
+
+.combat-card-placeholder {
+    width: 80px !important;
+    height: 115px !important;
+    border: 3px dashed rgba(255, 255, 255, 0.4) !important;
+    border-radius: 6px !important;
+}
+
+.combat-card-placeholder .card {
+    width: 75px !important;
+    height: 108px !important;
+}
+
+.vs-indicator {
+    font-size: 1.5rem !important;
+}
+
+/* Messages et actions compacts */
+.game-message {
+    padding: 6px 12px !important;
+    font-size: 0.8rem !important;
+    margin-bottom: 8px !important;
+}
+
+.action-buttons {
+    gap: 6px !important;
+}
+
+.action-button {
+    padding: 6px 12px !important;
+    font-size: 0.75rem !important;
+    min-width: 120px !important;
+}
+
+/* Ajustements pour les cartes blanches et noires */
+.card.white,
+.card.black {
+    box-shadow:
+        0 0 0 2px #d4af37,
+        0 0 0 3px rgba(212, 175, 55, 0.6),
+        0 4px 12px rgba(0, 0, 0, 0.4) !important;
+}
+
+.card.hidden .card-piece {
+    font-size: 3.5rem !important;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .game-board {
+        top: 60px !important;
+    }
+
+    .game-header-bar {
+        height: auto !important;
+        min-height: 60px !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .card {
+        width: 65px !important;
+        height: 92px !important;
+    }
+
+    .card-piece {
+        font-size: 2.2rem !important;
+    }
+
+    .current-power {
+        font-size: 0.75rem !important;
+        padding: 2px 4px !important;
+    }
+
+    .defense-slot,
+    .defense-slot .card {
+        width: 65px !important;
+        height: 92px !important;
+    }
+
+    .combat-card-placeholder {
+        width: 70px !important;
+        height: 100px !important;
+    }
+
+    .combat-card-placeholder .card {
+        width: 65px !important;
+        height: 95px !important;
+    }
+}
