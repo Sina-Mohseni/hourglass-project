@@ -1434,8 +1434,11 @@ function showDefenseModal(owner) {
     modal.className = 'graveyard-modal';
     modal.id = 'defense-modal-temp';
 
-    // Empêcher le scroll du body pendant que la modale est ouverte
-    document.body.style.overflow = 'hidden';
+    // Sauvegarder la position de scroll et fixer le body pour éviter tout mouvement
+    const scrollY = window.scrollY;
+    document.body.style.position = 'fixed';
+    document.body.style.top = `-${scrollY}px`;
+    document.body.style.width = '100%';
 
     const ownerName = owner === 'player1' ? gameState.settings.player1Name : gameState.settings.player2Name;
     const defenseCards = gameState[owner].defense || [];
@@ -1469,9 +1472,12 @@ function showDefenseModal(owner) {
     modal.innerHTML = modalHTML;
     document.body.appendChild(modal);
 
-    // Function pour fermer le modal en restaurant le scroll
+    // Fonction pour fermer la modale et restaurer la position exacte
     const closeModal = () => {
-        document.body.style.overflow = '';
+        document.body.style.position = '';
+        document.body.style.top = '';
+        document.body.style.width = '';
+        window.scrollTo(0, scrollY);
         modal.remove();
     };
 
