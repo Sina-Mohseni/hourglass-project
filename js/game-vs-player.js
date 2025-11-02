@@ -1060,7 +1060,7 @@ function createCardElement(card, hidden = false, isDefense = false) {
     });
     div.addEventListener('mouseleave', hideCardTooltip);
 
-    // Mobile : double-tap pour afficher le tooltip ou la modale
+    // Mobile : double-tap pour afficher le tooltip
     div.addEventListener('touchend', (e) => {
         // Toujours empêcher la propagation pour éviter conflits avec d'autres handlers
         e.preventDefault();
@@ -1072,19 +1072,7 @@ function createCardElement(card, hidden = false, isDefense = false) {
         // Double-tap détecté (moins de 300ms entre deux taps)
         if (tapTimeDiff < 300 && tapTimeDiff > 0) {
             touchHandled = true;
-
-            // Si c'est une carte en défense, afficher la modale de défense
-            if (isDefense) {
-                // Trouver le propriétaire de cette carte
-                const player1Defense = gameState.player1.defense || [];
-                const player2Defense = gameState.player2.defense || [];
-                const owner = player1Defense.some(c => c.id === card.id) ? 'player1' : 'player2';
-                showDefenseModal(owner);
-            } else {
-                // Sinon, afficher le tooltip normal
-                showCardTooltip(card, e, isDefense);
-            }
-
+            showCardTooltip(card, e, isDefense);
             lastTapTime = 0;
 
             // Reset après un délai
@@ -1426,19 +1414,23 @@ function makeGraveyardStatsClickable() {
     document.getElementById('player2-prison').parentElement.addEventListener('click', () => {
         showGraveyardModal('player2', true);
     });
+
+    // Zones de défense
+    document.getElementById('player1-defense').classList.add('clickable');
+    document.getElementById('player1-defense').addEventListener('click', () => {
+        showDefenseModal('player1');
+    });
+
+    document.getElementById('player2-defense').classList.add('clickable');
+    document.getElementById('player2-defense').addEventListener('click', () => {
+        showDefenseModal('player2');
+    });
 }
 
 function showDefenseModal(owner) {
-    // Créer le modal
     const modal = document.createElement('div');
     modal.className = 'graveyard-modal';
     modal.id = 'defense-modal-temp';
-
-    // Sauvegarder la position de scroll et fixer le body pour éviter tout mouvement
-    const scrollY = window.scrollY;
-    document.body.style.position = 'fixed';
-    document.body.style.top = `-${scrollY}px`;
-    document.body.style.width = '100%';
 
     const ownerName = owner === 'player1' ? gameState.settings.player1Name : gameState.settings.player2Name;
     const defenseCards = gameState[owner].defense || [];
@@ -1472,21 +1464,13 @@ function showDefenseModal(owner) {
     modal.innerHTML = modalHTML;
     document.body.appendChild(modal);
 
-    // Fonction pour fermer la modale et restaurer la position exacte
-    const closeModal = () => {
-        document.body.style.position = '';
-        document.body.style.top = '';
-        document.body.style.width = '';
-        window.scrollTo(0, scrollY);
+    document.getElementById('close-defense').addEventListener('click', () => {
         modal.remove();
-    };
-
-    // Event listeners
-    document.getElementById('close-defense').addEventListener('click', closeModal);
+    });
 
     modal.addEventListener('click', (e) => {
         if (e.target === modal) {
-            closeModal();
+            modal.remove();
         }
     });
 }
