@@ -69,13 +69,19 @@
                             <li><strong>Pas de doublon</strong> : Une pile ne peut pas contenir deux fois le même chiffre</li>
                         </ul>
 
+                        <h3>Fin de manche - 2 possibilités</h3>
+                        <ol>
+                            <li><strong>Élimination</strong> : Un joueur ne peut plus jouer → Il prend des points égaux à la somme de ses cartes en main</li>
+                            <li><strong>Pile complète (9 cartes)</strong> : Un joueur complète une pile → Il gagne <strong style="color: #4ecca3;">-15 points</strong> (retire 15 points de son score) 🎉</li>
+                        </ol>
+
                         <h3>Système de Joker ⭐</h3>
                         <ul>
-                            <li>Le perdant d'une manche commence la manche suivante et reçoit <strong>1 carte Joker multicolore</strong></li>
+                            <li>Le perdant d'une manche <strong>par élimination</strong> commence la manche suivante et reçoit <strong>1 carte Joker multicolore</strong></li>
                             <li>Le Joker peut être joué comme n'importe quelle couleur et n'importe quel chiffre</li>
                             <li>Le Joker est utilisable une seule fois</li>
                             <li>Si un joueur perd plusieurs manches <strong>consécutives</strong>, il accumule des Jokers (2, 3, 4...)</li>
-                            <li>Si un joueur avec Joker(s) ne perd pas la manche suivante, puis reperd ultérieurement (pas à la suite), il revient à 1 Joker</li>
+                            <li>En cas de pile complète, <strong>aucun joueur ne reçoit de Joker</strong></li>
                         </ul>
 
                         <h3>Fin de partie</h3>
@@ -191,8 +197,8 @@
                     <h3>🎴 Tour de jeu</h3>
                     <ul>
                         <li>Jouez une carte sur une des 9 piles</li>
-                        <li>Piochez une nouvelle carte</li>
-                        <li>Si vous ne pouvez pas jouer : éliminé !</li>
+                        <li>Piochez optionnellement une carte (max 1)</li>
+                        <li>Terminez votre tour</li>
                     </ul>
                 </div>
 
@@ -205,18 +211,24 @@
                     </ul>
                 </div>
 
+                <div class="rule-card" style="border-color: #4ecca3; background: linear-gradient(135deg, var(--bg-tertiary), rgba(78, 204, 163, 0.05));">
+                    <h3 style="color: #4ecca3;">🎉 Pile complète = BONUS !</h3>
+                    <p>Complétez une pile de 9 cartes → <strong style="color: #4ecca3;">-15 points !</strong></p>
+                    <p style="font-size: 0.9rem; margin-top: 5px;">La manche se termine immédiatement.</p>
+                </div>
+
                 <div class="rule-card joker-rule">
                     <h3>⭐ Système de Joker</h3>
                     <ul>
-                        <li>Le perdant commence la manche suivante avec <strong>1 Joker</strong></li>
-                        <li>Le Joker = n'importe quelle couleur + n'importe quel chiffre</li>
-                        <li>Perte consécutive = cumul de Jokers (2, 3, 4...)</li>
-                        <li>Perte non-consécutive = retour à 1 Joker</li>
+                        <li>Le perdant (par élimination) commence avec <strong>1 Joker</strong></li>
+                        <li>Le Joker = n'importe quelle couleur + chiffre</li>
+                        <li>Perte consécutive = cumul de Jokers</li>
+                        <li>Pile complète = pas de Joker donné</li>
                     </ul>
                 </div>
 
                 <div class="rule-card">
-                    <h3>🏆 Victoire</h3>
+                    <h3>🏆 Fin de partie</h3>
                     <p>Premier à atteindre le score max = perdant. Le gagnant a le moins de points !</p>
                 </div>
             </div>

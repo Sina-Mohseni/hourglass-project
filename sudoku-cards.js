@@ -317,6 +317,58 @@ function endRound(eliminatedPlayer) {
     }
 }
 
+function endRoundWithCompletion(winningPlayer, pileIndex) {
+    // Le joueur qui a complété la pile ne devient pas lastRoundLoser
+    // Réinitialiser les pertes consécutives de tous les joueurs (personne n'a perdu)
+    gameState.players.forEach(player => {
+        if (player.consecutiveLosses > 0) {
+            player.consecutiveLosses = 0;
+        }
+    });
+
+    // Aucun joueur ne reçoit de joker dans ce cas
+    gameState.lastRoundLoser = null;
+
+    // Afficher le modal de fin de manche
+    const modal = document.getElementById('round-end-modal');
+    const roundResult = document.getElementById('round-result');
+    const scoresTable = document.getElementById('scores-table');
+
+    const pileColor = gameState.piles[pileIndex][0].color;
+    const colorName = COLOR_NAMES[pileColor];
+
+    roundResult.innerHTML = `
+        <p style="color: var(--success); font-size: 1.3rem; font-weight: 700;">🎉 Pile complète ! 🎉</p>
+        <p><strong>${winningPlayer.name}</strong> a complété une pile de 9 cartes ${colorName}s !</p>
+        <p>Bonus : <span style="color: var(--success); font-weight: 700;">-15 points</span></p>
+    `;
+
+    // Afficher les scores
+    let scoresHTML = '<div class="scores-table">';
+    gameState.players.forEach(player => {
+        const jokerBadge = player.jokers > 0 ? ` <span style="color: #ffd700;">(⭐×${player.jokers})</span>` : '';
+        scoresHTML += `
+            <div class="score-row ${player.id === winningPlayer.id ? 'winner' : ''}">
+                <span>${player.name}${jokerBadge}</span>
+                <span>${player.score} points</span>
+            </div>
+        `;
+    });
+    scoresHTML += '</div>';
+    scoresTable.innerHTML = scoresHTML;
+
+    modal.classList.add('active');
+
+    // Vérifier si la partie est terminée
+    const loser = gameState.players.find(p => p.score >= gameState.maxScore);
+    if (loser) {
+        document.getElementById('next-round-btn').style.display = 'none';
+        setTimeout(() => endGame(loser), 2000);
+    } else {
+        document.getElementById('next-round-btn').style.display = 'block';
+    }
+}
+
 function nextRound() {
     document.getElementById('round-end-modal').classList.remove('active');
     gameState.round++;
@@ -402,6 +454,14 @@ function playCard(card, pileIndex) {
     // Marquer que le joueur a joué une carte
     gameState.hasPlayedCard = true;
 
+    // Vérifier si la pile est complète (9 cartes)
+    if (gameState.piles[pileIndex].length === 9) {
+        // Pile complète ! Le joueur gagne 15 points (retire 15 points négatifs)
+        currentPlayer.score -= 15;
+        endRoundWithCompletion(currentPlayer, pileIndex);
+        return;
+    }
+
     // Si c'est l'IA, piocher et terminer le tour automatiquement
     if (currentPlayer.type === 'ai') {
         if (gameState.deck.length > 0) {
@@ -450,6 +510,14 @@ function playJoker(pileIndex) {
 
     // Marquer que le joueur a joué une carte
     gameState.hasPlayedCard = true;
+
+    // Vérifier si la pile est complète (9 cartes)
+    if (gameState.piles[pileIndex].length === 9) {
+        // Pile complète ! Le joueur gagne 15 points (retire 15 points négatifs)
+        currentPlayer.score -= 15;
+        endRoundWithCompletion(currentPlayer, pileIndex);
+        return;
+    }
 
     // Si c'est l'IA, piocher et terminer le tour automatiquement
     if (currentPlayer.type === 'ai') {
