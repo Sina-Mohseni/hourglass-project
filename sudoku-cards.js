@@ -507,7 +507,8 @@ function isValidMove(card, pileIndex) {
     // Vérifier que le chiffre n'est pas déjà dans la pile
     if (pile.some(c => c.number === card.number)) return false;
 
-    return true;
+    // Vérifier les règles du Sudoku (pas de même chiffre dans la ligne/colonne)
+    return checkSudokuRules(card, pileIndex);
 }
 
 function checkSudokuRules(card, pileIndex) {
