@@ -41,6 +41,48 @@
                     <div id="players-setup"></div>
                 </div>
 
+                <div class="menu-section rules-section">
+                    <h2>Règles du jeu</h2>
+                    <div class="rules-content">
+                        <h3>But du jeu</h3>
+                        <p>Ne pas être éliminé ! Le joueur qui ne peut plus jouer de carte est éliminé et gagne des points négatifs égaux à la somme de ses cartes en main. Le premier joueur à atteindre le score maximum perd la partie.</p>
+
+                        <h3>Matériel</h3>
+                        <ul>
+                            <li><strong>81 cartes</strong> : 9 couleurs (rouge, bleu, vert, jaune, orange, mauve, noir, blanc, gris) × 9 chiffres (1 à 9)</li>
+                            <li><strong>9 piles</strong> disposées en grille 3×3</li>
+                        </ul>
+
+                        <h3>Déroulement d'une manche</h3>
+                        <ol>
+                            <li>Chaque joueur reçoit 5 cartes</li>
+                            <li>À son tour, un joueur doit poser une carte sur une des 9 piles</li>
+                            <li>Après avoir joué, il pioche une nouvelle carte (s'il en reste)</li>
+                            <li>Si un joueur ne peut pas jouer, il est éliminé et la manche se termine</li>
+                        </ol>
+
+                        <h3>Règles de placement</h3>
+                        <ul>
+                            <li><strong>Pile vide</strong> : Vous pouvez y placer n'importe quelle carte dont la couleur n'est pas déjà utilisée sur une autre pile</li>
+                            <li><strong>Règle de couleur</strong> : Une pile ne peut contenir que des cartes de la même couleur (9 cartes maximum)</li>
+                            <li><strong>Règle Sudoku</strong> : Vous ne pouvez pas placer un chiffre sur une pile si le même chiffre est visible au sommet d'une autre pile dans la même ligne ou colonne (grille 3×3)</li>
+                            <li><strong>Pas de doublon</strong> : Une pile ne peut pas contenir deux fois le même chiffre</li>
+                        </ul>
+
+                        <h3>Système de Joker ⭐</h3>
+                        <ul>
+                            <li>Le perdant d'une manche commence la manche suivante et reçoit <strong>1 carte Joker multicolore</strong></li>
+                            <li>Le Joker peut être joué comme n'importe quelle couleur et n'importe quel chiffre</li>
+                            <li>Le Joker est utilisable une seule fois</li>
+                            <li>Si un joueur perd plusieurs manches <strong>consécutives</strong>, il accumule des Jokers (2, 3, 4...)</li>
+                            <li>Si un joueur avec Joker(s) ne perd pas la manche suivante, puis reperd ultérieurement (pas à la suite), il revient à 1 Joker</li>
+                        </ul>
+
+                        <h3>Fin de partie</h3>
+                        <p>La partie se termine quand un joueur atteint ou dépasse le score maximum choisi. Le gagnant est celui qui a le <strong>moins de points</strong>.</p>
+                    </div>
+                </div>
+
                 <button id="start-game-btn" class="btn btn-primary">Commencer la partie</button>
             </div>
         </div>
@@ -55,7 +97,10 @@
                     <span>Score max: <span id="game-max-score">100</span></span>
                 </div>
             </div>
-            <button id="menu-btn" class="btn btn-secondary">Menu</button>
+            <div class="header-actions">
+                <button id="rules-btn" class="btn btn-info">Règles</button>
+                <button id="menu-btn" class="btn btn-secondary">Menu</button>
+            </div>
         </div>
 
         <div class="game-layout">
@@ -94,7 +139,13 @@
 
                 <!-- Main du joueur actif -->
                 <div class="player-hand-container">
-                    <h3>Votre main</h3>
+                    <div class="hand-header">
+                        <h3>Votre main</h3>
+                        <div id="joker-count" class="joker-indicator" style="display:none;">
+                            <span class="joker-icon">⭐</span>
+                            <span class="joker-text">×<span id="joker-number">0</span> Joker(s)</span>
+                        </div>
+                    </div>
                     <div id="player-hand" class="player-hand"></div>
                     <div class="hand-actions">
                         <button id="pass-turn-btn" class="btn btn-warning" style="display:none;">Je ne peux pas jouer</button>
@@ -121,6 +172,53 @@
             <div id="game-result"></div>
             <div id="final-scores"></div>
             <button id="new-game-btn" class="btn btn-primary">Nouvelle partie</button>
+        </div>
+    </div>
+
+    <!-- Modal des règles -->
+    <div id="rules-modal" class="modal">
+        <div class="modal-content modal-large">
+            <h2>Règles du jeu</h2>
+            <div class="rules-summary">
+                <div class="rule-card">
+                    <h3>🎯 Objectif</h3>
+                    <p>Ne pas être éliminé ! Jouez vos cartes stratégiquement pour éviter de vous retrouver bloqué.</p>
+                </div>
+
+                <div class="rule-card">
+                    <h3>🎴 Tour de jeu</h3>
+                    <ul>
+                        <li>Jouez une carte sur une des 9 piles</li>
+                        <li>Piochez une nouvelle carte</li>
+                        <li>Si vous ne pouvez pas jouer : éliminé !</li>
+                    </ul>
+                </div>
+
+                <div class="rule-card">
+                    <h3>📏 Règles de placement</h3>
+                    <ul>
+                        <li><strong>Couleur</strong> : Une pile = une seule couleur</li>
+                        <li><strong>Sudoku</strong> : Pas de chiffre identique dans la même ligne/colonne</li>
+                        <li><strong>Nouveau</strong> : Une couleur déjà posée ne peut aller que sur sa pile</li>
+                    </ul>
+                </div>
+
+                <div class="rule-card joker-rule">
+                    <h3>⭐ Système de Joker</h3>
+                    <ul>
+                        <li>Le perdant commence la manche suivante avec <strong>1 Joker</strong></li>
+                        <li>Le Joker = n'importe quelle couleur + n'importe quel chiffre</li>
+                        <li>Perte consécutive = cumul de Jokers (2, 3, 4...)</li>
+                        <li>Perte non-consécutive = retour à 1 Joker</li>
+                    </ul>
+                </div>
+
+                <div class="rule-card">
+                    <h3>🏆 Victoire</h3>
+                    <p>Premier à atteindre le score max = perdant. Le gagnant a le moins de points !</p>
+                </div>
+            </div>
+            <button id="close-rules-btn" class="btn btn-primary">Compris !</button>
         </div>
     </div>
 

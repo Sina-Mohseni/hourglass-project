@@ -666,6 +666,206 @@ body {
     }
 }
 
+/* Section des règles dans le menu */
+.rules-section {
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.rules-content h3 {
+    color: var(--success);
+    margin-top: 20px;
+    margin-bottom: 10px;
+    font-size: 1.1rem;
+}
+
+.rules-content h3:first-child {
+    margin-top: 0;
+}
+
+.rules-content p {
+    color: var(--text-secondary);
+    line-height: 1.6;
+    margin-bottom: 15px;
+}
+
+.rules-content ul,
+.rules-content ol {
+    color: var(--text-secondary);
+    line-height: 1.8;
+    padding-left: 25px;
+    margin-bottom: 15px;
+}
+
+.rules-content li {
+    margin-bottom: 8px;
+}
+
+.rules-content strong {
+    color: var(--text-primary);
+}
+
+/* Header actions */
+.header-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.btn-info {
+    background: var(--success);
+    color: white;
+}
+
+.btn-info:hover {
+    background: #3dbd8f;
+}
+
+/* Main du joueur avec joker */
+.hand-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.joker-indicator {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: linear-gradient(135deg, #ffd700, #ffed4e);
+    padding: 8px 15px;
+    border-radius: 20px;
+    color: #2c3e50;
+    font-weight: 700;
+    animation: pulse-glow 2s infinite;
+}
+
+@keyframes pulse-glow {
+    0%, 100% {
+        box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+    }
+    50% {
+        box-shadow: 0 0 20px rgba(255, 215, 0, 0.8);
+    }
+}
+
+.joker-icon {
+    font-size: 1.3rem;
+    animation: rotate-star 3s linear infinite;
+}
+
+@keyframes rotate-star {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.joker-text {
+    font-size: 0.95rem;
+}
+
+/* Carte Joker */
+.card.joker {
+    background: linear-gradient(135deg, #ffd700, #ffed4e, #ff69b4, #00bfff);
+    background-size: 400% 400%;
+    animation: gradient-shift 3s ease infinite;
+    border-color: #ffd700;
+    position: relative;
+    overflow: hidden;
+}
+
+@keyframes gradient-shift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+.card.joker::before {
+    content: '⭐';
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 1.5rem;
+}
+
+.card.joker .card-number {
+    color: #2c3e50;
+    text-shadow: 2px 2px 4px rgba(255, 255, 255, 0.5);
+}
+
+.card.joker .card-color-name {
+    color: #2c3e50;
+    font-weight: 700;
+}
+
+/* Modal des règles */
+.modal-large {
+    max-width: 800px;
+}
+
+.rules-summary {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.rule-card {
+    background: var(--bg-tertiary);
+    padding: 20px;
+    border-radius: 10px;
+    border: 2px solid var(--border-color);
+}
+
+.rule-card h3 {
+    color: var(--accent-primary);
+    margin-bottom: 15px;
+    font-size: 1.2rem;
+}
+
+.rule-card p {
+    color: var(--text-secondary);
+    line-height: 1.6;
+}
+
+.rule-card ul {
+    color: var(--text-secondary);
+    line-height: 1.8;
+    padding-left: 20px;
+}
+
+.rule-card li {
+    margin-bottom: 8px;
+}
+
+.rule-card strong {
+    color: var(--text-primary);
+}
+
+.joker-rule {
+    border-color: #ffd700;
+    background: linear-gradient(135deg, var(--bg-tertiary), rgba(255, 215, 0, 0.05));
+}
+
+.joker-rule h3 {
+    color: #ffd700;
+}
+
+/* Indicateur de joker pour les joueurs */
+.player-joker-badge {
+    display: inline-block;
+    background: linear-gradient(135deg, #ffd700, #ffed4e);
+    color: #2c3e50;
+    padding: 3px 8px;
+    border-radius: 10px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    margin-top: 5px;
+}
+
 /* Scrollbar personnalisée */
 ::-webkit-scrollbar {
     width: 10px;
@@ -682,4 +882,15 @@ body {
 
 ::-webkit-scrollbar-thumb:hover {
     background: #ff6b6b;
+}
+
+/* Responsive pour les règles */
+@media (max-width: 768px) {
+    .rules-summary {
+        grid-template-columns: 1fr;
+    }
+
+    .modal-large {
+        max-width: 95%;
+    }
 }

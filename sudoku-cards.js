@@ -28,7 +28,9 @@ let gameState = {
     round: 1,
     maxScore: 100,
     selectedCard: null,
-    selectedPile: null
+    selectedPile: null,
+    lastRoundLoser: null,
+    playingJoker: false
 };
 
 // ===============================
@@ -136,7 +138,9 @@ function startGame() {
                 type: 'human',
                 hand: [],
                 score: 0,
-                eliminated: false
+                eliminated: false,
+                jokers: 0,
+                consecutiveLosses: 0
             });
         } else {
             const difficultyBtn = document.querySelector(`.player-config-ai[data-player="${i}"] .difficulty-btn.active`);
@@ -148,7 +152,9 @@ function startGame() {
                 difficulty: difficulty,
                 hand: [],
                 score: 0,
-                eliminated: false
+                eliminated: false,
+                jokers: 0,
+                consecutiveLosses: 0
             });
         }
     }
@@ -162,7 +168,9 @@ function startGame() {
         round: 1,
         maxScore: maxScore,
         selectedCard: null,
-        selectedPile: null
+        selectedPile: null,
+        lastRoundLoser: null,
+        playingJoker: false
     };
 
     // Passer à l'écran de jeu
@@ -206,6 +214,7 @@ function startRound() {
     gameState.piles = Array(9).fill(null).map(() => []);
     gameState.selectedCard = null;
     gameState.selectedPile = null;
+    gameState.playingJoker = false;
 
     // Réinitialiser les joueurs
     gameState.players.forEach(player => {
@@ -220,6 +229,14 @@ function startRound() {
         }
     });
 
+    // Si c'est la première manche, le joueur 0 commence
+    // Sinon, le perdant de la manche précédente commence
+    if (gameState.lastRoundLoser !== null) {
+        gameState.currentPlayerIndex = gameState.lastRoundLoser.id;
+    } else {
+        gameState.currentPlayerIndex = 0;
+    }
+
     // Mettre à jour l'affichage
     updateGameDisplay();
 
@@ -232,22 +249,49 @@ function endRound(eliminatedPlayer) {
     const points = eliminatedPlayer.hand.reduce((sum, card) => sum + card.number, 0);
     eliminatedPlayer.score += points;
 
+    // Gérer le système de jokers
+    // Si c'est le même joueur que la manche précédente qui perd
+    if (gameState.lastRoundLoser && gameState.lastRoundLoser.id === eliminatedPlayer.id) {
+        eliminatedPlayer.consecutiveLosses++;
+        eliminatedPlayer.jokers = eliminatedPlayer.consecutiveLosses;
+    } else {
+        // Si c'est un autre joueur qui perd
+        // Réinitialiser les pertes consécutives des autres joueurs
+        gameState.players.forEach(player => {
+            if (player.id !== eliminatedPlayer.id && player.consecutiveLosses > 0) {
+                player.consecutiveLosses = 0;
+            }
+        });
+
+        eliminatedPlayer.consecutiveLosses = 1;
+        eliminatedPlayer.jokers = 1;
+    }
+
+    // Mémoriser le perdant de cette manche
+    gameState.lastRoundLoser = eliminatedPlayer;
+
     // Afficher le modal de fin de manche
     const modal = document.getElementById('round-end-modal');
     const roundResult = document.getElementById('round-result');
     const scoresTable = document.getElementById('scores-table');
 
+    const jokerMessage = eliminatedPlayer.jokers > 0
+        ? `<p style="color: #ffd700; margin-top: 10px;">⭐ Vous commencerez la prochaine manche avec ${eliminatedPlayer.jokers} Joker${eliminatedPlayer.jokers > 1 ? 's' : ''} !</p>`
+        : '';
+
     roundResult.innerHTML = `
         <p><strong>${eliminatedPlayer.name}</strong> a été éliminé(e) !</p>
         <p>Points gagnés : <span style="color: var(--danger)">+${points}</span></p>
+        ${jokerMessage}
     `;
 
     // Afficher les scores
     let scoresHTML = '<div class="scores-table">';
     gameState.players.forEach(player => {
+        const jokerBadge = player.jokers > 0 ? ` <span style="color: #ffd700;">(⭐×${player.jokers})</span>` : '';
         scoresHTML += `
             <div class="score-row ${player.id === eliminatedPlayer.id ? 'loser' : ''}">
-                <span>${player.name}</span>
+                <span>${player.name}${jokerBadge}</span>
                 <span>${player.score} points</span>
             </div>
         `;
@@ -318,10 +362,11 @@ function endGame(loser) {
 function playTurn() {
     const currentPlayer = gameState.players[gameState.currentPlayerIndex];
 
-    // Vérifier si le joueur a des coups possibles
+    // Vérifier si le joueur a des coups possibles (cartes ou jokers)
     const validMoves = getValidMoves(currentPlayer);
+    const hasJoker = currentPlayer.jokers > 0;
 
-    if (validMoves.length === 0) {
+    if (validMoves.length === 0 && !hasJoker) {
         // Le joueur est éliminé
         currentPlayer.eliminated = true;
         endRound(currentPlayer);
@@ -357,9 +402,53 @@ function playCard(card, pileIndex) {
     nextPlayer();
 }
 
+function playJoker(pileIndex) {
+    const currentPlayer = gameState.players[gameState.currentPlayerIndex];
+
+    // Déterminer quelle carte le joker va représenter
+    const pile = gameState.piles[pileIndex];
+    let jokerCard;
+
+    if (pile.length === 0) {
+        // Pile vide : choisir une couleur disponible et un chiffre stratégique
+        const usedColors = gameState.piles
+            .filter(p => p.length > 0)
+            .map(p => p[0].color);
+        const availableColors = COLORS.filter(c => !usedColors.includes(c));
+
+        const color = availableColors[Math.floor(Math.random() * availableColors.length)];
+        const number = Math.floor(Math.random() * 9) + 1;
+
+        jokerCard = { color, number, isJoker: true };
+    } else {
+        // Pile existante : suivre la couleur et choisir un chiffre manquant
+        const color = pile[0].color;
+        const usedNumbers = pile.map(c => c.number);
+        const availableNumbers = NUMBERS.filter(n => !usedNumbers.includes(n));
+
+        const number = availableNumbers[Math.floor(Math.random() * availableNumbers.length)];
+        jokerCard = { color, number, isJoker: true };
+    }
+
+    // Ajouter le joker à la pile
+    gameState.piles[pileIndex].push(jokerCard);
+
+    // Réduire le nombre de jokers
+    currentPlayer.jokers--;
+
+    // Piocher une nouvelle carte si le deck n'est pas vide
+    if (gameState.deck.length > 0) {
+        currentPlayer.hand.push(gameState.deck.pop());
+    }
+
+    // Passer au joueur suivant
+    nextPlayer();
+}
+
 function nextPlayer() {
     gameState.selectedCard = null;
     gameState.selectedPile = null;
+    gameState.playingJoker = false;
 
     do {
         gameState.currentPlayerIndex = (gameState.currentPlayerIndex + 1) % gameState.players.length;
@@ -457,6 +546,20 @@ function checkSudokuRules(card, pileIndex) {
 // ===============================
 
 function playAITurn(player, validMoves) {
+    // Si l'IA n'a pas de coups valides mais a un joker, l'utiliser
+    if (validMoves.length === 0 && player.jokers > 0) {
+        // Trouver une pile non pleine
+        const availablePiles = gameState.piles
+            .map((pile, index) => ({ pile, index }))
+            .filter(({ pile }) => pile.length < 9);
+
+        if (availablePiles.length > 0) {
+            const randomPile = availablePiles[Math.floor(Math.random() * availablePiles.length)];
+            playJoker(randomPile.index);
+        }
+        return;
+    }
+
     let chosenMove;
 
     switch (player.difficulty) {
@@ -545,10 +648,13 @@ function updatePlayersList() {
         const playerCard = document.createElement('div');
         playerCard.className = `player-card ${index === gameState.currentPlayerIndex ? 'active' : ''} ${player.eliminated ? 'eliminated' : ''}`;
 
+        const jokerBadge = player.jokers > 0 ? `<div class="player-joker-badge">⭐ ×${player.jokers}</div>` : '';
+
         playerCard.innerHTML = `
             <div class="player-name">${player.name}</div>
             <div class="player-score">${player.score} pts</div>
             <div class="player-cards-count">${player.hand.length} carte(s)</div>
+            ${jokerBadge}
             ${index === gameState.currentPlayerIndex && !player.eliminated ? '<div class="player-status">À jouer</div>' : ''}
             ${player.eliminated ? '<div class="player-status" style="background: var(--danger);">Éliminé</div>' : ''}
         `;
@@ -588,10 +694,21 @@ function updatePlayerHand() {
     const currentPlayer = gameState.players[gameState.currentPlayerIndex];
     const handElement = document.getElementById('player-hand');
     const passBtn = document.getElementById('pass-turn-btn');
+    const jokerIndicator = document.getElementById('joker-count');
+    const jokerNumber = document.getElementById('joker-number');
 
     handElement.innerHTML = '';
 
+    // Afficher l'indicateur de jokers si le joueur en a
+    if (currentPlayer.jokers > 0) {
+        jokerIndicator.style.display = 'flex';
+        jokerNumber.textContent = currentPlayer.jokers;
+    } else {
+        jokerIndicator.style.display = 'none';
+    }
+
     if (currentPlayer.type === 'human') {
+        // Afficher les cartes normales
         currentPlayer.hand.forEach(card => {
             const cardElement = createCardElement(card, true);
 
@@ -605,9 +722,17 @@ function updatePlayerHand() {
             handElement.appendChild(cardElement);
         });
 
+        // Afficher les cartes joker
+        for (let i = 0; i < currentPlayer.jokers; i++) {
+            const jokerCard = createJokerCard();
+            jokerCard.onclick = () => handleJokerClick();
+            handElement.appendChild(jokerCard);
+        }
+
         // Afficher le bouton "passer" si aucun coup n'est possible
         const validMoves = getValidMoves(currentPlayer);
-        passBtn.style.display = validMoves.length === 0 ? 'block' : 'none';
+        const hasJoker = currentPlayer.jokers > 0;
+        passBtn.style.display = (validMoves.length === 0 && !hasJoker) ? 'block' : 'none';
     } else {
         // Pour l'IA, afficher des cartes cachées
         for (let i = 0; i < currentPlayer.hand.length; i++) {
@@ -617,6 +742,13 @@ function updatePlayerHand() {
             cardBack.style.height = '120px';
             handElement.appendChild(cardBack);
         }
+
+        // Afficher les jokers de l'IA
+        for (let i = 0; i < currentPlayer.jokers; i++) {
+            const jokerCard = createJokerCard();
+            handElement.appendChild(jokerCard);
+        }
+
         passBtn.style.display = 'none';
     }
 }
@@ -643,6 +775,22 @@ function createCardElement(card, selectable) {
     return cardElement;
 }
 
+function createJokerCard() {
+    const jokerCard = document.createElement('div');
+    jokerCard.className = 'card joker';
+
+    if (gameState.playingJoker) {
+        jokerCard.classList.add('selected');
+    }
+
+    jokerCard.innerHTML = `
+        <div class="card-number">?</div>
+        <div class="card-color-name">JOKER</div>
+    `;
+
+    return jokerCard;
+}
+
 // ===============================
 // GESTION DES ÉVÉNEMENTS
 // ===============================
@@ -655,6 +803,7 @@ function handleCardClick(card, canPlay) {
 
     gameState.selectedCard = card;
     gameState.selectedPile = null;
+    gameState.playingJoker = false;
 
     // Mettre à jour l'affichage pour montrer les piles valides
     updatePiles();
@@ -673,10 +822,44 @@ function handleCardClick(card, canPlay) {
     });
 }
 
+function handleJokerClick() {
+    const currentPlayer = gameState.players[gameState.currentPlayerIndex];
+    if (currentPlayer.type !== 'human') return;
+    if (currentPlayer.jokers <= 0) return;
+
+    gameState.playingJoker = true;
+    gameState.selectedCard = null;
+    gameState.selectedPile = null;
+
+    // Mettre à jour l'affichage
+    updatePlayerHand();
+
+    // Toutes les piles sont valides pour un joker (sauf les piles pleines)
+    const piles = document.querySelectorAll('.pile');
+    piles.forEach((pileElement, index) => {
+        pileElement.classList.remove('valid-drop', 'invalid-drop');
+
+        if (gameState.piles[index].length < 9) {
+            pileElement.classList.add('valid-drop');
+        } else {
+            pileElement.classList.add('invalid-drop');
+        }
+    });
+}
+
 function handlePileClick(pileIndex) {
     const currentPlayer = gameState.players[gameState.currentPlayerIndex];
     if (currentPlayer.type !== 'human') return;
 
+    // Jouer un joker
+    if (gameState.playingJoker) {
+        if (gameState.piles[pileIndex].length < 9) {
+            playJoker(pileIndex);
+        }
+        return;
+    }
+
+    // Jouer une carte normale
     if (!gameState.selectedCard) return;
 
     if (isValidMove(gameState.selectedCard, pileIndex)) {
@@ -697,6 +880,14 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('game-screen').classList.remove('active');
             document.getElementById('menu-screen').classList.add('active');
         }
+    });
+
+    document.getElementById('rules-btn').addEventListener('click', () => {
+        document.getElementById('rules-modal').classList.add('active');
+    });
+
+    document.getElementById('close-rules-btn').addEventListener('click', () => {
+        document.getElementById('rules-modal').classList.remove('active');
     });
 
     document.getElementById('next-round-btn').addEventListener('click', nextRound);
