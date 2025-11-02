@@ -267,7 +267,10 @@ function resolveCombat(card1, card2, isAttackVsAttack = true, firstPlayer = null
         } else {
             // Contre autres pièces, pions 1&2 sont considérés comme chiffres faibles
             if (card2.type === CARD_TYPES.PAWN) {
-                return card1.number > card2.number ? 1 : (card1.number < card2.number ? -1 : 0);
+                if (card1.number > card2.number) return 1;
+                if (card1.number < card2.number) return -1;
+                // Égalité de numéro → Premier joueur gagne
+                return firstPlayer === 'card1' ? 1 : -1;
             }
             return -1; // Pions 1&2 perdent contre pièces majeures
         }
@@ -279,7 +282,10 @@ function resolveCombat(card1, card2, isAttackVsAttack = true, firstPlayer = null
             return firstPlayer === 'card1' ? 1 : -1;
         } else {
             if (card1.type === CARD_TYPES.PAWN) {
-                return card1.number > card2.number ? 1 : (card1.number < card2.number ? -1 : 0);
+                if (card1.number > card2.number) return 1;
+                if (card1.number < card2.number) return -1;
+                // Égalité de numéro → Premier joueur gagne
+                return firstPlayer === 'card1' ? 1 : -1;
             }
             return 1; // Pièces majeures battent pions 1&2
         }

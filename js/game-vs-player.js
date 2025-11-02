@@ -277,7 +277,10 @@ function resolveCombat(card1, card2, isAttackVsAttack = true, firstPlayer = null
             return firstPlayer === 'card1' ? 1 : -1;
         } else {
             if (card2.type === CARD_TYPES.PAWN) {
-                return card1.number > card2.number ? 1 : (card1.number < card2.number ? -1 : 0);
+                if (card1.number > card2.number) return 1;
+                if (card1.number < card2.number) return -1;
+                // Égalité de numéro → Premier joueur gagne
+                return firstPlayer === 'card1' ? 1 : -1;
             }
             return -1;
         }
@@ -289,7 +292,10 @@ function resolveCombat(card1, card2, isAttackVsAttack = true, firstPlayer = null
             return firstPlayer === 'card1' ? 1 : -1;
         } else {
             if (card1.type === CARD_TYPES.PAWN) {
-                return card1.number > card2.number ? 1 : (card1.number < card2.number ? -1 : 0);
+                if (card1.number > card2.number) return 1;
+                if (card1.number < card2.number) return -1;
+                // Égalité de numéro → Premier joueur gagne
+                return firstPlayer === 'card1' ? 1 : -1;
             }
             return 1;
         }
