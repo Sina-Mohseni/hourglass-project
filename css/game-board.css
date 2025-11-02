@@ -683,6 +683,28 @@
     text-align: center;
 }
 
+.defense-info-icon {
+    font-size: 1.5rem;
+    text-align: center;
+    margin-top: 10px;
+    padding: 8px;
+    cursor: pointer;
+    transition: var(--transition);
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.defense-info-icon:hover {
+    background: rgba(233, 69, 96, 0.2);
+    transform: scale(1.1);
+}
+
 /* ===== COMBAT ZONE ===== */
 .combat-zone {
     background: rgba(15, 52, 96, 0.5);

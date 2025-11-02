@@ -1635,6 +1635,15 @@ function makeGraveyardStatsClickable() {
     document.getElementById('ai-prison').parentElement.addEventListener('click', () => {
         showGraveyardModal('ai', true);
     });
+
+    // Icônes de défense
+    document.getElementById('player-defense-info').addEventListener('click', () => {
+        showDefenseModal('player');
+    });
+
+    document.getElementById('ai-defense-info').addEventListener('click', () => {
+        showDefenseModal('ai');
+    });
 }
 
 function showGraveyardModal(owner, prisonOnly = false) {
@@ -1701,6 +1710,54 @@ function showGraveyardModal(owner, prisonOnly = false) {
 
     // Event listeners
     document.getElementById('close-graveyard').addEventListener('click', () => {
+        modal.remove();
+    });
+
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+            modal.remove();
+        }
+    });
+}
+
+function showDefenseModal(owner) {
+    const modal = document.createElement('div');
+    modal.className = 'graveyard-modal';
+    modal.id = 'defense-modal-temp';
+
+    const ownerName = owner === 'player' ? 'Vous' : 'IA';
+    const defenseCards = gameState[owner].defense || [];
+
+    let modalHTML = `
+        <div class="graveyard-modal-content">
+            <div class="graveyard-modal-header">
+                <h2 class="graveyard-modal-title">
+                    🛡️ Défense de ${ownerName}
+                </h2>
+                <button class="close-modal" id="close-defense">×</button>
+            </div>
+            <div class="graveyard-modal-body">
+                <div class="graveyard-section">
+                    <h3 class="graveyard-section-title">
+                        🛡️ Défenseurs actifs <span class="count-badge">${defenseCards.length} / ${gameState.settings.defenders}</span>
+                    </h3>
+                    <div class="graveyard-cards-grid" id="defense-cards">
+    `;
+
+    if (defenseCards.length === 0) {
+        modalHTML += '<div class="graveyard-empty">Aucun défenseur</div>';
+    } else {
+        defenseCards.forEach(card => {
+            modalHTML += createCardElement(card, false, true).outerHTML;
+        });
+    }
+
+    modalHTML += '</div></div></div></div>';
+
+    modal.innerHTML = modalHTML;
+    document.body.appendChild(modal);
+
+    document.getElementById('close-defense').addEventListener('click', () => {
         modal.remove();
     });
 
