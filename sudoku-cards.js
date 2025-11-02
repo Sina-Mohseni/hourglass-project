@@ -826,20 +826,33 @@ function updatePlayerHand() {
         currentPlayer.hand.forEach(card => {
             const cardElement = createCardElement(card, true);
 
-            // Vérifier si la carte peut être jouée sur au moins une pile (indices 0 à 8)
-            const canPlay = [0, 1, 2, 3, 4, 5, 6, 7, 8].some(pileIndex => isValidMove(card, pileIndex));
-            if (!canPlay) {
+            // Si une carte a déjà été jouée, désactiver toutes les cartes
+            if (gameState.hasPlayedCard) {
                 cardElement.classList.add('disabled');
-            }
+                cardElement.onclick = null;
+            } else {
+                // Vérifier si la carte peut être jouée sur au moins une pile (indices 0 à 8)
+                const canPlay = [0, 1, 2, 3, 4, 5, 6, 7, 8].some(pileIndex => isValidMove(card, pileIndex));
+                if (!canPlay) {
+                    cardElement.classList.add('disabled');
+                }
 
-            cardElement.onclick = () => handleCardClick(card, canPlay);
+                cardElement.onclick = () => handleCardClick(card, canPlay);
+            }
             handElement.appendChild(cardElement);
         });
 
         // Afficher les cartes joker
         for (let i = 0; i < currentPlayer.jokers; i++) {
             const jokerCard = createJokerCard();
-            jokerCard.onclick = () => handleJokerClick();
+
+            // Si une carte a déjà été jouée, désactiver les jokers
+            if (gameState.hasPlayedCard) {
+                jokerCard.classList.add('disabled');
+                jokerCard.onclick = null;
+            } else {
+                jokerCard.onclick = () => handleJokerClick();
+            }
             handElement.appendChild(jokerCard);
         }
 
@@ -985,6 +998,9 @@ function handleJokerClick() {
 function handlePileClick(pileIndex) {
     const currentPlayer = gameState.players[gameState.currentPlayerIndex];
     if (currentPlayer.type !== 'human') return;
+
+    // Ne pas permettre de jouer une autre carte si une carte a déjà été jouée
+    if (gameState.hasPlayedCard) return;
 
     // Jouer un joker
     if (gameState.playingJoker) {

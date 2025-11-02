@@ -44,48 +44,69 @@
                 <div class="menu-section rules-section">
                     <h2>Règles du jeu</h2>
                     <div class="rules-content">
-                        <h3>But du jeu</h3>
-                        <p>Ne pas être éliminé ! Le joueur qui ne peut plus jouer de carte est éliminé et gagne des points négatifs égaux à la somme de ses cartes en main. Le premier joueur à atteindre le score maximum perd la partie.</p>
+                        <h3>🎯 But du jeu</h3>
+                        <p>Avoir le <strong>moins de points</strong> possible ! Le premier joueur à atteindre le score maximum <strong>perd la partie</strong>.</p>
 
-                        <h3>Matériel</h3>
+                        <h3>🎴 Matériel</h3>
                         <ul>
                             <li><strong>81 cartes</strong> : 9 couleurs (rouge, bleu, vert, jaune, orange, mauve, noir, blanc, gris) × 9 chiffres (1 à 9)</li>
-                            <li><strong>9 piles</strong> disposées en grille 3×3</li>
+                            <li><strong>9 piles</strong> disposées en grille 3×3 (comme un Sudoku)</li>
+                            <li><strong>5 cartes en main</strong> par joueur au départ</li>
                         </ul>
 
-                        <h3>Déroulement d'une manche</h3>
+                        <h3>🎲 Déroulement d'un tour</h3>
                         <ol>
-                            <li>Chaque joueur reçoit 5 cartes</li>
-                            <li>À son tour, un joueur doit poser une carte sur une des 9 piles</li>
-                            <li>Après avoir joué, il pioche une nouvelle carte (s'il en reste)</li>
-                            <li>Si un joueur ne peut pas jouer, il est éliminé et la manche se termine</li>
+                            <li><strong>Jouer UNE carte</strong> : Choisissez une carte de votre main et placez-la sur une pile</li>
+                            <li><strong>Piocher (optionnel)</strong> : Vous POUVEZ piocher UNE carte (maximum 1 par tour) si des cartes restent dans la pioche</li>
+                            <li><strong>Terminer le tour</strong> : Cliquez sur "Terminer le tour" pour passer au joueur suivant</li>
+                        </ol>
+                        <p style="color: var(--warning); font-style: italic;">⚠️ Vous ne pouvez jouer qu'UNE SEULE carte par tour ! Une fois jouée, vous devez terminer votre tour.</p>
+
+                        <h3>📏 Règles de placement des cartes</h3>
+                        <h4>Sur une pile vide :</h4>
+                        <ul>
+                            <li>La couleur de la carte ne doit pas être déjà utilisée sur une autre pile</li>
+                            <li>Le chiffre ne doit pas apparaître sur une autre pile de la même ligne ou colonne (règle Sudoku)</li>
+                        </ul>
+
+                        <h4>Sur une pile existante :</h4>
+                        <ul>
+                            <li><strong>Même couleur</strong> : La carte doit être de la même couleur que les cartes déjà sur la pile</li>
+                            <li><strong>Pas de doublon</strong> : Le chiffre ne doit pas déjà être présent dans la pile</li>
+                            <li><strong>Règle Sudoku</strong> : Le chiffre ne doit pas apparaître au sommet d'une autre pile dans la même ligne ou colonne</li>
+                        </ul>
+
+                        <h3>🏁 Fin de manche - 2 possibilités</h3>
+                        <ol>
+                            <li>
+                                <strong style="color: var(--danger);">Élimination (mauvais)</strong> : Un joueur ne peut plus jouer
+                                <ul>
+                                    <li>Il gagne <strong>+points</strong> égaux à la somme de ses cartes en main</li>
+                                    <li>Il commence la prochaine manche et reçoit 1 Joker</li>
+                                </ul>
+                            </li>
+                            <li>
+                                <strong style="color: var(--success);">Pile complète (bon !)</strong> : Un joueur complète une pile de 9 cartes
+                                <ul>
+                                    <li>Il gagne <strong>-15 points</strong> (retire 15 points de son score) 🎉</li>
+                                    <li>La manche se termine immédiatement</li>
+                                    <li>Aucun joueur ne reçoit de Joker</li>
+                                </ul>
+                            </li>
                         </ol>
 
-                        <h3>Règles de placement</h3>
+                        <h3>⭐ Système de Joker</h3>
                         <ul>
-                            <li><strong>Pile vide</strong> : Vous pouvez y placer n'importe quelle carte dont la couleur n'est pas déjà utilisée sur une autre pile</li>
-                            <li><strong>Règle de couleur</strong> : Une pile ne peut contenir que des cartes de la même couleur (9 cartes maximum)</li>
-                            <li><strong>Règle Sudoku</strong> : Vous ne pouvez pas placer un chiffre sur une pile si le même chiffre est visible au sommet d'une autre pile dans la même ligne ou colonne (grille 3×3)</li>
-                            <li><strong>Pas de doublon</strong> : Une pile ne peut pas contenir deux fois le même chiffre</li>
+                            <li>Le <strong>perdant par élimination</strong> commence la manche suivante avec <strong>1 Joker</strong></li>
+                            <li>Le Joker peut être joué comme <strong>n'importe quelle couleur ET n'importe quel chiffre</strong></li>
+                            <li>Utilisable <strong>une seule fois</strong> (le Joker disparaît après utilisation)</li>
+                            <li>Si un joueur perd <strong>plusieurs manches consécutives</strong>, il accumule des Jokers (2, 3, 4...)</li>
+                            <li>Si un joueur perd après avoir gagné au moins une manche (perte non-consécutive), il revient à 1 Joker</li>
+                            <li>En cas de <strong>pile complète</strong>, personne ne reçoit de Joker</li>
                         </ul>
 
-                        <h3>Fin de manche - 2 possibilités</h3>
-                        <ol>
-                            <li><strong>Élimination</strong> : Un joueur ne peut plus jouer → Il prend des points égaux à la somme de ses cartes en main</li>
-                            <li><strong>Pile complète (9 cartes)</strong> : Un joueur complète une pile → Il gagne <strong style="color: #4ecca3;">-15 points</strong> (retire 15 points de son score) 🎉</li>
-                        </ol>
-
-                        <h3>Système de Joker ⭐</h3>
-                        <ul>
-                            <li>Le perdant d'une manche <strong>par élimination</strong> commence la manche suivante et reçoit <strong>1 carte Joker multicolore</strong></li>
-                            <li>Le Joker peut être joué comme n'importe quelle couleur et n'importe quel chiffre</li>
-                            <li>Le Joker est utilisable une seule fois</li>
-                            <li>Si un joueur perd plusieurs manches <strong>consécutives</strong>, il accumule des Jokers (2, 3, 4...)</li>
-                            <li>En cas de pile complète, <strong>aucun joueur ne reçoit de Joker</strong></li>
-                        </ul>
-
-                        <h3>Fin de partie</h3>
-                        <p>La partie se termine quand un joueur atteint ou dépasse le score maximum choisi. Le gagnant est celui qui a le <strong>moins de points</strong>.</p>
+                        <h3>🏆 Fin de partie</h3>
+                        <p>La partie se termine quand un joueur atteint ou dépasse le <strong>score maximum choisi</strong>. Le <strong>gagnant</strong> est celui qui a le <strong>moins de points</strong> !</p>
                     </div>
                 </div>
 
@@ -190,46 +211,62 @@
             <div class="rules-summary">
                 <div class="rule-card">
                     <h3>🎯 Objectif</h3>
-                    <p>Ne pas être éliminé ! Jouez vos cartes stratégiquement pour éviter de vous retrouver bloqué.</p>
+                    <p>Avoir le <strong>moins de points</strong> possible ! Évitez l'élimination et visez les piles complètes.</p>
                 </div>
 
                 <div class="rule-card">
-                    <h3>🎴 Tour de jeu</h3>
-                    <ul>
-                        <li>Jouez une carte sur une des 9 piles</li>
-                        <li>Piochez optionnellement une carte (max 1)</li>
-                        <li>Terminez votre tour</li>
+                    <h3>🎴 Votre tour en 3 étapes</h3>
+                    <ol style="line-height: 1.6;">
+                        <li>Jouez <strong>UNE carte</strong> sur une pile</li>
+                        <li>Piochez <strong>0 ou 1 carte</strong> (optionnel)</li>
+                        <li>Cliquez sur <strong>"Terminer le tour"</strong></li>
+                    </ol>
+                    <p style="font-size: 0.85rem; color: var(--warning); margin-top: 5px;">⚠️ 1 seule carte par tour !</p>
+                </div>
+
+                <div class="rule-card">
+                    <h3>📏 Placement des cartes</h3>
+                    <p style="font-size: 0.9rem; margin-bottom: 8px;"><strong>Pile vide :</strong></p>
+                    <ul style="font-size: 0.9rem;">
+                        <li>Couleur non utilisée ailleurs</li>
+                        <li>Respect de la règle Sudoku</li>
                     </ul>
-                </div>
-
-                <div class="rule-card">
-                    <h3>📏 Règles de placement</h3>
-                    <ul>
-                        <li><strong>Couleur</strong> : Une pile = une seule couleur</li>
-                        <li><strong>Sudoku</strong> : Pas de chiffre identique dans la même ligne/colonne</li>
-                        <li><strong>Nouveau</strong> : Une couleur déjà posée ne peut aller que sur sa pile</li>
+                    <p style="font-size: 0.9rem; margin-top: 8px; margin-bottom: 8px;"><strong>Pile existante :</strong></p>
+                    <ul style="font-size: 0.9rem;">
+                        <li>Même couleur uniquement</li>
+                        <li>Pas de doublon dans la pile</li>
+                        <li>Respect de la règle Sudoku</li>
                     </ul>
                 </div>
 
                 <div class="rule-card" style="border-color: #4ecca3; background: linear-gradient(135deg, var(--bg-tertiary), rgba(78, 204, 163, 0.05));">
                     <h3 style="color: #4ecca3;">🎉 Pile complète = BONUS !</h3>
-                    <p>Complétez une pile de 9 cartes → <strong style="color: #4ecca3;">-15 points !</strong></p>
-                    <p style="font-size: 0.9rem; margin-top: 5px;">La manche se termine immédiatement.</p>
-                </div>
-
-                <div class="rule-card joker-rule">
-                    <h3>⭐ Système de Joker</h3>
+                    <p>Complétez 9 cartes d'une couleur :</p>
                     <ul>
-                        <li>Le perdant (par élimination) commence avec <strong>1 Joker</strong></li>
-                        <li>Le Joker = n'importe quelle couleur + chiffre</li>
-                        <li>Perte consécutive = cumul de Jokers</li>
-                        <li>Pile complète = pas de Joker donné</li>
+                        <li><strong style="color: #4ecca3;">-15 points !</strong></li>
+                        <li>Fin de manche immédiate</li>
+                        <li>Pas de Joker donné</li>
                     </ul>
                 </div>
 
-                <div class="rule-card">
-                    <h3>🏆 Fin de partie</h3>
-                    <p>Premier à atteindre le score max = perdant. Le gagnant a le moins de points !</p>
+                <div class="rule-card" style="border-color: var(--danger); background: linear-gradient(135deg, var(--bg-tertiary), rgba(231, 76, 60, 0.05));">
+                    <h3 style="color: var(--danger);">❌ Élimination</h3>
+                    <p>Si vous ne pouvez plus jouer :</p>
+                    <ul>
+                        <li><strong style="color: var(--danger);">+points</strong> (somme de vos cartes)</li>
+                        <li>Vous commencez la prochaine manche</li>
+                        <li>Vous recevez 1 Joker</li>
+                    </ul>
+                </div>
+
+                <div class="rule-card joker-rule">
+                    <h3>⭐ Joker</h3>
+                    <ul>
+                        <li>Joue comme n'importe quelle carte</li>
+                        <li>Donné au perdant (élimination)</li>
+                        <li>Cumule si pertes consécutives</li>
+                        <li>Usage unique</li>
+                    </ul>
                 </div>
             </div>
             <button id="close-rules-btn" class="btn btn-primary">Compris !</button>
