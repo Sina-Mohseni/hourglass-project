@@ -45,11 +45,17 @@ let gameState = {
 
 function initMenu() {
     const numPlayersSelect = document.getElementById('num-players');
+    const firstPlayerModeSelect = document.getElementById('first-player-mode');
     const playersSetup = document.getElementById('players-setup');
     const startGameBtn = document.getElementById('start-game-btn');
 
     // Mise à jour de la configuration des joueurs
     numPlayersSelect.addEventListener('change', () => {
+        updatePlayersSetup(parseInt(numPlayersSelect.value));
+    });
+
+    // Mise à jour quand on change le mode de sélection du premier joueur
+    firstPlayerModeSelect.addEventListener('change', () => {
         updatePlayersSetup(parseInt(numPlayersSelect.value));
     });
 
@@ -62,13 +68,28 @@ function initMenu() {
 
 function updatePlayersSetup(numPlayers) {
     const playersSetup = document.getElementById('players-setup');
+    const firstPlayerMode = document.getElementById('first-player-mode').value;
     playersSetup.innerHTML = '';
 
     for (let i = 0; i < numPlayers; i++) {
         const playerDiv = document.createElement('div');
         playerDiv.className = 'player-setup';
+
+        // Afficher l'option de premier joueur si le mode est manuel
+        const firstPlayerOption = firstPlayerMode === 'manual'
+            ? `<div class="first-player-option">
+                <label>
+                    <input type="radio" name="first-player" value="${i}" ${i === 0 ? 'checked' : ''}>
+                    <span>Premier joueur</span>
+                </label>
+            </div>`
+            : '';
+
         playerDiv.innerHTML = `
-            <h3>Joueur ${i + 1}</h3>
+            <div class="player-setup-header">
+                <h3>Joueur ${i + 1}</h3>
+                ${firstPlayerOption}
+            </div>
             <div class="player-type-selector">
                 <button class="player-type-btn ${i === 0 ? 'active' : ''}" data-player="${i}" data-type="human">
                     Humain
@@ -130,6 +151,7 @@ function startGame() {
     const maxScore = parseInt(document.getElementById('max-score').value);
     const numPlayers = parseInt(document.getElementById('num-players').value);
     const maxHandSize = parseInt(document.getElementById('max-hand-size').value);
+    const firstPlayerMode = document.getElementById('first-player-mode').value;
 
     // Créer les joueurs
     const players = [];
@@ -166,12 +188,24 @@ function startGame() {
         }
     }
 
+    // Déterminer le premier joueur
+    let initialPlayerIndex = 0;
+    if (firstPlayerMode === 'manual') {
+        const selectedFirstPlayer = document.querySelector('input[name="first-player"]:checked');
+        if (selectedFirstPlayer) {
+            initialPlayerIndex = parseInt(selectedFirstPlayer.value);
+        }
+    } else {
+        // Mode aléatoire
+        initialPlayerIndex = Math.floor(Math.random() * numPlayers);
+    }
+
     // Initialiser le jeu
     gameState = {
         deck: createDeck(),
         players: players,
         piles: Array(9).fill(null).map(() => []),
-        currentPlayerIndex: 0,
+        currentPlayerIndex: initialPlayerIndex,
         round: 1,
         maxScore: maxScore,
         maxHandSize: maxHandSize,
