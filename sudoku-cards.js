@@ -690,7 +690,8 @@ function checkSudokuRules(card, pileIndex) {
             const otherPile = gameState.piles[otherPileIndex];
             if (otherPile.length > 0) {
                 const topCard = otherPile[otherPile.length - 1];
-                if (topCard.number === card.number) return false;
+                // Ignorer les jokers : ils sont transparents pour les règles Sudoku
+                if (!topCard.isJoker && topCard.number === card.number) return false;
             }
         }
     }
@@ -702,7 +703,8 @@ function checkSudokuRules(card, pileIndex) {
             const otherPile = gameState.piles[otherPileIndex];
             if (otherPile.length > 0) {
                 const topCard = otherPile[otherPile.length - 1];
-                if (topCard.number === card.number) return false;
+                // Ignorer les jokers : ils sont transparents pour les règles Sudoku
+                if (!topCard.isJoker && topCard.number === card.number) return false;
             }
         }
     }
