@@ -485,38 +485,67 @@ function checkSeriesBonus(card, player) {
     }
     // Cas 2 : Joker
     else {
-        // Compter combien de chaque chiffre est visible (avant de compter le joker)
-        const numberCounts = {};
-        for (let num = 1; num <= 9; num++) {
-            numberCounts[num] = 0;
-        }
+        // Compter combien de jokers sont déjà visibles sur le plateau (avant de poser celui-ci)
+        let jokerCount = 0;
+        const visibleNumbers = [];
 
         for (let i = 0; i < gameState.piles.length; i++) {
             const pile = gameState.piles[i];
             if (pile.length > 0) {
                 const topCard = pile[pile.length - 1];
-                // Ne compter que les cartes normales (pas les jokers) avant le joker qu'on vient de poser
-                if (!topCard.isJoker) {
-                    numberCounts[topCard.number]++;
+                if (topCard.isJoker) {
+                    jokerCount++;
+                } else {
+                    visibleNumbers.push(topCard.number);
                 }
             }
         }
 
-        // Trouver les chiffres qui ont au moins 2 cartes visibles
-        const eligibleNumbers = [];
-        for (let num = 1; num <= 9; num++) {
-            if (numberCounts[num] >= 2) {
-                eligibleNumbers.push(num);
+        // Cas spécial : si on pose un joker et qu'il y a déjà 2+ jokers sur le plateau
+        if (jokerCount >= 2) {
+            // Trouver le chiffre le plus bas parmi les cartes normales visibles
+            if (visibleNumbers.length > 0) {
+                const lowestNumber = Math.min(...visibleNumbers);
+                const points = 3 * lowestNumber;
+                player.score -= points;
+                showSeriesBonus(player, lowestNumber, 3, points, true); // true = joker triggered
             }
         }
+        // Cas normal : le joker compte pour le chiffre le plus bas avec 2+ cartes
+        else {
+            // Compter combien de chaque chiffre est visible
+            const numberCounts = {};
+            for (let num = 1; num <= 9; num++) {
+                numberCounts[num] = 0;
+            }
 
-        // Si on a des chiffres éligibles, prendre le plus bas
-        if (eligibleNumbers.length > 0) {
-            const lowestNumber = Math.min(...eligibleNumbers);
-            const count = numberCounts[lowestNumber] + 1; // +1 pour le joker qu'on vient de poser
-            const points = count * lowestNumber;
-            player.score -= points;
-            showSeriesBonus(player, lowestNumber, count, points, true); // true = joker triggered
+            for (let i = 0; i < gameState.piles.length; i++) {
+                const pile = gameState.piles[i];
+                if (pile.length > 0) {
+                    const topCard = pile[pile.length - 1];
+                    // Ne compter que les cartes normales (pas les jokers)
+                    if (!topCard.isJoker) {
+                        numberCounts[topCard.number]++;
+                    }
+                }
+            }
+
+            // Trouver les chiffres qui ont au moins 2 cartes visibles
+            const eligibleNumbers = [];
+            for (let num = 1; num <= 9; num++) {
+                if (numberCounts[num] >= 2) {
+                    eligibleNumbers.push(num);
+                }
+            }
+
+            // Si on a des chiffres éligibles, prendre le plus bas
+            if (eligibleNumbers.length > 0) {
+                const lowestNumber = Math.min(...eligibleNumbers);
+                const count = numberCounts[lowestNumber] + 1; // +1 pour le joker qu'on vient de poser
+                const points = count * lowestNumber;
+                player.score -= points;
+                showSeriesBonus(player, lowestNumber, count, points, true); // true = joker triggered
+            }
         }
     }
 }
