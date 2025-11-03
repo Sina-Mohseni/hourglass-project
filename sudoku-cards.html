@@ -86,6 +86,17 @@
                             <li><strong>Règle Sudoku</strong> : Le chiffre ne doit pas apparaître au sommet d'une autre pile dans la même ligne ou colonne</li>
                         </ul>
 
+                        <h3>✨ Bonus de série</h3>
+                        <p>Quand vous posez une carte, si <strong>3 cartes identiques ou plus</strong> (même chiffre) sont visibles sur le plateau :</p>
+                        <ul>
+                            <li>Vous gagnez immédiatement des <strong>points positifs</strong> = nombre de cartes × valeur du chiffre</li>
+                            <li>Exemple : 3 cartes "6" visibles = 3 × 6 = <strong>18 points</strong> gagnés (score diminue)</li>
+                            <li>Exemple : 4 cartes "7" visibles = 4 × 7 = <strong>28 points</strong> gagnés</li>
+                            <li>Les jokers ne comptent pas pour les séries</li>
+                            <li>La manche continue normalement après le bonus</li>
+                        </ul>
+                        <p style="color: var(--success); font-style: italic;">💡 Conseil : Essayez de créer des séries pour diminuer votre score !</p>
+
                         <h3>🏁 Fin de manche - 2 possibilités</h3>
                         <ol>
                             <li>
@@ -250,6 +261,17 @@
                         <li>Même couleur uniquement</li>
                         <li>Pas de doublon dans la pile</li>
                         <li>Respect de la règle Sudoku</li>
+                    </ul>
+                </div>
+
+                <div class="rule-card" style="border-color: #ffa500; background: linear-gradient(135deg, var(--bg-tertiary), rgba(255, 165, 0, 0.05));">
+                    <h3 style="color: #ffa500;">✨ Bonus de série</h3>
+                    <p style="font-size: 0.9rem;">3+ cartes identiques visibles :</p>
+                    <ul style="font-size: 0.9rem;">
+                        <li><strong style="color: #ffa500;">Points gagnés</strong> = nb × chiffre</li>
+                        <li>Ex: 3×"6" = 18 points</li>
+                        <li>Jokers exclus</li>
+                        <li>La manche continue</li>
                     </ul>
                 </div>
 

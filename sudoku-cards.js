@@ -460,6 +460,70 @@ function playTurn() {
     }
 }
 
+function checkSeriesBonus(card, player) {
+    // Ignorer les jokers pour le bonus de série
+    if (card.isJoker) return;
+
+    // Compter combien de cartes avec le même numéro sont visibles sur le plateau
+    let count = 0;
+    for (let i = 0; i < gameState.piles.length; i++) {
+        const pile = gameState.piles[i];
+        if (pile.length > 0) {
+            const topCard = pile[pile.length - 1];
+            // Ne compter que les cartes non-joker avec le même numéro
+            if (!topCard.isJoker && topCard.number === card.number) {
+                count++;
+            }
+        }
+    }
+
+    // Si au moins 3 cartes identiques sont visibles, gagner des points
+    if (count >= 3) {
+        const points = count * card.number;
+        player.score -= points; // Soustraire car moins de points = mieux
+
+        // Afficher une notification
+        showSeriesBonus(player, card.number, count, points);
+    }
+}
+
+function showSeriesBonus(player, cardNumber, count, points) {
+    // Créer une notification temporaire
+    const notification = document.createElement('div');
+    notification.style.cssText = `
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: linear-gradient(135deg, #4ecca3, #3dbd8f);
+        color: white;
+        padding: 30px 50px;
+        border-radius: 20px;
+        font-size: 1.5rem;
+        font-weight: 700;
+        text-align: center;
+        z-index: 2000;
+        box-shadow: 0 10px 40px rgba(78, 204, 163, 0.5);
+        animation: bounceIn 0.5s ease;
+    `;
+    notification.innerHTML = `
+        <div style="font-size: 2rem; margin-bottom: 10px;">🎉 SÉRIE ! 🎉</div>
+        <div>${player.name}</div>
+        <div style="margin: 15px 0;">${count} × ${cardNumber} = <strong>${points} points</strong></div>
+        <div style="font-size: 1rem; opacity: 0.9;">Score: ${player.score} points</div>
+    `;
+
+    document.body.appendChild(notification);
+
+    // Retirer après 3 secondes
+    setTimeout(() => {
+        notification.style.animation = 'fadeOut 0.5s ease';
+        setTimeout(() => {
+            document.body.removeChild(notification);
+        }, 500);
+    }, 3000);
+}
+
 function playCard(card, pileIndex) {
     const currentPlayer = gameState.players[gameState.currentPlayerIndex];
 
@@ -482,6 +546,9 @@ function playCard(card, pileIndex) {
         endRoundWithCompletion(currentPlayer, pileIndex);
         return;
     }
+
+    // Vérifier le bonus de série (3+ cartes identiques visibles)
+    checkSeriesBonus(card, currentPlayer);
 
     // Si c'est l'IA, piocher et terminer le tour automatiquement
     if (currentPlayer.type === 'ai') {
@@ -542,6 +609,9 @@ function playJoker(pileIndex) {
         endRoundWithCompletion(currentPlayer, pileIndex);
         return;
     }
+
+    // Vérifier le bonus de série (3+ cartes identiques visibles)
+    checkSeriesBonus(jokerCard, currentPlayer);
 
     // Si c'est l'IA, piocher et terminer le tour automatiquement
     if (currentPlayer.type === 'ai') {
