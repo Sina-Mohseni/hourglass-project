@@ -36,7 +36,8 @@ let gameState = {
     hasPlayedCard: false,
     hasDrawnCard: false,
     lastPlayedCard: null,
-    lastPlayedPile: null
+    lastPlayedPile: null,
+    waitingForTurnConfirmation: false
 };
 
 // ===============================
@@ -217,7 +218,8 @@ function startGame() {
         hasPlayedCard: false,
         hasDrawnCard: false,
         lastPlayedCard: null,
-        lastPlayedPile: null
+        lastPlayedPile: null,
+        waitingForTurnConfirmation: false
     };
 
     // Passer à l'écran de jeu
@@ -485,14 +487,38 @@ function playTurn() {
         return;
     }
 
-    updateGameDisplay();
-
-    // Si c'est une IA, jouer automatiquement après un délai
-    if (currentPlayer.type === 'ai') {
+    // Si c'est un joueur humain, afficher la modale de confirmation de tour
+    if (currentPlayer.type === 'human') {
+        showTurnConfirmation(currentPlayer);
+    } else {
+        // Si c'est une IA, mettre à jour l'affichage et jouer automatiquement
+        updateGameDisplay();
         setTimeout(() => {
             playAITurn(currentPlayer, validMoves);
         }, 1000);
     }
+}
+
+function showTurnConfirmation(player) {
+    gameState.waitingForTurnConfirmation = true;
+
+    // Afficher la modale de confirmation
+    const modal = document.getElementById('turn-confirmation-modal');
+    const playerNameElement = document.getElementById('turn-player-name');
+
+    playerNameElement.textContent = player.name;
+    modal.classList.add('active');
+}
+
+function startPlayerTurn() {
+    gameState.waitingForTurnConfirmation = false;
+
+    // Masquer la modale
+    const modal = document.getElementById('turn-confirmation-modal');
+    modal.classList.remove('active');
+
+    // Afficher le jeu
+    updateGameDisplay();
 }
 
 function checkSeriesBonus(card, player) {
@@ -1049,6 +1075,16 @@ function updatePlayerHand() {
 
     handElement.innerHTML = '';
 
+    // Si on attend la confirmation du tour, ne pas afficher les cartes
+    if (gameState.waitingForTurnConfirmation) {
+        jokerIndicator.style.display = 'none';
+        undoBtn.style.display = 'none';
+        drawBtn.style.display = 'none';
+        endTurnBtn.style.display = 'none';
+        passBtn.style.display = 'none';
+        return;
+    }
+
     // Afficher l'indicateur de jokers si le joueur en a
     if (currentPlayer.jokers > 0) {
         jokerIndicator.style.display = 'flex';
@@ -1307,4 +1343,5 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('draw-card-btn').addEventListener('click', drawCard);
     document.getElementById('end-turn-btn').addEventListener('click', endTurn);
     document.getElementById('pass-turn-btn').addEventListener('click', passTurn);
+    document.getElementById('start-turn-btn').addEventListener('click', startPlayerTurn);
 });
