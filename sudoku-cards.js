@@ -274,20 +274,22 @@ function shuffleDeck(deck) {
 
 function startRound() {
     // Réinitialiser le deck et les piles
-    gameState.deck = createDeck();
+    gameState.deck = createDeck(gameState.jokersInDeck);
     gameState.piles = Array(9).fill(null).map(() => []);
+    gameState.pilesState = Array(9).fill(null).map(() => ({ isJokerPile: false, isSealed: false }));
     gameState.selectedCard = null;
     gameState.selectedPile = null;
     gameState.playingJoker = false;
-    gameState.hasPlayedCard = false;
-    gameState.hasDrawnCard = false;
-    gameState.lastPlayedCard = null;
-    gameState.lastPlayedPile = null;
+    gameState.pendingAction = null;
+    gameState.waitingForTurnConfirmation = false;
 
     // Réinitialiser les joueurs
     gameState.players.forEach(player => {
         player.hand = [];
         player.eliminated = false;
+        player.hp = gameState.maxHP;
+        player.mp = gameState.maxMP;
+        player.deadCardColors = [];
     });
 
     // Distribuer les cartes initiales à chaque joueur (selon le nombre configuré)
@@ -1026,6 +1028,8 @@ function updateHeader() {
 
     const currentPlayer = gameState.players[gameState.currentPlayerIndex];
     document.getElementById('current-player-name').textContent = currentPlayer.name;
+    document.getElementById('current-player-hp').textContent = currentPlayer.hp;
+    document.getElementById('current-player-mp').textContent = currentPlayer.mp;
 }
 
 function updatePlayersList() {
