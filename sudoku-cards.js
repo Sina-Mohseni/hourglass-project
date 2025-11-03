@@ -493,12 +493,8 @@ function endGame(loser) {
 function playTurn() {
     const currentPlayer = gameState.players[gameState.currentPlayerIndex];
 
-    // Vérifier si le joueur a des coups possibles (cartes ou jokers)
-    const validMoves = getValidMoves(currentPlayer);
-    const hasJoker = currentPlayer.jokers > 0;
-
-    if (validMoves.length === 0 && !hasJoker) {
-        // Le joueur est éliminé
+    // Vérifier si le joueur a atteint 0 PV → fin de manche
+    if (currentPlayer.hp <= 0) {
         currentPlayer.eliminated = true;
         endRound(currentPlayer);
         return;
@@ -511,7 +507,7 @@ function playTurn() {
         // Si c'est une IA, mettre à jour l'affichage et jouer automatiquement
         updateGameDisplay();
         setTimeout(() => {
-            playAITurn(currentPlayer, validMoves);
+            playAITurn(currentPlayer);
         }, 1000);
     }
 }
