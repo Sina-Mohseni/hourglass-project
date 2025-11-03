@@ -535,16 +535,18 @@ function startPlayerTurn() {
 }
 
 function checkSeriesBonus(card, player) {
-    // Cas 1 : Carte normale (non-joker)
+    // v2.3 : Seules les cartes normales déclenchent les séries
+    // Les jokers ne comptent PLUS dans les séries
     if (!card.isJoker) {
-        // Compter combien de cartes avec le même numéro sont visibles sur le plateau
+        // Compter combien de cartes normales avec le même numéro sont visibles
         let count = 0;
         for (let i = 0; i < gameState.piles.length; i++) {
             const pile = gameState.piles[i];
             if (pile.length > 0) {
                 const topCard = pile[pile.length - 1];
-                // Compter les cartes normales avec le même numéro ET les jokers (qui comptent pour tous les chiffres)
-                if (topCard.number === card.number || topCard.isJoker) {
+                // Compter UNIQUEMENT les cartes normales avec le même numéro
+                // Les jokers ne comptent plus !
+                if (!topCard.isJoker && topCard.number === card.number) {
                     count++;
                 }
             }
@@ -553,75 +555,17 @@ function checkSeriesBonus(card, player) {
         // Si au moins 3 cartes identiques sont visibles, gagner des points
         if (count >= 3) {
             const points = count * card.number;
-            player.score -= points; // Soustraire car moins de points = mieux
+            player.score = Math.max(0, player.score - points); // Plancher à 0
+
+            // v2.3 : Piocher 1 carte après le bonus (si possible)
+            if (gameState.deck.length > 0 && player.hand.length < gameState.maxHandSize) {
+                player.hand.push(gameState.deck.pop());
+            }
+
             showSeriesBonus(player, card.number, count, points);
         }
     }
-    // Cas 2 : Joker
-    else {
-        // Compter combien de jokers sont déjà visibles sur le plateau (avant de poser celui-ci)
-        let jokerCount = 0;
-        const visibleNumbers = [];
-
-        for (let i = 0; i < gameState.piles.length; i++) {
-            const pile = gameState.piles[i];
-            if (pile.length > 0) {
-                const topCard = pile[pile.length - 1];
-                if (topCard.isJoker) {
-                    jokerCount++;
-                } else {
-                    visibleNumbers.push(topCard.number);
-                }
-            }
-        }
-
-        // Cas spécial : si on pose un joker et qu'il y a déjà 2+ jokers sur le plateau
-        if (jokerCount >= 2) {
-            // Trouver le chiffre le plus bas parmi les cartes normales visibles
-            if (visibleNumbers.length > 0) {
-                const lowestNumber = Math.min(...visibleNumbers);
-                const points = 3 * lowestNumber;
-                player.score -= points;
-                showSeriesBonus(player, lowestNumber, 3, points, true); // true = joker triggered
-            }
-        }
-        // Cas normal : le joker compte pour le chiffre le plus bas avec 2+ cartes
-        else {
-            // Compter combien de chaque chiffre est visible
-            const numberCounts = {};
-            for (let num = 1; num <= 9; num++) {
-                numberCounts[num] = 0;
-            }
-
-            for (let i = 0; i < gameState.piles.length; i++) {
-                const pile = gameState.piles[i];
-                if (pile.length > 0) {
-                    const topCard = pile[pile.length - 1];
-                    // Ne compter que les cartes normales (pas les jokers)
-                    if (!topCard.isJoker) {
-                        numberCounts[topCard.number]++;
-                    }
-                }
-            }
-
-            // Trouver les chiffres qui ont au moins 2 cartes visibles
-            const eligibleNumbers = [];
-            for (let num = 1; num <= 9; num++) {
-                if (numberCounts[num] >= 2) {
-                    eligibleNumbers.push(num);
-                }
-            }
-
-            // Si on a des chiffres éligibles, prendre le plus bas
-            if (eligibleNumbers.length > 0) {
-                const lowestNumber = Math.min(...eligibleNumbers);
-                const count = numberCounts[lowestNumber] + 1; // +1 pour le joker qu'on vient de poser
-                const points = count * lowestNumber;
-                player.score -= points;
-                showSeriesBonus(player, lowestNumber, count, points, true); // true = joker triggered
-            }
-        }
-    }
+    // Les jokers ne déclenchent plus de bonus de série (v2.3)
 }
 
 function showSeriesBonus(player, cardNumber, count, points, isJokerTriggered = false) {
@@ -676,6 +620,12 @@ function playCard(card, pileIndex) {
     // Ajouter la carte à la pile
     gameState.piles[pileIndex].push(card);
 
+    // Si c'est une pile Joker, fixer la couleur maintenant
+    if (gameState.pilesState[pileIndex].isJokerPile) {
+        gameState.pilesState[pileIndex].isJokerPile = false;
+        // La couleur est maintenant fixée par la carte posée
+    }
+
     // Désélectionner la carte
     gameState.selectedCard = null;
 
@@ -686,12 +636,14 @@ function playCard(card, pileIndex) {
         gameState.pilesState[pileIndex].isSealed = true;
 
         // Les cartes de cette couleur deviennent mortes
-        const sealedColor = gameState.piles[pileIndex][0].color;
-        gameState.players.forEach(player => {
-            if (!player.deadCardColors.includes(sealedColor)) {
-                player.deadCardColors.push(sealedColor);
-            }
-        });
+        const sealedColor = getPileColor(pileIndex);
+        if (sealedColor) {
+            gameState.players.forEach(player => {
+                if (!player.deadCardColors.includes(sealedColor)) {
+                    player.deadCardColors.push(sealedColor);
+                }
+            });
+        }
 
         // Continuer (pas de fin de manche comme avant)
     }
@@ -943,28 +895,51 @@ function getValidMoves(player) {
 
 function isValidMove(card, pileIndex) {
     const pile = gameState.piles[pileIndex];
+    const pileState = gameState.pilesState[pileIndex];
 
-    // Si la pile est vide, la carte peut être placée
+    // Pile scellée : impossible de jouer dessus
+    if (pileState.isSealed) return false;
+
+    // Pile vide
     if (pile.length === 0) {
         // Vérifier que la couleur n'est pas déjà utilisée sur une autre pile
-        const colorUsed = gameState.piles.some((p, i) =>
-            i !== pileIndex && p.length > 0 && p[0].color === card.color
-        );
+        const colorUsed = gameState.piles.some((p, i) => {
+            if (i === pileIndex) return false;
+            const pColor = getPileColor(i);
+            return pColor && pColor === card.color;
+        });
         if (colorUsed) return false;
 
         // Vérifier les règles du Sudoku (pas de même chiffre dans la ligne/colonne)
         return checkSudokuRules(card, pileIndex);
     }
 
-    // La pile a déjà des cartes
-    // Vérifier que la couleur correspond
-    if (pile[0].color !== card.color) return false;
+    // Pile Joker (pile sans couleur fixée) : toute couleur disponible
+    if (pileState.isJokerPile) {
+        // Vérifier que la couleur n'est pas déjà utilisée ailleurs
+        const colorUsed = gameState.piles.some((p, i) => {
+            if (i === pileIndex) return false;
+            const pColor = getPileColor(i);
+            return pColor && pColor === card.color;
+        });
+        if (colorUsed) return false;
+
+        // Vérifier que le numéro n'est pas déjà dans la pile
+        if (pile.some(c => !c.isJoker && c.number === card.number)) return false;
+
+        // Vérifier les règles du Sudoku
+        return checkSudokuRules(card, pileIndex);
+    }
+
+    // Pile avec couleur fixée
+    const pileColor = getPileColor(pileIndex);
+    if (pileColor && pileColor !== card.color) return false;
 
     // Vérifier que la pile n'est pas complète (9 cartes)
     if (pile.length >= 9) return false;
 
     // Vérifier que le chiffre n'est pas déjà dans la pile
-    if (pile.some(c => c.number === card.number)) return false;
+    if (pile.some(c => !c.isJoker && c.number === card.number)) return false;
 
     // Vérifier les règles du Sudoku (pas de même chiffre dans la ligne/colonne)
     return checkSudokuRules(card, pileIndex);
