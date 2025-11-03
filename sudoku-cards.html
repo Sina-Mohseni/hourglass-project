@@ -93,7 +93,7 @@
                 </div>
 
                 <div class="menu-section rules-section">
-                    <h2>Règles du jeu</h2>
+                    <h2>Règles du jeu (v2.3)</h2>
                     <div class="rules-content">
                         <h3>🎯 But du jeu</h3>
                         <p>Avoir le <strong>moins de points</strong> possible ! Le premier joueur à atteindre le score maximum <strong>perd la partie</strong>.</p>
@@ -101,17 +101,26 @@
                         <h3>🎴 Matériel</h3>
                         <ul>
                             <li><strong>81 cartes</strong> : 9 couleurs (rouge, bleu, vert, jaune, orange, mauve, noir, blanc, gris) × 9 chiffres (1 à 9)</li>
+                            <li><strong>Jokers</strong> : configurable (0, 2, 4, 6 ou 9 jokers dans le deck)</li>
                             <li><strong>9 piles</strong> disposées en grille 3×3 (comme un Sudoku)</li>
-                            <li><strong>Cartes en main</strong> : configurable de 2 à 5 cartes par joueur (les jokers ne comptent pas dans cette limite)</li>
+                            <li><strong>Cartes en main</strong> : configurable de 5 à 10 cartes par joueur</li>
+                        </ul>
+
+                        <h3>💖⚡ Ressources des joueurs</h3>
+                        <ul>
+                            <li><strong>❤️ PV (Points de Vie)</strong> : configurable (3, 5, 7 ou 10 PV max). Perdus en passant son tour.</li>
+                            <li><strong>⚡ PM (Points de Mana)</strong> : configurable (3, 5, 7 ou 10 PM max). Perdus en remplaçant une carte.</li>
+                            <li><strong>⚠️ Fin de manche</strong> : Quand un joueur atteint <strong>0 PV</strong>, la manche se termine.</li>
                         </ul>
 
                         <h3>🎲 Déroulement d'un tour</h3>
+                        <p>À votre tour, vous devez faire <strong>UNE action parmi</strong> :</p>
                         <ol>
-                            <li><strong>Jouer UNE carte</strong> : Choisissez une carte de votre main et placez-la sur une pile</li>
-                            <li><strong>Piocher (optionnel)</strong> : Vous POUVEZ piocher UNE carte (maximum 1 par tour) si vous n'avez pas atteint votre limite de cartes</li>
-                            <li><strong>Terminer le tour</strong> : Cliquez sur "Terminer le tour" pour passer au joueur suivant</li>
+                            <li><strong>Jouer une carte</strong> : Sélectionnez une carte de votre main et cliquez sur une pile</li>
+                            <li><strong>⏭️ Passer le tour (-1 ❤️ PV)</strong> : Si vous ne pouvez/voulez pas jouer</li>
+                            <li><strong>🔄 Remplacer une carte (-1 ⚡ PM)</strong> : Échangez une carte de votre main contre une carte du deck</li>
                         </ol>
-                        <p style="color: var(--warning); font-style: italic;">⚠️ Vous ne pouvez jouer qu'UNE SEULE carte par tour ! Limite de cartes en main configurable (2-5 cartes, les jokers ne comptent pas).</p>
+                        <p style="color: var(--warning); font-style: italic;">⚠️ Chaque action nécessite une <strong>confirmation</strong> (Accepter/Annuler). Le tour passe automatiquement au joueur suivant après l'action.</p>
 
                         <h3>📏 Règles de placement des cartes</h3>
                         <h4>Sur une pile vide :</h4>
@@ -123,64 +132,60 @@
                         <h4>Sur une pile existante :</h4>
                         <ul>
                             <li><strong>Même couleur</strong> : La carte doit être de la même couleur que les cartes déjà sur la pile</li>
+                            <li><strong>Exception - Pile Joker</strong> : Si la pile a été créée avec un joker (⭐ MULTICOLORE), elle accepte n'importe quelle couleur disponible</li>
                             <li><strong>Pas de doublon</strong> : Le chiffre ne doit pas déjà être présent dans la pile</li>
                             <li><strong>Règle Sudoku</strong> : Le chiffre ne doit pas apparaître au sommet d'une autre pile dans la même ligne ou colonne</li>
                         </ul>
 
-                        <h3>✨ Bonus de série</h3>
-                        <p>Quand vous posez une carte, si <strong>3 cartes identiques ou plus</strong> (même chiffre) sont visibles sur le plateau :</p>
+                        <h3>🔒 Piles scellées</h3>
+                        <p>Quand une pile atteint <strong>9 cartes</strong> :</p>
+                        <ul>
+                            <li>Le joueur qui a complété la pile gagne <strong>-15 points</strong> (score diminue) 🎉</li>
+                            <li>La pile devient <strong>scellée</strong> (🔒 bordure rouge double) : impossible d'y jouer</li>
+                            <li>La couleur de la pile devient <strong>morte</strong> pour tous les joueurs</li>
+                            <li>La manche <strong>continue</strong> normalement</li>
+                        </ul>
+
+                        <h3>💀 Cartes mortes</h3>
+                        <ul>
+                            <li>Une carte est <strong>morte</strong> si sa couleur correspond à une pile scellée</li>
+                            <li>Les cartes mortes sont affichées en <strong>grisé</strong> avec un crâne (💀)</li>
+                            <li>Elles <strong>ne peuvent PAS être jouées</strong> sur le plateau</li>
+                            <li>Elles peuvent <strong>UNIQUEMENT être remplacées</strong> (-1 ⚡ PM)</li>
+                        </ul>
+
+                        <h3>✨ Bonus de série (v2.3)</h3>
+                        <p>Quand vous posez une <strong>carte normale</strong> (pas un joker), si <strong>3 cartes identiques ou plus</strong> (même chiffre) sont visibles sur le plateau :</p>
                         <ul>
                             <li>Vous gagnez immédiatement des <strong>points positifs</strong> = nombre de cartes × valeur du chiffre</li>
                             <li>Exemple : 3 cartes "6" visibles = 3 × 6 = <strong>18 points</strong> gagnés (score diminue)</li>
-                            <li>Exemple : 4 cartes "7" visibles = 4 × 7 = <strong>28 points</strong> gagnés</li>
-                            <li><strong>Jokers :</strong> Les jokers comptent aussi pour les séries !
-                                <ul>
-                                    <li>Quand vous posez une carte normale : les jokers visibles comptent pour ce chiffre</li>
-                                    <li>Quand vous posez un joker : il compte pour le <strong>chiffre le plus bas</strong> parmi ceux ayant déjà 2+ cartes visibles</li>
-                                    <li>Exemple : 2 "3" et 2 "7" visibles → poser un joker = 3 × 3 = 9 points (le joker compte comme un "3")</li>
-                                    <li><strong>Cas spécial :</strong> Si vous posez un joker et qu'il y a déjà <strong>2+ jokers</strong> sur le plateau → vous gagnez 3 × (chiffre le plus bas présent)</li>
-                                </ul>
-                            </li>
+                            <li><strong>📌 Important v2.3 :</strong> Les jokers <strong>ne comptent PLUS</strong> dans les séries ! Seules les cartes normales comptent.</li>
+                            <li><strong>🎴 Bonus supplémentaire :</strong> Après un bonus de série, vous piochez automatiquement <strong>1 carte</strong> (si possible)</li>
                             <li>La manche continue normalement après le bonus</li>
                         </ul>
-                        <p style="color: var(--success); font-style: italic;">💡 Conseil : Essayez de créer des séries pour diminuer votre score !</p>
+                        <p style="color: var(--success); font-style: italic;">💡 Conseil : Créez des séries avec vos cartes normales pour diminuer votre score !</p>
 
-                        <h3>🏁 Fin de manche - 2 possibilités</h3>
-                        <ol>
-                            <li>
-                                <strong style="color: var(--danger);">Élimination (mauvais)</strong> : Un joueur ne peut plus jouer
-                                <ul>
-                                    <li>Il gagne <strong>+points</strong> égaux à la somme de ses cartes en main (minimum 15 points s'il n'a plus de cartes)</li>
-                                    <li>Il commence la prochaine manche et reçoit 1 Joker</li>
-                                </ul>
-                            </li>
-                            <li>
-                                <strong style="color: var(--success);">Pile complète (bon !)</strong> : Un joueur complète une pile de 9 cartes
-                                <ul>
-                                    <li>Il gagne <strong>-15 points</strong> (retire 15 points de son score) 🎉</li>
-                                    <li>La manche se termine immédiatement</li>
-                                    <li>Il commence la <strong>prochaine manche</strong> en tant que premier joueur</li>
-                                    <li>Aucun joueur ne reçoit de Joker</li>
-                                </ul>
-                            </li>
-                        </ol>
-
-                        <h3>⭐ Système de Joker</h3>
+                        <h3>⭐ Système de Joker (v2.3)</h3>
                         <ul>
-                            <li>Le <strong>perdant par élimination</strong> commence la manche suivante avec <strong>1 Joker</strong></li>
+                            <li>Les jokers sont <strong>mélangés dans le deck</strong> en début de partie (configurable : 0-9 jokers)</li>
                             <li>Le Joker peut être joué comme <strong>n'importe quelle couleur ET n'importe quel chiffre</strong></li>
-                            <li>Le Joker <strong>ne compte pas</strong> dans la limite de cartes en main (configurable)</li>
                             <li>Une fois joué, le Joker reste <strong>visible comme joker</strong> (★ multicolore) sur le terrain</li>
                             <li>Le Joker est <strong>transparent pour les règles Sudoku</strong> (n'empêche pas de poser d'autres cartes)</li>
-                            <li>Le Joker <strong>compte pour les séries bonus</strong> : il s'adapte au chiffre le plus bas parmi ceux ayant 2+ cartes visibles</li>
-                            <li>Utilisable <strong>une seule fois</strong> (le Joker disparaît après utilisation)</li>
-                            <li>Si un joueur perd <strong>plusieurs manches consécutives</strong>, il accumule des Jokers (2, 3, 4...)</li>
-                            <li>Si un joueur perd après avoir gagné au moins une manche (perte non-consécutive), il revient à 1 Joker</li>
-                            <li>En cas de <strong>pile complète</strong>, personne ne reçoit de Joker</li>
+                            <li><strong>Pile Joker :</strong> Si un joker est joué sur une pile vide, la pile devient <strong>multicolore</strong> (⭐ MULTICOLORE) et accepte n'importe quelle couleur disponible</li>
+                            <li><strong>📌 Important v2.3 :</strong> Les jokers <strong>ne déclenchent PLUS de bonus de série</strong></li>
+                        </ul>
+
+                        <h3>🏁 Fin de manche</h3>
+                        <p>La manche se termine quand un joueur atteint <strong>0 ❤️ PV</strong> :</p>
+                        <ul>
+                            <li>Le joueur avec le <strong>plus petit score</strong> commence la prochaine manche</li>
+                            <li>Les PV et PM sont <strong>réinitialisés</strong> pour tous les joueurs</li>
+                            <li>Un nouveau plateau est créé</li>
                         </ul>
 
                         <h3>🏆 Fin de partie</h3>
                         <p>La partie se termine quand un joueur atteint ou dépasse le <strong>score maximum choisi</strong>. Le <strong>gagnant</strong> est celui qui a le <strong>moins de points</strong> !</p>
+                        <p style="color: var(--info); font-style: italic;">ℹ️ Note : Le score ne peut pas descendre en dessous de <strong>0</strong>.</p>
                     </div>
                 </div>
 
@@ -313,21 +318,31 @@
     <!-- Modal des règles -->
     <div id="rules-modal" class="modal">
         <div class="modal-content modal-large">
-            <h2>Règles du jeu</h2>
+            <h2>Règles du jeu (v2.3)</h2>
             <div class="rules-summary">
                 <div class="rule-card">
                     <h3>🎯 Objectif</h3>
-                    <p>Avoir le <strong>moins de points</strong> possible ! Évitez l'élimination et visez les piles complètes.</p>
+                    <p>Avoir le <strong>moins de points</strong> possible ! Le premier à atteindre le score maximum perd.</p>
+                    <p style="font-size: 0.85rem; margin-top: 5px;">ℹ️ Le score ne peut pas descendre en dessous de 0.</p>
+                </div>
+
+                <div class="rule-card" style="border-color: #4fc3f7; background: linear-gradient(135deg, var(--bg-tertiary), rgba(79, 195, 247, 0.05));">
+                    <h3 style="color: #4fc3f7;">💖⚡ Ressources</h3>
+                    <ul style="font-size: 0.9rem;">
+                        <li><strong>❤️ PV (Points de Vie)</strong> : Perdus en passant son tour</li>
+                        <li><strong>⚡ PM (Points de Mana)</strong> : Perdus en remplaçant une carte</li>
+                        <li><strong>⚠️ 0 PV = Fin de manche !</strong></li>
+                    </ul>
                 </div>
 
                 <div class="rule-card">
-                    <h3>🎴 Votre tour en 3 étapes</h3>
+                    <h3>🎴 Votre tour - Choisir UNE action</h3>
                     <ol style="line-height: 1.6;">
-                        <li>Jouez <strong>UNE carte</strong> sur une pile</li>
-                        <li>Piochez <strong>0 ou 1 carte</strong> (optionnel, selon limite)</li>
-                        <li>Cliquez sur <strong>"Terminer le tour"</strong></li>
+                        <li>Jouer <strong>une carte</strong> sur une pile</li>
+                        <li><strong>⏭️ Passer le tour</strong> (-1 ❤️ PV)</li>
+                        <li><strong>🔄 Remplacer une carte</strong> (-1 ⚡ PM)</li>
                     </ol>
-                    <p style="font-size: 0.85rem; color: var(--warning); margin-top: 5px;">⚠️ 1 seule carte par tour ! Limite de cartes configurable (2-5, hors jokers).</p>
+                    <p style="font-size: 0.85rem; color: var(--warning); margin-top: 5px;">⚠️ Chaque action nécessite une confirmation. Le tour passe automatiquement après.</p>
                 </div>
 
                 <div class="rule-card">
@@ -339,61 +354,74 @@
                     </ul>
                     <p style="font-size: 0.9rem; margin-top: 8px; margin-bottom: 8px;"><strong>Pile existante :</strong></p>
                     <ul style="font-size: 0.9rem;">
-                        <li>Même couleur uniquement</li>
+                        <li>Même couleur (sauf <strong>⭐ Pile Joker</strong>)</li>
                         <li>Pas de doublon dans la pile</li>
                         <li>Respect de la règle Sudoku</li>
                     </ul>
                 </div>
 
-                <div class="rule-card" style="border-color: #ffa500; background: linear-gradient(135deg, var(--bg-tertiary), rgba(255, 165, 0, 0.05));">
-                    <h3 style="color: #ffa500;">✨ Bonus de série</h3>
-                    <p style="font-size: 0.9rem;">3+ cartes identiques visibles :</p>
+                <div class="rule-card" style="border-color: #ffd700; background: linear-gradient(135deg, var(--bg-tertiary), rgba(255, 215, 0, 0.05));">
+                    <h3 style="color: #ffd700;">⭐ Pile Joker (MULTICOLORE)</h3>
+                    <p style="font-size: 0.9rem;">Si un joker est joué sur pile vide :</p>
                     <ul style="font-size: 0.9rem;">
-                        <li><strong style="color: #ffa500;">Points gagnés</strong> = nb × chiffre</li>
-                        <li>Ex: 3×"6" = 18 points</li>
-                        <li><strong>Jokers ⭐ inclus :</strong>
-                            <ul style="font-size: 0.85rem; margin-top: 5px;">
-                                <li>Carte normale : jokers comptent</li>
-                                <li>Joker posé : compte pour le chiffre le plus bas avec 2+ cartes</li>
-                                <li><strong>Cas spécial :</strong> 2+ jokers déjà présents → 3×(chiffre le plus bas)</li>
-                            </ul>
-                        </li>
-                        <li>La manche continue</li>
-                    </ul>
-                </div>
-
-                <div class="rule-card" style="border-color: #4ecca3; background: linear-gradient(135deg, var(--bg-tertiary), rgba(78, 204, 163, 0.05));">
-                    <h3 style="color: #4ecca3;">🎉 Pile complète = BONUS !</h3>
-                    <p>Complétez 9 cartes d'une couleur :</p>
-                    <ul>
-                        <li><strong style="color: #4ecca3;">-15 points !</strong></li>
-                        <li>Fin de manche immédiate</li>
-                        <li>Vous êtes 1er joueur à la prochaine manche</li>
-                        <li>Pas de Joker donné</li>
+                        <li>La pile devient <strong>multicolore</strong></li>
+                        <li>Accepte <strong>n'importe quelle couleur</strong> disponible</li>
+                        <li>Bordure dorée avec label "⭐ MULTICOLORE"</li>
                     </ul>
                 </div>
 
                 <div class="rule-card" style="border-color: var(--danger); background: linear-gradient(135deg, var(--bg-tertiary), rgba(231, 76, 60, 0.05));">
-                    <h3 style="color: var(--danger);">❌ Élimination</h3>
-                    <p>Si vous ne pouvez plus jouer :</p>
-                    <ul>
-                        <li><strong style="color: var(--danger);">+points</strong> (somme de vos cartes, min. 15)</li>
-                        <li>Vous commencez la prochaine manche</li>
-                        <li>Vous recevez 1 Joker</li>
+                    <h3 style="color: var(--danger);">🔒 Piles scellées</h3>
+                    <p style="font-size: 0.9rem;">Quand une pile atteint 9 cartes :</p>
+                    <ul style="font-size: 0.9rem;">
+                        <li><strong style="color: #4ecca3;">-15 points</strong> pour celui qui la complète</li>
+                        <li>Pile <strong>scellée</strong> : impossible d'y jouer (🔒)</li>
+                        <li>Couleur devient <strong>morte</strong> pour tous</li>
+                        <li>La manche <strong>continue</strong></li>
+                    </ul>
+                </div>
+
+                <div class="rule-card" style="border-color: #666; background: linear-gradient(135deg, var(--bg-tertiary), rgba(100, 100, 100, 0.05));">
+                    <h3 style="color: #888;">💀 Cartes mortes</h3>
+                    <p style="font-size: 0.9rem;">Cartes d'une couleur scellée :</p>
+                    <ul style="font-size: 0.9rem;">
+                        <li>Affichées en <strong>grisé</strong> avec crâne (💀)</li>
+                        <li><strong>Ne peuvent PAS être jouées</strong></li>
+                        <li>Peuvent <strong>UNIQUEMENT être remplacées</strong> (-1 ⚡ PM)</li>
+                    </ul>
+                </div>
+
+                <div class="rule-card" style="border-color: #ffa500; background: linear-gradient(135deg, var(--bg-tertiary), rgba(255, 165, 0, 0.05));">
+                    <h3 style="color: #ffa500;">✨ Bonus de série (v2.3)</h3>
+                    <p style="font-size: 0.9rem;">Quand vous jouez une <strong>carte normale</strong> (pas joker) :</p>
+                    <ul style="font-size: 0.9rem;">
+                        <li>3+ cartes identiques visibles = <strong>bonus</strong></li>
+                        <li><strong style="color: #ffa500;">Points gagnés</strong> = nb × chiffre</li>
+                        <li>Ex: 3×"6" = 18 points</li>
+                        <li><strong>📌 v2.3 :</strong> Jokers <strong>ne comptent PLUS</strong> !</li>
+                        <li><strong>🎴 Bonus :</strong> Piochez 1 carte après</li>
                     </ul>
                 </div>
 
                 <div class="rule-card joker-rule">
-                    <h3>⭐ Joker</h3>
-                    <ul>
+                    <h3>⭐ Joker (v2.3)</h3>
+                    <ul style="font-size: 0.9rem;">
+                        <li>Mélangé dans le deck (config : 0-9)</li>
                         <li>Joue comme n'importe quelle carte</li>
-                        <li>Ne compte pas dans la limite de cartes</li>
-                        <li>Reste visible comme joker (★) sur le terrain</li>
+                        <li>Reste visible comme joker (★)</li>
                         <li>Transparent pour règles Sudoku</li>
-                        <li>Compte pour séries (chiffre le plus bas)</li>
-                        <li>Donné au perdant (élimination)</li>
-                        <li>Cumule si pertes consécutives</li>
-                        <li>Usage unique</li>
+                        <li><strong>Pile vide</strong> → Pile Joker (⭐ multicolore)</li>
+                        <li><strong>Ne déclenche PLUS de bonus</strong> (v2.3)</li>
+                    </ul>
+                </div>
+
+                <div class="rule-card" style="border-color: #4ecca3; background: linear-gradient(135deg, var(--bg-tertiary), rgba(78, 204, 163, 0.05));">
+                    <h3 style="color: #4ecca3;">🏁 Fin de manche</h3>
+                    <p style="font-size: 0.9rem;">Quand un joueur atteint <strong>0 ❤️ PV</strong> :</p>
+                    <ul style="font-size: 0.9rem;">
+                        <li>Le joueur avec le <strong>plus petit score</strong> commence la prochaine manche</li>
+                        <li>PV et PM <strong>réinitialisés</strong></li>
+                        <li>Nouveau plateau</li>
                     </ul>
                 </div>
             </div>
