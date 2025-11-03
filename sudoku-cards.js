@@ -883,6 +883,12 @@ function getValidMoves(player) {
 
     for (let i = 0; i < player.hand.length; i++) {
         const card = player.hand[i];
+
+        // v2.3 : Exclure les cartes mortes (couleur scellée)
+        if (player.deadCardColors.includes(card.color)) {
+            continue; // Les cartes mortes ne peuvent pas être jouées
+        }
+
         for (let pileIndex = 0; pileIndex < 9; pileIndex++) {
             if (isValidMove(card, pileIndex)) {
                 validMoves.push({ card, pileIndex });
@@ -982,21 +988,61 @@ function checkSudokuRules(card, pileIndex) {
 // IA
 // ===============================
 
-function playAITurn(player, validMoves) {
-    // Si l'IA n'a pas de coups valides mais a un joker, l'utiliser
-    if (validMoves.length === 0 && player.jokers > 0) {
-        // Trouver une pile non pleine
-        const availablePiles = gameState.piles
-            .map((pile, index) => ({ pile, index }))
-            .filter(({ pile }) => pile.length < 9);
+function playAITurn(player) {
+    // v2.3 : Calculer les coups valides (exclure les cartes mortes)
+    const validMoves = getValidMoves(player);
 
-        if (availablePiles.length > 0) {
-            const randomPile = availablePiles[Math.floor(Math.random() * availablePiles.length)];
-            playJoker(randomPile.index);
+    // v2.3 : Vérifier s'il y a des cartes mortes (couleur scellée)
+    const deadCards = player.hand.filter(card => player.deadCardColors.includes(card.color));
+    const hasDeadCards = deadCards.length > 0;
+
+    // Décision AI selon v2.3 :
+    // 1. Si pas de coups valides et pas de jokers → Remplacer une carte morte ou Passer
+    // 2. Si des coups valides → Jouer normalement
+    // 3. Si pas de coups valides mais a des jokers → Jouer un joker
+
+    if (validMoves.length === 0) {
+        // Cas 1 : Pas de coups valides
+        if (player.jokers > 0) {
+            // Jouer un joker sur une pile non scellée
+            const availablePiles = gameState.piles
+                .map((pile, index) => ({ pile, index }))
+                .filter(({ pile }, index) => !gameState.pilesState[index].isSealed);
+
+            if (availablePiles.length > 0) {
+                const randomPile = availablePiles[Math.floor(Math.random() * availablePiles.length)];
+                playJoker(randomPile.index);
+                return;
+            }
         }
+
+        // Pas de joker ou pas de piles disponibles
+        // Priorité 1 : Remplacer une carte morte si on a du MP
+        if (hasDeadCards && player.mp > 0) {
+            const cardToReplace = deadCards[0]; // Remplacer la première carte morte
+            replaceCardAI(player, cardToReplace);
+            return;
+        }
+
+        // Priorité 2 : Passer le tour si on a du HP
+        if (player.hp > 1) { // Garder au moins 1 HP
+            passAITurn(player);
+            return;
+        }
+
+        // Dernière option : Remplacer n'importe quelle carte si on a du MP
+        if (player.mp > 0 && player.hand.length > 0) {
+            const cardToReplace = player.hand[0];
+            replaceCardAI(player, cardToReplace);
+            return;
+        }
+
+        // Si aucune option, passer (sacrifier HP)
+        passAITurn(player);
         return;
     }
 
+    // Cas 2 : L'IA a des coups valides, choisir le meilleur
     let chosenMove;
 
     switch (player.difficulty) {
@@ -1013,6 +1059,35 @@ function playAITurn(player, validMoves) {
 
     if (chosenMove) {
         playCard(chosenMove.card, chosenMove.pileIndex);
+    }
+}
+
+// v2.3 : Action Passer pour l'IA
+function passAITurn(player) {
+    player.hp -= 1;
+    updateGameDisplay();
+    nextPlayer();
+}
+
+// v2.3 : Action Remplacer pour l'IA
+function replaceCardAI(player, card) {
+    const cardIndex = player.hand.indexOf(card);
+    if (cardIndex !== -1) {
+        // Retirer de la main
+        player.hand.splice(cardIndex, 1);
+
+        // Remettre dans le deck et mélanger
+        gameState.deck.push(card);
+        gameState.deck = shuffleDeck(gameState.deck);
+
+        // Piocher une nouvelle carte
+        if (gameState.deck.length > 0) {
+            player.hand.push(gameState.deck.pop());
+        }
+
+        player.mp -= 1;
+        updateGameDisplay();
+        nextPlayer();
     }
 }
 
