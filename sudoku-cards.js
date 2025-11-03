@@ -915,29 +915,34 @@ function updatePlayerHand() {
         }
 
         // Gérer l'affichage des boutons
-        const validMoves = getValidMoves(currentPlayer);
-        const hasJoker = currentPlayer.jokers > 0;
-        const canPlayAnything = validMoves.length > 0 || hasJoker;
-
-        if (!canPlayAnything) {
-            // Aucun coup possible : bouton passer
-            undoBtn.style.display = 'none';
-            drawBtn.style.display = 'none';
-            endTurnBtn.style.display = 'none';
-            passBtn.style.display = 'block';
-        } else if (gameState.hasPlayedCard) {
+        if (gameState.hasPlayedCard) {
             // Carte jouée : boutons annuler, piocher et terminer le tour
+            // Une fois qu'une carte a été jouée, on ne vérifie PLUS si le joueur peut jouer
+            // Il doit pouvoir piocher et terminer son tour normalement
             undoBtn.style.display = 'inline-block';
             // Le bouton piocher n'apparaît que si le joueur n'a pas encore pioché, qu'il reste des cartes, et qu'il n'a pas déjà 5 cartes
             drawBtn.style.display = (!gameState.hasDrawnCard && gameState.deck.length > 0 && currentPlayer.hand.length < 5) ? 'inline-block' : 'none';
             endTurnBtn.style.display = 'inline-block';
             passBtn.style.display = 'none';
         } else {
-            // Début de tour : aucun bouton (doit jouer une carte)
-            undoBtn.style.display = 'none';
-            drawBtn.style.display = 'none';
-            endTurnBtn.style.display = 'none';
-            passBtn.style.display = 'none';
+            // Début de tour : vérifier si le joueur peut jouer
+            const validMoves = getValidMoves(currentPlayer);
+            const hasJoker = currentPlayer.jokers > 0;
+            const canPlayAnything = validMoves.length > 0 || hasJoker;
+
+            if (!canPlayAnything) {
+                // Aucun coup possible : bouton passer
+                undoBtn.style.display = 'none';
+                drawBtn.style.display = 'none';
+                endTurnBtn.style.display = 'none';
+                passBtn.style.display = 'block';
+            } else {
+                // Début de tour : aucun bouton (doit jouer une carte)
+                undoBtn.style.display = 'none';
+                drawBtn.style.display = 'none';
+                endTurnBtn.style.display = 'none';
+                passBtn.style.display = 'none';
+            }
         }
     } else {
         // Pour l'IA, afficher des cartes cachées
