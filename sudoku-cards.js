@@ -1107,7 +1107,22 @@ function updatePiles() {
 
     piles.forEach((pileElement, index) => {
         const pile = gameState.piles[index];
+        const pileState = gameState.pilesState[index];
+
         pileElement.innerHTML = '';
+
+        // Réinitialiser les classes
+        pileElement.className = 'pile';
+
+        // v2.3 : Ajouter la classe sealed si la pile est scellée
+        if (pileState.isSealed) {
+            pileElement.classList.add('sealed');
+        }
+
+        // v2.3 : Ajouter la classe joker-pile si c'est une pile Joker (sans couleur fixée)
+        if (pileState.isJokerPile) {
+            pileElement.classList.add('joker-pile');
+        }
 
         if (pile.length === 0) {
             pileElement.innerHTML = '<div class="pile-empty-text">Pile vide</div>';
@@ -1119,13 +1134,20 @@ function updatePiles() {
 
             // Afficher le nombre de cartes dans la pile
             const countElement = document.createElement('div');
-            countElement.style.cssText = 'position: absolute; bottom: 5px; right: 5px; background: var(--bg-primary); padding: 3px 8px; border-radius: 5px; font-size: 0.8rem;';
-            countElement.textContent = `${pile.length}/9`;
+            countElement.className = pileState.isSealed ? 'pile-card-count' : '';
+            countElement.style.cssText = pileState.isSealed
+                ? 'position: absolute; bottom: 5px; left: 50%; transform: translateX(-50%);'
+                : 'position: absolute; bottom: 5px; right: 5px; background: var(--bg-primary); padding: 3px 8px; border-radius: 5px; font-size: 0.8rem;';
+            countElement.textContent = pileState.isSealed ? 'SCELLÉE (9/9)' : `${pile.length}/9`;
             pileElement.appendChild(countElement);
         }
 
-        // Gérer le clic sur les piles
-        pileElement.onclick = () => handlePileClick(index);
+        // Gérer le clic sur les piles (désactiver si scellée)
+        if (pileState.isSealed) {
+            pileElement.onclick = null;
+        } else {
+            pileElement.onclick = () => handlePileClick(index);
+        }
     });
 }
 
@@ -1156,17 +1178,34 @@ function updatePlayerHand() {
         currentPlayer.hand.forEach(card => {
             const cardElement = createCardElement(card, true);
 
+            // v2.3 : Vérifier si c'est une carte morte (couleur scellée)
+            const isDead = currentPlayer.deadCardColors.includes(card.color);
+            if (isDead) {
+                cardElement.classList.add('dead');
+
+                // Ajouter un badge "Remplacer uniquement"
+                const deadBadge = document.createElement('div');
+                deadBadge.className = 'dead-badge';
+                deadBadge.textContent = 'REMPLACER';
+                cardElement.appendChild(deadBadge);
+            }
+
             // Mode remplacement : les cartes sont cliquables pour être remplacées
             if (replacingCard) {
                 cardElement.onclick = () => replaceCard(card);
             } else {
                 // Mode normal : vérifier si la carte peut être jouée
-                const canPlay = [0, 1, 2, 3, 4, 5, 6, 7, 8].some(pileIndex => isValidMove(card, pileIndex));
+                const canPlay = !isDead && [0, 1, 2, 3, 4, 5, 6, 7, 8].some(pileIndex => isValidMove(card, pileIndex));
                 if (!canPlay) {
                     cardElement.classList.add('disabled');
                 }
 
-                cardElement.onclick = () => handleCardClick(card, canPlay);
+                // Les cartes mortes ne peuvent pas être jouées, seulement remplacées
+                if (isDead) {
+                    cardElement.onclick = null;
+                } else {
+                    cardElement.onclick = () => handleCardClick(card, canPlay);
+                }
             }
             handElement.appendChild(cardElement);
         });
