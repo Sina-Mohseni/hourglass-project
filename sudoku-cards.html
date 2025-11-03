@@ -253,10 +253,11 @@
                     </div>
                     <div id="player-hand" class="player-hand"></div>
                     <div class="hand-actions">
-                        <button id="undo-move-btn" class="btn btn-secondary" style="display:none;">↶ Annuler le coup</button>
-                        <button id="draw-card-btn" class="btn btn-success" style="display:none;">🃏 Piocher une carte</button>
-                        <button id="end-turn-btn" class="btn btn-primary" style="display:none;">✓ Terminer le tour</button>
-                        <button id="pass-turn-btn" class="btn btn-warning" style="display:none;">❌ Je ne peux pas jouer</button>
+                        <button id="pass-turn-btn" class="btn btn-warning">⏭️ Passer le tour (-1 ❤️)</button>
+                        <button id="replace-card-btn" class="btn btn-info">🔄 Remplacer une carte (-1 ⚡)</button>
+                    </div>
+                    <div id="replace-card-instruction" class="action-instruction" style="display:none;">
+                        Cliquez sur une carte de votre main à remplacer
                     </div>
                 </div>
             </div>
@@ -293,6 +294,19 @@
                 <p class="turn-instruction">Assurez-vous que les autres joueurs ne regardent pas l'écran</p>
             </div>
             <button id="start-turn-btn" class="btn btn-primary btn-large">C'est parti ! 🚀</button>
+        </div>
+    </div>
+
+    <!-- Modal de confirmation d'action -->
+    <div id="action-confirmation-modal" class="modal">
+        <div class="modal-content action-confirmation">
+            <div class="confirmation-icon">❓</div>
+            <h2>Confirmer l'action</h2>
+            <div id="action-description" class="action-description"></div>
+            <div class="confirmation-buttons">
+                <button id="confirm-action-btn" class="btn btn-success btn-large">✓ Accepter</button>
+                <button id="cancel-action-btn" class="btn btn-secondary btn-large">✗ Annuler</button>
+            </div>
         </div>
     </div>
 

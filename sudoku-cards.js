@@ -784,66 +784,145 @@ function nextPlayer() {
     playTurn();
 }
 
+// Nouvelle action: Passer le tour (-1 PV)
 function passTurn() {
     const currentPlayer = gameState.players[gameState.currentPlayerIndex];
-    currentPlayer.eliminated = true;
-    endRound(currentPlayer);
-}
 
-function drawCard() {
-    const currentPlayer = gameState.players[gameState.currentPlayerIndex];
+    const description = `Vous allez passer votre tour.<br><br>
+        <strong style="color: #ff6b6b;">-1 ❤️ PV</strong><br><br>
+        PV actuels: ${currentPlayer.hp} → ${currentPlayer.hp - 1}`;
 
-    // Vérifier qu'on n'a pas déjà pioché, qu'il reste des cartes, et qu'on n'a pas atteint la limite
-    // Les jokers ne comptent pas dans la limite de cartes
-    if (!gameState.hasDrawnCard && gameState.deck.length > 0 && currentPlayer.hand.length < gameState.maxHandSize) {
-        currentPlayer.hand.push(gameState.deck.pop());
-        gameState.hasDrawnCard = true;
+    showActionConfirmation('pass', description, () => {
+        currentPlayer.hp -= 1;
         updateGameDisplay();
-    }
+        nextPlayer();
+    });
 }
 
-function endTurn() {
+// Nouvelle action: Remplacer une carte (-1 PM)
+let replacingCard = false;
+
+function initiateReplaceCard() {
     const currentPlayer = gameState.players[gameState.currentPlayerIndex];
 
-    // Vérifier que le joueur a joué une carte
-    if (!gameState.hasPlayedCard) {
-        return; // Ne peut pas terminer le tour sans avoir joué
-    }
-
-    // Passer au joueur suivant
-    nextPlayer();
-}
-
-function undoMove() {
-    // Vérifier qu'une carte a été jouée
-    if (!gameState.hasPlayedCard || gameState.lastPlayedCard === null || gameState.lastPlayedPile === null) {
+    // Vérifier que le joueur a au moins 1 PM
+    if (currentPlayer.mp < 1) {
+        alert("❌ Vous n'avez pas assez de PM pour remplacer une carte !");
         return;
     }
 
-    const currentPlayer = gameState.players[gameState.currentPlayerIndex];
-    const card = gameState.lastPlayedCard;
-    const pileIndex = gameState.lastPlayedPile;
-
-    // Retirer la carte de la pile
-    const removedCard = gameState.piles[pileIndex].pop();
-
-    // Si c'était un joker, le redonner au joueur
-    if (removedCard && removedCard.isJoker) {
-        currentPlayer.jokers++;
-    } else if (removedCard) {
-        // Si c'était une carte normale, la remettre dans la main
-        currentPlayer.hand.push(removedCard);
+    // Vérifier qu'il y a des cartes dans la pioche
+    if (gameState.deck.length === 0) {
+        alert("❌ La pioche est vide !");
+        return;
     }
 
-    // Réinitialiser les flags et infos de jeu
-    gameState.hasPlayedCard = false;
-    gameState.lastPlayedCard = null;
-    gameState.lastPlayedPile = null;
-    gameState.selectedCard = null;
-    gameState.playingJoker = false;
-
-    // Mettre à jour l'affichage
+    // Activer le mode sélection de carte
+    replacingCard = true;
+    document.getElementById('replace-card-instruction').style.display = 'block';
     updateGameDisplay();
+}
+
+function replaceCard(card) {
+    const currentPlayer = gameState.players[gameState.currentPlayerIndex];
+
+    const cardDisplay = card.isJoker
+        ? '<strong>⭐ Joker</strong>'
+        : `<strong>${card.number}</strong> de <strong style="color: ${getCardColor(card.color)};">${COLOR_NAMES[card.color]}</strong>`;
+
+    const description = `Vous allez remplacer cette carte:<br><br>
+        ${cardDisplay}<br><br>
+        <strong style="color: #4fc3f7;">-1 ⚡ PM</strong><br><br>
+        PM actuels: ${currentPlayer.mp} → ${currentPlayer.mp - 1}`;
+
+    showActionConfirmation('replace', description, () => {
+        // Retirer la carte de la main
+        const cardIndex = currentPlayer.hand.findIndex(c =>
+            (c.isJoker && card.isJoker) ||
+            (!c.isJoker && !card.isJoker && c.color === card.color && c.number === card.number)
+        );
+
+        if (cardIndex !== -1) {
+            currentPlayer.hand.splice(cardIndex, 1);
+
+            // Remettre la carte dans la pioche
+            gameState.deck.push(card);
+
+            // Mélanger la pioche
+            gameState.deck = shuffleDeck(gameState.deck);
+
+            // Piocher une nouvelle carte
+            if (gameState.deck.length > 0) {
+                currentPlayer.hand.push(gameState.deck.pop());
+            }
+
+            // Coût en PM
+            currentPlayer.mp -= 1;
+        }
+
+        // Désactiver le mode remplacement
+        replacingCard = false;
+        document.getElementById('replace-card-instruction').style.display = 'none';
+
+        updateGameDisplay();
+        nextPlayer();
+    }, () => {
+        // Callback annuler
+        replacingCard = false;
+        document.getElementById('replace-card-instruction').style.display = 'none';
+        updateGameDisplay();
+    });
+}
+
+function getCardColor(color) {
+    const colors = {
+        red: '#e74c3c',
+        blue: '#3498db',
+        green: '#2ecc71',
+        yellow: '#f1c40f',
+        orange: '#e67e22',
+        purple: '#9b59b6',
+        black: '#34495e',
+        white: '#ecf0f1',
+        gray: '#95a5a6'
+    };
+    return colors[color] || '#fff';
+}
+
+// Système de confirmation pour toutes les actions
+function showActionConfirmation(actionType, description, onConfirm, onCancel = null) {
+    const modal = document.getElementById('action-confirmation-modal');
+    const descriptionElement = document.getElementById('action-description');
+
+    descriptionElement.innerHTML = description;
+    modal.classList.add('active');
+
+    // Stocker les callbacks dans gameState pour éviter les fuites mémoire
+    gameState.pendingAction = {
+        type: actionType,
+        onConfirm: onConfirm,
+        onCancel: onCancel
+    };
+}
+
+function confirmAction() {
+    if (gameState.pendingAction && gameState.pendingAction.onConfirm) {
+        gameState.pendingAction.onConfirm();
+    }
+    closeActionConfirmation();
+}
+
+function cancelAction() {
+    if (gameState.pendingAction && gameState.pendingAction.onCancel) {
+        gameState.pendingAction.onCancel();
+    }
+    closeActionConfirmation();
+}
+
+function closeActionConfirmation() {
+    const modal = document.getElementById('action-confirmation-modal');
+    modal.classList.remove('active');
+    gameState.pendingAction = null;
 }
 
 // ===============================
@@ -1081,10 +1160,6 @@ function updatePiles() {
 function updatePlayerHand() {
     const currentPlayer = gameState.players[gameState.currentPlayerIndex];
     const handElement = document.getElementById('player-hand');
-    const undoBtn = document.getElementById('undo-move-btn');
-    const drawBtn = document.getElementById('draw-card-btn');
-    const endTurnBtn = document.getElementById('end-turn-btn');
-    const passBtn = document.getElementById('pass-turn-btn');
     const jokerIndicator = document.getElementById('joker-count');
     const jokerNumber = document.getElementById('joker-number');
 
@@ -1093,10 +1168,6 @@ function updatePlayerHand() {
     // Si on attend la confirmation du tour, ne pas afficher les cartes
     if (gameState.waitingForTurnConfirmation) {
         jokerIndicator.style.display = 'none';
-        undoBtn.style.display = 'none';
-        drawBtn.style.display = 'none';
-        endTurnBtn.style.display = 'none';
-        passBtn.style.display = 'none';
         return;
     }
 
@@ -1113,12 +1184,11 @@ function updatePlayerHand() {
         currentPlayer.hand.forEach(card => {
             const cardElement = createCardElement(card, true);
 
-            // Si une carte a déjà été jouée, désactiver toutes les cartes
-            if (gameState.hasPlayedCard) {
-                cardElement.classList.add('disabled');
-                cardElement.onclick = null;
+            // Mode remplacement : les cartes sont cliquables pour être remplacées
+            if (replacingCard) {
+                cardElement.onclick = () => replaceCard(card);
             } else {
-                // Vérifier si la carte peut être jouée sur au moins une pile (indices 0 à 8)
+                // Mode normal : vérifier si la carte peut être jouée
                 const canPlay = [0, 1, 2, 3, 4, 5, 6, 7, 8].some(pileIndex => isValidMove(card, pileIndex));
                 if (!canPlay) {
                     cardElement.classList.add('disabled');
@@ -1133,8 +1203,8 @@ function updatePlayerHand() {
         for (let i = 0; i < currentPlayer.jokers; i++) {
             const jokerCard = createJokerCard();
 
-            // Si une carte a déjà été jouée, désactiver les jokers
-            if (gameState.hasPlayedCard) {
+            // Mode remplacement : ne pas permettre de remplacer un joker
+            if (replacingCard) {
                 jokerCard.classList.add('disabled');
                 jokerCard.onclick = null;
             } else {
@@ -1143,36 +1213,7 @@ function updatePlayerHand() {
             handElement.appendChild(jokerCard);
         }
 
-        // Gérer l'affichage des boutons
-        if (gameState.hasPlayedCard) {
-            // Carte jouée : boutons annuler, piocher et terminer le tour
-            // Une fois qu'une carte a été jouée, on ne vérifie PLUS si le joueur peut jouer
-            // Il doit pouvoir piocher et terminer son tour normalement
-            undoBtn.style.display = 'inline-block';
-            // Le bouton piocher n'apparaît que si le joueur n'a pas encore pioché, qu'il reste des cartes, et qu'il n'a pas atteint la limite
-            drawBtn.style.display = (!gameState.hasDrawnCard && gameState.deck.length > 0 && currentPlayer.hand.length < gameState.maxHandSize) ? 'inline-block' : 'none';
-            endTurnBtn.style.display = 'inline-block';
-            passBtn.style.display = 'none';
-        } else {
-            // Début de tour : vérifier si le joueur peut jouer
-            const validMoves = getValidMoves(currentPlayer);
-            const hasJoker = currentPlayer.jokers > 0;
-            const canPlayAnything = validMoves.length > 0 || hasJoker;
-
-            if (!canPlayAnything) {
-                // Aucun coup possible : bouton passer
-                undoBtn.style.display = 'none';
-                drawBtn.style.display = 'none';
-                endTurnBtn.style.display = 'none';
-                passBtn.style.display = 'block';
-            } else {
-                // Début de tour : aucun bouton (doit jouer une carte)
-                undoBtn.style.display = 'none';
-                drawBtn.style.display = 'none';
-                endTurnBtn.style.display = 'none';
-                passBtn.style.display = 'none';
-            }
-        }
+        // Les boutons Pass et Replace sont toujours visibles (pas de logique complexe)
     } else {
         // Pour l'IA, afficher des cartes cachées
         for (let i = 0; i < currentPlayer.hand.length; i++) {
@@ -1189,11 +1230,7 @@ function updatePlayerHand() {
             handElement.appendChild(jokerCard);
         }
 
-        // Cacher tous les boutons pour l'IA
-        undoBtn.style.display = 'none';
-        drawBtn.style.display = 'none';
-        endTurnBtn.style.display = 'none';
-        passBtn.style.display = 'none';
+        // Les boutons sont cachés dans l'UI pour l'IA (CSS ou par l'interface)
     }
 }
 
@@ -1354,9 +1391,9 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('menu-screen').classList.add('active');
     });
 
-    document.getElementById('undo-move-btn').addEventListener('click', undoMove);
-    document.getElementById('draw-card-btn').addEventListener('click', drawCard);
-    document.getElementById('end-turn-btn').addEventListener('click', endTurn);
     document.getElementById('pass-turn-btn').addEventListener('click', passTurn);
+    document.getElementById('replace-card-btn').addEventListener('click', initiateReplaceCard);
     document.getElementById('start-turn-btn').addEventListener('click', startPlayerTurn);
+    document.getElementById('confirm-action-btn').addEventListener('click', confirmAction);
+    document.getElementById('cancel-action-btn').addEventListener('click', cancelAction);
 });
