@@ -92,7 +92,13 @@
                             <li>Vous gagnez immédiatement des <strong>points positifs</strong> = nombre de cartes × valeur du chiffre</li>
                             <li>Exemple : 3 cartes "6" visibles = 3 × 6 = <strong>18 points</strong> gagnés (score diminue)</li>
                             <li>Exemple : 4 cartes "7" visibles = 4 × 7 = <strong>28 points</strong> gagnés</li>
-                            <li>Les jokers ne comptent pas pour les séries</li>
+                            <li><strong>Jokers :</strong> Les jokers comptent aussi pour les séries !
+                                <ul>
+                                    <li>Quand vous posez une carte normale : les jokers visibles comptent pour ce chiffre</li>
+                                    <li>Quand vous posez un joker : il compte pour le <strong>chiffre le plus bas</strong> parmi ceux ayant déjà 2+ cartes visibles</li>
+                                    <li>Exemple : 2 "3" et 2 "7" visibles → poser un joker = 3 × 3 = 9 points (le joker compte comme un "3")</li>
+                                </ul>
+                            </li>
                             <li>La manche continue normalement après le bonus</li>
                         </ul>
                         <p style="color: var(--success); font-style: italic;">💡 Conseil : Essayez de créer des séries pour diminuer votre score !</p>
@@ -123,6 +129,8 @@
                             <li>Le Joker peut être joué comme <strong>n'importe quelle couleur ET n'importe quel chiffre</strong></li>
                             <li>Le Joker <strong>ne compte pas</strong> dans la limite de cartes en main (configurable)</li>
                             <li>Une fois joué, le Joker reste <strong>visible comme joker</strong> (★ multicolore) sur le terrain</li>
+                            <li>Le Joker est <strong>transparent pour les règles Sudoku</strong> (n'empêche pas de poser d'autres cartes)</li>
+                            <li>Le Joker <strong>compte pour les séries bonus</strong> : il s'adapte au chiffre le plus bas parmi ceux ayant 2+ cartes visibles</li>
                             <li>Utilisable <strong>une seule fois</strong> (le Joker disparaît après utilisation)</li>
                             <li>Si un joueur perd <strong>plusieurs manches consécutives</strong>, il accumule des Jokers (2, 3, 4...)</li>
                             <li>Si un joueur perd après avoir gagné au moins une manche (perte non-consécutive), il revient à 1 Joker</li>
@@ -270,7 +278,12 @@
                     <ul style="font-size: 0.9rem;">
                         <li><strong style="color: #ffa500;">Points gagnés</strong> = nb × chiffre</li>
                         <li>Ex: 3×"6" = 18 points</li>
-                        <li>Jokers exclus</li>
+                        <li><strong>Jokers ⭐ inclus :</strong>
+                            <ul style="font-size: 0.85rem; margin-top: 5px;">
+                                <li>Carte normale : jokers comptent</li>
+                                <li>Joker posé : compte pour le chiffre le plus bas avec 2+ cartes</li>
+                            </ul>
+                        </li>
                         <li>La manche continue</li>
                     </ul>
                 </div>
@@ -302,6 +315,8 @@
                         <li>Joue comme n'importe quelle carte</li>
                         <li>Ne compte pas dans la limite de cartes</li>
                         <li>Reste visible comme joker (★) sur le terrain</li>
+                        <li>Transparent pour règles Sudoku</li>
+                        <li>Compte pour séries (chiffre le plus bas)</li>
                         <li>Donné au perdant (élimination)</li>
                         <li>Cumule si pertes consécutives</li>
                         <li>Usage unique</li>

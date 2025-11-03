@@ -461,42 +461,79 @@ function playTurn() {
 }
 
 function checkSeriesBonus(card, player) {
-    // Ignorer les jokers pour le bonus de série
-    if (card.isJoker) return;
-
-    // Compter combien de cartes avec le même numéro sont visibles sur le plateau
-    let count = 0;
-    for (let i = 0; i < gameState.piles.length; i++) {
-        const pile = gameState.piles[i];
-        if (pile.length > 0) {
-            const topCard = pile[pile.length - 1];
-            // Ne compter que les cartes non-joker avec le même numéro
-            if (!topCard.isJoker && topCard.number === card.number) {
-                count++;
+    // Cas 1 : Carte normale (non-joker)
+    if (!card.isJoker) {
+        // Compter combien de cartes avec le même numéro sont visibles sur le plateau
+        let count = 0;
+        for (let i = 0; i < gameState.piles.length; i++) {
+            const pile = gameState.piles[i];
+            if (pile.length > 0) {
+                const topCard = pile[pile.length - 1];
+                // Compter les cartes normales avec le même numéro ET les jokers (qui comptent pour tous les chiffres)
+                if (topCard.number === card.number || topCard.isJoker) {
+                    count++;
+                }
             }
         }
+
+        // Si au moins 3 cartes identiques sont visibles, gagner des points
+        if (count >= 3) {
+            const points = count * card.number;
+            player.score -= points; // Soustraire car moins de points = mieux
+            showSeriesBonus(player, card.number, count, points);
+        }
     }
+    // Cas 2 : Joker
+    else {
+        // Compter combien de chaque chiffre est visible (avant de compter le joker)
+        const numberCounts = {};
+        for (let num = 1; num <= 9; num++) {
+            numberCounts[num] = 0;
+        }
 
-    // Si au moins 3 cartes identiques sont visibles, gagner des points
-    if (count >= 3) {
-        const points = count * card.number;
-        player.score -= points; // Soustraire car moins de points = mieux
+        for (let i = 0; i < gameState.piles.length; i++) {
+            const pile = gameState.piles[i];
+            if (pile.length > 0) {
+                const topCard = pile[pile.length - 1];
+                // Ne compter que les cartes normales (pas les jokers) avant le joker qu'on vient de poser
+                if (!topCard.isJoker) {
+                    numberCounts[topCard.number]++;
+                }
+            }
+        }
 
-        // Afficher une notification
-        showSeriesBonus(player, card.number, count, points);
+        // Trouver les chiffres qui ont au moins 2 cartes visibles
+        const eligibleNumbers = [];
+        for (let num = 1; num <= 9; num++) {
+            if (numberCounts[num] >= 2) {
+                eligibleNumbers.push(num);
+            }
+        }
+
+        // Si on a des chiffres éligibles, prendre le plus bas
+        if (eligibleNumbers.length > 0) {
+            const lowestNumber = Math.min(...eligibleNumbers);
+            const count = numberCounts[lowestNumber] + 1; // +1 pour le joker qu'on vient de poser
+            const points = count * lowestNumber;
+            player.score -= points;
+            showSeriesBonus(player, lowestNumber, count, points, true); // true = joker triggered
+        }
     }
 }
 
-function showSeriesBonus(player, cardNumber, count, points) {
+function showSeriesBonus(player, cardNumber, count, points, isJokerTriggered = false) {
     // Créer une notification temporaire
     const notification = document.createElement('div');
+    const bgColor = isJokerTriggered ? 'linear-gradient(135deg, #ffd700, #ffed4e)' : 'linear-gradient(135deg, #4ecca3, #3dbd8f)';
+    const textColor = isJokerTriggered ? '#2c3e50' : 'white';
+
     notification.style.cssText = `
         position: fixed;
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
-        background: linear-gradient(135deg, #4ecca3, #3dbd8f);
-        color: white;
+        background: ${bgColor};
+        color: ${textColor};
         padding: 30px 50px;
         border-radius: 20px;
         font-size: 1.5rem;
@@ -506,8 +543,10 @@ function showSeriesBonus(player, cardNumber, count, points) {
         box-shadow: 0 10px 40px rgba(78, 204, 163, 0.5);
         animation: bounceIn 0.5s ease;
     `;
+
+    const jokerEmoji = isJokerTriggered ? ' ⭐' : '';
     notification.innerHTML = `
-        <div style="font-size: 2rem; margin-bottom: 10px;">🎉 SÉRIE ! 🎉</div>
+        <div style="font-size: 2rem; margin-bottom: 10px;">🎉 SÉRIE !${jokerEmoji} 🎉</div>
         <div>${player.name}</div>
         <div style="margin: 15px 0;">${count} × ${cardNumber} = <strong>${points} points</strong></div>
         <div style="font-size: 1rem; opacity: 0.9;">Score: ${player.score} points</div>
