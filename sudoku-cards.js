@@ -280,7 +280,8 @@ function startRound() {
         }
     });
 
-    // Si c'est la première manche, le joueur 0 commence
+    // Déterminer le joueur qui commence cette manche
+    // Si c'est la première manche, garder le joueur défini dans startGame()
     // Sinon, le perdant de la manche précédente commence
     // OU le gagnant par pile complète commence
     if (gameState.lastRoundWinner !== null) {
@@ -288,9 +289,9 @@ function startRound() {
         gameState.lastRoundWinner = null; // Réinitialiser pour la prochaine manche
     } else if (gameState.lastRoundLoser !== null) {
         gameState.currentPlayerIndex = gameState.lastRoundLoser.id;
-    } else {
-        gameState.currentPlayerIndex = 0;
     }
+    // Si round === 1, on garde la valeur définie dans startGame()
+    // Donc pas de else qui réinitialise à 0
 
     // Mettre à jour l'affichage
     updateGameDisplay();
