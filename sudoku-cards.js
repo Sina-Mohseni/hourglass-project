@@ -676,62 +676,47 @@ function playCard(card, pileIndex) {
     // Ajouter la carte à la pile
     gameState.piles[pileIndex].push(card);
 
-    // Marquer que le joueur a joué une carte et sauvegarder les infos pour annulation
-    gameState.hasPlayedCard = true;
-    gameState.lastPlayedCard = card;
-    gameState.lastPlayedPile = pileIndex;
+    // Désélectionner la carte
+    gameState.selectedCard = null;
 
-    // Vérifier si la pile est complète (9 cartes)
+    // Vérifier si la pile est complète (9 cartes) → pile scellée
     if (gameState.piles[pileIndex].length === 9) {
-        // Pile complète ! Le joueur gagne 15 points (retire 15 points négatifs)
-        currentPlayer.score -= 15;
-        endRoundWithCompletion(currentPlayer, pileIndex);
-        return;
+        // Pile scellée ! Le joueur gagne -15 points
+        currentPlayer.score = Math.max(0, currentPlayer.score - 15); // Plancher à 0
+        gameState.pilesState[pileIndex].isSealed = true;
+
+        // Les cartes de cette couleur deviennent mortes
+        const sealedColor = gameState.piles[pileIndex][0].color;
+        gameState.players.forEach(player => {
+            if (!player.deadCardColors.includes(sealedColor)) {
+                player.deadCardColors.push(sealedColor);
+            }
+        });
+
+        // Continuer (pas de fin de manche comme avant)
     }
 
     // Vérifier le bonus de série (3+ cartes identiques visibles)
     checkSeriesBonus(card, currentPlayer);
 
-    // Si c'est l'IA, piocher et terminer le tour automatiquement
-    if (currentPlayer.type === 'ai') {
-        // L'IA pioche seulement si elle n'a pas atteint la limite de cartes
-        if (gameState.deck.length > 0 && currentPlayer.hand.length < gameState.maxHandSize) {
-            currentPlayer.hand.push(gameState.deck.pop());
-        }
-        nextPlayer();
-    } else {
-        // Pour un joueur humain, mettre à jour l'affichage
-        updateGameDisplay();
-    }
+    // Passer automatiquement au joueur suivant
+    updateGameDisplay();
+    nextPlayer();
 }
 
 function playJoker(pileIndex) {
     const currentPlayer = gameState.players[gameState.currentPlayerIndex];
-
-    // Déterminer quelle carte le joker va représenter
     const pile = gameState.piles[pileIndex];
-    let jokerCard;
 
+    // Le Joker est multicolore et n'a pas de numéro visible (v2.3)
+    const jokerCard = { isJoker: true };
+
+    // Pile vide → pile devient "état Joker" (sans couleur fixée)
     if (pile.length === 0) {
-        // Pile vide : choisir une couleur disponible et un chiffre stratégique
-        const usedColors = gameState.piles
-            .filter(p => p.length > 0)
-            .map(p => p[0].color);
-        const availableColors = COLORS.filter(c => !usedColors.includes(c));
-
-        const color = availableColors[Math.floor(Math.random() * availableColors.length)];
-        const number = Math.floor(Math.random() * 9) + 1;
-
-        jokerCard = { color, number, isJoker: true };
-    } else {
-        // Pile existante : suivre la couleur et choisir un chiffre manquant
-        const color = pile[0].color;
-        const usedNumbers = pile.map(c => c.number);
-        const availableNumbers = NUMBERS.filter(n => !usedNumbers.includes(n));
-
-        const number = availableNumbers[Math.floor(Math.random() * availableNumbers.length)];
-        jokerCard = { color, number, isJoker: true };
+        gameState.pilesState[pileIndex].isJokerPile = true;
     }
+    // Pile existante → le Joker prend la couleur de la pile
+    // (la couleur sera gérée lors de la validation/affichage)
 
     // Ajouter le joker à la pile
     gameState.piles[pileIndex].push(jokerCard);
@@ -739,33 +724,45 @@ function playJoker(pileIndex) {
     // Réduire le nombre de jokers
     currentPlayer.jokers--;
 
-    // Marquer que le joueur a joué une carte (joker) et sauvegarder les infos pour annulation
-    gameState.hasPlayedCard = true;
-    gameState.lastPlayedCard = jokerCard;
-    gameState.lastPlayedPile = pileIndex;
+    // Désactiver le mode joker
+    gameState.playingJoker = false;
 
-    // Vérifier si la pile est complète (9 cartes)
+    // Vérifier si la pile est complète (9 cartes) → pile scellée
     if (gameState.piles[pileIndex].length === 9) {
-        // Pile complète ! Le joueur gagne 15 points (retire 15 points négatifs)
-        currentPlayer.score -= 15;
-        endRoundWithCompletion(currentPlayer, pileIndex);
-        return;
-    }
+        // Pile scellée ! Le joueur gagne -15 points
+        currentPlayer.score = Math.max(0, currentPlayer.score - 15); // Plancher à 0
+        gameState.pilesState[pileIndex].isSealed = true;
 
-    // Vérifier le bonus de série (3+ cartes identiques visibles)
-    checkSeriesBonus(jokerCard, currentPlayer);
-
-    // Si c'est l'IA, piocher et terminer le tour automatiquement
-    if (currentPlayer.type === 'ai') {
-        // L'IA pioche seulement si elle n'a pas atteint la limite de cartes
-        if (gameState.deck.length > 0 && currentPlayer.hand.length < gameState.maxHandSize) {
-            currentPlayer.hand.push(gameState.deck.pop());
+        // Les cartes de cette couleur deviennent mortes (si pile a une couleur)
+        if (!gameState.pilesState[pileIndex].isJokerPile) {
+            const sealedColor = getPileColor(pileIndex);
+            if (sealedColor) {
+                gameState.players.forEach(player => {
+                    if (!player.deadCardColors.includes(sealedColor)) {
+                        player.deadCardColors.push(sealedColor);
+                    }
+                });
+            }
         }
-        nextPlayer();
-    } else {
-        // Pour un joueur humain, mettre à jour l'affichage
-        updateGameDisplay();
     }
+
+    // Note: Les jokers ne comptent pas dans les séries (v2.3)
+    // Donc pas de checkSeriesBonus pour joker
+
+    // Passer automatiquement au joueur suivant
+    updateGameDisplay();
+    nextPlayer();
+}
+
+// Helper: obtenir la couleur d'une pile (première carte non-joker)
+function getPileColor(pileIndex) {
+    const pile = gameState.piles[pileIndex];
+    for (const card of pile) {
+        if (!card.isJoker && card.color) {
+            return card.color;
+        }
+    }
+    return null;
 }
 
 function nextPlayer() {
@@ -1341,13 +1338,10 @@ function handlePileClick(pileIndex) {
     const currentPlayer = gameState.players[gameState.currentPlayerIndex];
     if (currentPlayer.type !== 'human') return;
 
-    // Ne pas permettre de jouer une autre carte si une carte a déjà été jouée
-    if (gameState.hasPlayedCard) return;
-
     // Jouer un joker
     if (gameState.playingJoker) {
         if (gameState.piles[pileIndex].length < 9) {
-            playJoker(pileIndex);
+            confirmPlayJoker(pileIndex);
         }
         return;
     }
@@ -1356,8 +1350,52 @@ function handlePileClick(pileIndex) {
     if (!gameState.selectedCard) return;
 
     if (isValidMove(gameState.selectedCard, pileIndex)) {
-        playCard(gameState.selectedCard, pileIndex);
+        confirmPlayCard(gameState.selectedCard, pileIndex);
     }
+}
+
+// Confirmation avant de jouer une carte
+function confirmPlayCard(card, pileIndex) {
+    const currentPlayer = gameState.players[gameState.currentPlayerIndex];
+    const pile = gameState.piles[pileIndex];
+
+    const cardDisplay = `<strong>${card.number}</strong> de <strong style="color: ${getCardColor(card.color)};">${COLOR_NAMES[card.color]}</strong>`;
+    const pileDisplay = pile.length === 0
+        ? 'pile vide'
+        : `pile <strong style="color: ${getCardColor(pile[0].color)};">${COLOR_NAMES[pile[0].color]}</strong> (${pile.length}/9 cartes)`;
+
+    const description = `Vous allez jouer cette carte:<br><br>
+        ${cardDisplay}<br><br>
+        sur ${pileDisplay}`;
+
+    showActionConfirmation('playCard', description, () => {
+        playCard(card, pileIndex);
+    }, () => {
+        // Annuler : désélectionner la carte
+        gameState.selectedCard = null;
+        updateGameDisplay();
+    });
+}
+
+// Confirmation avant de jouer un joker
+function confirmPlayJoker(pileIndex) {
+    const currentPlayer = gameState.players[gameState.currentPlayerIndex];
+    const pile = gameState.piles[pileIndex];
+
+    const pileDisplay = pile.length === 0
+        ? 'pile vide'
+        : `pile <strong style="color: ${getCardColor(pile[0].color)};">${COLOR_NAMES[pile[0].color]}</strong> (${pile.length}/9 cartes)`;
+
+    const description = `Vous allez jouer un <strong>⭐ Joker</strong><br><br>
+        sur ${pileDisplay}`;
+
+    showActionConfirmation('playJoker', description, () => {
+        playJoker(pileIndex);
+    }, () => {
+        // Annuler : désactiver le mode joker
+        gameState.playingJoker = false;
+        updateGameDisplay();
+    });
 }
 
 // ===============================
