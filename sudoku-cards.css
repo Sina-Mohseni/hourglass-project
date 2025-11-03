@@ -670,43 +670,539 @@ body {
     width: 100%;
 }
 
-/* Responsive */
+/* ========================================
+   RESPONSIVE DESIGN
+   ======================================== */
+
+/* Tablettes paysage et petits écrans (1024px - 1200px) */
 @media (max-width: 1200px) {
     .game-layout {
         grid-template-columns: 200px 1fr;
     }
+
+    .menu-container {
+        max-width: 600px;
+        padding: 30px;
+    }
 }
 
-@media (max-width: 992px) {
+/* Tablettes portrait (768px - 1024px) */
+@media (max-width: 1024px) {
     .game-layout {
         grid-template-columns: 1fr;
     }
 
     .players-panel {
         max-height: none;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 15px;
+    }
+
+    .player-card {
+        margin-bottom: 0;
     }
 
     .piles-container {
         grid-template-columns: repeat(3, 1fr);
+        gap: 12px;
+        padding: 15px;
+    }
+
+    .pile {
+        min-height: 120px;
     }
 }
 
+/* Tablettes portrait petit format et grands mobiles (600px - 768px) */
 @media (max-width: 768px) {
-    .player-hand {
-        flex-wrap: wrap;
+    body {
+        font-size: 14px;
     }
 
+    .screen {
+        padding: 10px;
+    }
+
+    /* Menu */
+    .menu-container {
+        padding: 25px 20px;
+        max-width: 100%;
+    }
+
+    .game-title {
+        font-size: 2rem;
+        margin-bottom: 25px;
+    }
+
+    .menu-content {
+        gap: 20px;
+    }
+
+    .menu-section {
+        padding: 20px;
+    }
+
+    .menu-section h2 {
+        font-size: 1.3rem;
+    }
+
+    /* Game header */
+    .game-header {
+        flex-direction: column;
+        gap: 15px;
+        padding: 15px;
+    }
+
+    .game-info {
+        gap: 20px;
+    }
+
+    .round-info {
+        gap: 15px;
+        font-size: 1rem;
+    }
+
+    .header-actions {
+        width: 100%;
+    }
+
+    .header-actions .btn {
+        flex: 1;
+        padding: 10px 15px;
+        font-size: 0.9rem;
+    }
+
+    /* Players panel */
+    .players-panel {
+        grid-template-columns: repeat(2, 1fr);
+        padding: 15px;
+    }
+
+    .player-card {
+        padding: 12px;
+    }
+
+    .player-name {
+        font-size: 1rem;
+    }
+
+    .player-score {
+        font-size: 1.1rem;
+    }
+
+    /* Game board */
+    .game-board {
+        padding: 15px;
+    }
+
+    .board-header {
+        flex-direction: column;
+        gap: 15px;
+        padding-bottom: 15px;
+    }
+
+    .deck-pile {
+        width: 100%;
+        flex-direction: row;
+        justify-content: center;
+    }
+
+    .current-turn {
+        font-size: 1rem;
+        text-align: center;
+    }
+
+    /* Piles */
+    .piles-container {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 8px;
+        padding: 10px;
+    }
+
+    .pile {
+        min-height: 100px;
+        padding: 5px;
+    }
+
+    /* Cards */
     .card {
+        width: 65px;
+        height: 90px;
+    }
+
+    .card-number {
+        font-size: 1.8rem;
+    }
+
+    .card-color-name {
+        font-size: 0.65rem;
+    }
+
+    .card-back {
         width: 70px;
         height: 95px;
     }
 
+    /* Player hand */
+    .player-hand {
+        flex-wrap: wrap;
+        gap: 10px;
+        padding: 15px;
+        min-height: 120px;
+    }
+
+    .hand-actions {
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    .hand-actions .btn {
+        padding: 10px 15px;
+        font-size: 0.85rem;
+    }
+
+    /* Buttons */
+    .btn {
+        padding: 12px 20px;
+        font-size: 0.95rem;
+    }
+
+    /* Modals */
+    .modal-content {
+        padding: 25px 20px;
+        width: 95%;
+    }
+
+    .modal-content h2 {
+        font-size: 1.5rem;
+        margin-bottom: 20px;
+    }
+
+    .rules-summary {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+
+    .rule-card {
+        padding: 15px;
+    }
+
+    .rule-card h3 {
+        font-size: 1.1rem;
+    }
+}
+
+/* Mobiles paysage et petits mobiles portrait (480px - 600px) */
+@media (max-width: 600px) {
+    .game-title {
+        font-size: 1.7rem;
+    }
+
+    .menu-section h2 {
+        font-size: 1.2rem;
+    }
+
+    /* Players panel en colonne sur petit écran */
+    .players-panel {
+        grid-template-columns: 1fr;
+    }
+
+    /* Piles plus compactes */
+    .piles-container {
+        gap: 6px;
+        padding: 8px;
+    }
+
+    .pile {
+        min-height: 85px;
+    }
+
+    /* Cartes encore plus petites */
+    .card {
+        width: 55px;
+        height: 75px;
+    }
+
     .card-number {
-        font-size: 2rem;
+        font-size: 1.5rem;
+    }
+
+    .card-color-name {
+        font-size: 0.55rem;
+        margin-top: 2px;
+    }
+
+    .card-back {
+        width: 60px;
+        height: 80px;
+    }
+
+    .deck-count {
+        font-size: 1.2rem;
+    }
+
+    /* Hand actions en colonne */
+    .hand-actions {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .hand-actions .btn {
+        width: 100%;
+        padding: 12px;
+        font-size: 0.9rem;
+    }
+
+    /* Joker indicator plus compact */
+    .joker-indicator {
+        padding: 6px 12px;
+        font-size: 0.85rem;
+    }
+
+    .joker-icon {
+        font-size: 1.1rem;
+    }
+}
+
+/* Très petits mobiles portrait (320px - 480px) */
+@media (max-width: 480px) {
+    .screen {
+        padding: 5px;
+    }
+
+    .game-title {
+        font-size: 1.5rem;
+        margin-bottom: 20px;
+    }
+
+    .menu-container {
+        padding: 20px 15px;
+    }
+
+    .menu-section {
+        padding: 15px;
+    }
+
+    .menu-section h2 {
+        font-size: 1.1rem;
+        margin-bottom: 15px;
+    }
+
+    .setting-group {
+        margin-bottom: 15px;
+    }
+
+    .setting-group label {
+        font-size: 0.9rem;
+    }
+
+    .setting-group select,
+    .setting-group input {
+        padding: 10px;
+        font-size: 0.9rem;
+    }
+
+    /* Player setup */
+    .player-type-selector {
+        gap: 8px;
+    }
+
+    .player-type-btn {
+        padding: 8px;
+        font-size: 0.85rem;
+    }
+
+    .difficulty-btn {
+        padding: 6px;
+        font-size: 0.8rem;
+    }
+
+    /* Game */
+    .game-header {
+        padding: 12px;
+    }
+
+    .round-info {
+        flex-direction: column;
+        gap: 8px;
+        font-size: 0.9rem;
+        align-items: center;
+    }
+
+    .game-board {
+        padding: 10px;
+        gap: 15px;
+    }
+
+    .board-header {
+        gap: 10px;
+    }
+
+    .current-turn {
+        font-size: 0.9rem;
+    }
+
+    /* Piles ultra compactes mais garde 3x3 */
+    .piles-container {
+        gap: 4px;
+        padding: 5px;
+    }
+
+    .pile {
+        min-height: 70px;
+        padding: 3px;
+        border-width: 2px;
+    }
+
+    /* Cartes minimales */
+    .card {
+        width: 48px;
+        height: 65px;
+        border-width: 2px;
+    }
+
+    .card-number {
+        font-size: 1.3rem;
+    }
+
+    .card-color-name {
+        font-size: 0.5rem;
+        margin-top: 1px;
+    }
+
+    .card-back {
+        width: 50px;
+        height: 70px;
+    }
+
+    .deck-count {
+        font-size: 1rem;
+    }
+
+    /* Player hand */
+    .player-hand {
+        gap: 8px;
+        padding: 10px;
+        min-height: 90px;
+    }
+
+    .hand-header h3 {
+        font-size: 1rem;
+    }
+
+    .hand-actions .btn {
+        padding: 10px;
+        font-size: 0.85rem;
+    }
+
+    /* Buttons */
+    .btn {
+        padding: 10px 15px;
+        font-size: 0.85rem;
+    }
+
+    /* Modals */
+    .modal-content {
+        padding: 20px 15px;
+    }
+
+    .modal-content h2 {
+        font-size: 1.3rem;
+    }
+
+    #round-result,
+    #game-result {
+        font-size: 1rem;
+    }
+
+    .scores-table {
+        padding: 15px;
+    }
+
+    .score-row {
+        padding: 8px;
+        font-size: 0.9rem;
+    }
+
+    .rule-card {
+        padding: 12px;
+    }
+
+    .rule-card h3 {
+        font-size: 1rem;
+        margin-bottom: 10px;
+    }
+
+    .rule-card p,
+    .rule-card ul,
+    .rule-card ol {
+        font-size: 0.85rem;
+    }
+
+    /* Rules section in menu */
+    .rules-section {
+        max-height: 300px;
+    }
+
+    .rules-content h3 {
+        font-size: 1rem;
+    }
+
+    .rules-content p,
+    .rules-content ul,
+    .rules-content ol {
+        font-size: 0.85rem;
+    }
+}
+
+/* Mode paysage spécifique pour mobiles */
+@media (max-height: 600px) and (orientation: landscape) {
+    .screen {
+        padding: 5px;
+    }
+
+    .game-header {
+        padding: 8px;
+        margin-bottom: 10px;
+    }
+
+    .game-layout {
+        gap: 10px;
+    }
+
+    .game-board {
+        padding: 10px;
+        gap: 10px;
     }
 
     .piles-container {
-        grid-template-columns: repeat(2, 1fr);
+        padding: 8px;
+        gap: 6px;
+    }
+
+    .pile {
+        min-height: 70px;
+    }
+
+    .player-hand {
+        padding: 10px;
+        min-height: 80px;
+    }
+
+    .hand-header {
+        margin-bottom: 8px;
+    }
+
+    .hand-actions {
+        margin-top: 8px;
+        flex-direction: row;
+        flex-wrap: wrap;
+    }
+
+    .hand-actions .btn {
+        flex: 1 1 auto;
+        min-width: 120px;
     }
 }
 
