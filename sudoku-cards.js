@@ -27,6 +27,7 @@ let gameState = {
     currentPlayerIndex: 0,
     round: 1,
     maxScore: 100,
+    maxHandSize: 5,
     selectedCard: null,
     selectedPile: null,
     lastRoundLoser: null,
@@ -128,6 +129,7 @@ function startGame() {
     // Récupérer la configuration
     const maxScore = parseInt(document.getElementById('max-score').value);
     const numPlayers = parseInt(document.getElementById('num-players').value);
+    const maxHandSize = parseInt(document.getElementById('max-hand-size').value);
 
     // Créer les joueurs
     const players = [];
@@ -172,6 +174,7 @@ function startGame() {
         currentPlayerIndex: 0,
         round: 1,
         maxScore: maxScore,
+        maxHandSize: maxHandSize,
         selectedCard: null,
         selectedPile: null,
         lastRoundLoser: null,
@@ -236,9 +239,9 @@ function startRound() {
         player.eliminated = false;
     });
 
-    // Distribuer 5 cartes à chaque joueur
+    // Distribuer les cartes initiales à chaque joueur (selon le nombre configuré)
     gameState.players.forEach(player => {
-        for (let i = 0; i < 5; i++) {
+        for (let i = 0; i < gameState.maxHandSize; i++) {
             player.hand.push(gameState.deck.pop());
         }
     });
@@ -482,8 +485,8 @@ function playCard(card, pileIndex) {
 
     // Si c'est l'IA, piocher et terminer le tour automatiquement
     if (currentPlayer.type === 'ai') {
-        // L'IA pioche seulement si elle a moins de 5 cartes
-        if (gameState.deck.length > 0 && currentPlayer.hand.length < 5) {
+        // L'IA pioche seulement si elle n'a pas atteint la limite de cartes
+        if (gameState.deck.length > 0 && currentPlayer.hand.length < gameState.maxHandSize) {
             currentPlayer.hand.push(gameState.deck.pop());
         }
         nextPlayer();
@@ -542,8 +545,8 @@ function playJoker(pileIndex) {
 
     // Si c'est l'IA, piocher et terminer le tour automatiquement
     if (currentPlayer.type === 'ai') {
-        // L'IA pioche seulement si elle a moins de 5 cartes
-        if (gameState.deck.length > 0 && currentPlayer.hand.length < 5) {
+        // L'IA pioche seulement si elle n'a pas atteint la limite de cartes
+        if (gameState.deck.length > 0 && currentPlayer.hand.length < gameState.maxHandSize) {
             currentPlayer.hand.push(gameState.deck.pop());
         }
         nextPlayer();
@@ -578,9 +581,9 @@ function passTurn() {
 function drawCard() {
     const currentPlayer = gameState.players[gameState.currentPlayerIndex];
 
-    // Vérifier qu'on n'a pas déjà pioché, qu'il reste des cartes, et qu'on n'a pas déjà 5 cartes
-    // Les jokers ne comptent pas dans la limite de 5 cartes
-    if (!gameState.hasDrawnCard && gameState.deck.length > 0 && currentPlayer.hand.length < 5) {
+    // Vérifier qu'on n'a pas déjà pioché, qu'il reste des cartes, et qu'on n'a pas atteint la limite
+    // Les jokers ne comptent pas dans la limite de cartes
+    if (!gameState.hasDrawnCard && gameState.deck.length > 0 && currentPlayer.hand.length < gameState.maxHandSize) {
         currentPlayer.hand.push(gameState.deck.pop());
         gameState.hasDrawnCard = true;
         updateGameDisplay();
@@ -922,8 +925,8 @@ function updatePlayerHand() {
             // Une fois qu'une carte a été jouée, on ne vérifie PLUS si le joueur peut jouer
             // Il doit pouvoir piocher et terminer son tour normalement
             undoBtn.style.display = 'inline-block';
-            // Le bouton piocher n'apparaît que si le joueur n'a pas encore pioché, qu'il reste des cartes, et qu'il n'a pas déjà 5 cartes
-            drawBtn.style.display = (!gameState.hasDrawnCard && gameState.deck.length > 0 && currentPlayer.hand.length < 5) ? 'inline-block' : 'none';
+            // Le bouton piocher n'apparaît que si le joueur n'a pas encore pioché, qu'il reste des cartes, et qu'il n'a pas atteint la limite
+            drawBtn.style.display = (!gameState.hasDrawnCard && gameState.deck.length > 0 && currentPlayer.hand.length < gameState.maxHandSize) ? 'inline-block' : 'none';
             endTurnBtn.style.display = 'inline-block';
             passBtn.style.display = 'none';
         } else {
