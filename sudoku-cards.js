@@ -152,6 +152,9 @@ function startGame() {
     const maxScore = parseInt(document.getElementById('max-score').value);
     const numPlayers = parseInt(document.getElementById('num-players').value);
     const maxHandSize = parseInt(document.getElementById('max-hand-size').value);
+    const maxHP = parseInt(document.getElementById('max-hp').value);
+    const maxMP = parseInt(document.getElementById('max-mp').value);
+    const jokersInDeck = parseInt(document.getElementById('jokers-in-deck').value);
     const firstPlayerMode = document.getElementById('first-player-mode').value;
 
     // Créer les joueurs
@@ -168,9 +171,12 @@ function startGame() {
                 type: 'human',
                 hand: [],
                 score: 0,
+                hp: maxHP,
+                mp: maxMP,
                 eliminated: false,
                 jokers: 0,
-                consecutiveLosses: 0
+                consecutiveLosses: 0,
+                deadCardColors: [] // Couleurs scellées (cartes mortes)
             });
         } else {
             const difficultyBtn = document.querySelector(`.player-config-ai[data-player="${i}"] .difficulty-btn.active`);
@@ -182,9 +188,12 @@ function startGame() {
                 difficulty: difficulty,
                 hand: [],
                 score: 0,
+                hp: maxHP,
+                mp: maxMP,
                 eliminated: false,
                 jokers: 0,
-                consecutiveLosses: 0
+                consecutiveLosses: 0,
+                deadCardColors: []
             });
         }
     }
@@ -203,23 +212,24 @@ function startGame() {
 
     // Initialiser le jeu
     gameState = {
-        deck: createDeck(),
+        deck: createDeck(jokersInDeck),
         players: players,
         piles: Array(9).fill(null).map(() => []),
+        pilesState: Array(9).fill(null).map(() => ({ isJokerPile: false, isSealed: false })),
         currentPlayerIndex: initialPlayerIndex,
         round: 1,
         maxScore: maxScore,
         maxHandSize: maxHandSize,
+        maxHP: maxHP,
+        maxMP: maxMP,
+        jokersInDeck: jokersInDeck,
         selectedCard: null,
         selectedPile: null,
         lastRoundLoser: null,
         lastRoundWinner: null,
         playingJoker: false,
-        hasPlayedCard: false,
-        hasDrawnCard: false,
-        lastPlayedCard: null,
-        lastPlayedPile: null,
-        waitingForTurnConfirmation: false
+        waitingForTurnConfirmation: false,
+        pendingAction: null // Pour le système de confirmation
     };
 
     // Passer à l'écran de jeu
@@ -234,12 +244,17 @@ function startGame() {
 // CRÉATION DU DECK
 // ===============================
 
-function createDeck() {
+function createDeck(jokersCount = 0) {
     const deck = [];
+    // Cartes numérotées
     for (const color of COLORS) {
         for (const number of NUMBERS) {
             deck.push({ color, number });
         }
+    }
+    // Ajouter les Jokers selon le paramètre
+    for (let i = 0; i < jokersCount; i++) {
+        deck.push({ isJoker: true });
     }
     return shuffleDeck(deck);
 }
